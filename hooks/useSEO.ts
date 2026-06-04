@@ -1,0 +1,57 @@
+
+import { useEffect } from 'react';
+
+interface SEOConfig {
+    title?: string;
+    description?: string;
+    image?: string;
+    url?: string;
+}
+
+export function useSEO(config: SEOConfig) {
+    useEffect(() => {
+        const { title, description, image, url } = config;
+
+        // 1. Update Document Title
+        if (title) {
+            document.title = title;
+        }
+
+        // 2. Helper to update/create meta tags
+        const updateMeta = (selector: string, attribute: string, value: string) => {
+            if (!value) return;
+            let element = document.querySelector(selector);
+            if (!element) {
+                element = document.createElement('meta');
+
+                // Handle different attribute types for selector creation vs setting
+                if (selector.startsWith('meta[name=')) {
+                    element.setAttribute('name', selector.replace('meta[name="', '').replace('"]', ''));
+                } else if (selector.startsWith('meta[property=')) {
+                    element.setAttribute('property', selector.replace('meta[property="', '').replace('"]', ''));
+                }
+
+                document.head.appendChild(element);
+            }
+            element.setAttribute(attribute, value);
+        };
+
+        // 3. Update Standard Meta Tags
+        if (description) updateMeta('meta[name="description"]', 'content', description);
+
+        // 4. Update Open Graph (Facebook/Discord)
+        if (title) updateMeta('meta[property="og:title"]', 'content', title);
+        if (description) updateMeta('meta[property="og:description"]', 'content', description);
+        if (image) updateMeta('meta[property="og:image"]', 'content', image);
+        if (url) updateMeta('meta[property="og:url"]', 'content', url);
+        updateMeta('meta[property="og:type"]', 'content', 'website');
+
+        // 5. Update Twitter Card
+        updateMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
+        if (title) updateMeta('meta[name="twitter:title"]', 'content', title);
+        if (description) updateMeta('meta[name="twitter:description"]', 'content', description);
+        if (image) updateMeta('meta[name="twitter:image"]', 'content', image);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: keyed on the four specific config fields the effect updates; a whole-`config` dep would re-fire on every object identity change (since callers rarely memoize a literal config object).
+    }, [config.title, config.description, config.image, config.url]);
+}

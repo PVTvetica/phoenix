@@ -1,0 +1,358 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { useFormatDate } from '../../../../contexts/AuthContext';
+import { useData } from '../../../../contexts/DataContext';
+import { useMembers } from '../../../../contexts/MembersContext';
+import type {
+    DossierData,
+    HydratedIntelligenceReport,
+    HydratedWarrant,
+    HydratedServiceRequest,
+    User,
+    IntelThreatLevel,
+    WarrantStatus,
+} from '../../../../types';
+import HeroStat from '../../../shared/ui/HeroStat';
+import EmptyState from '../../../shared/ui/EmptyState';
+import IntelligenceReportCard from '../../intel/IntelligenceReportCard';
+import RapSheetHeader from './RapSheetHeader';
+import RapSheetAlerts from './RapSheetAlerts';
+import MdtRequestRow from './MdtRequestRow';
+import MdtWarrantRow from './MdtWarrantRow';
+import { useModalRegistry } from '../../../../contexts/ModalRegistryContext';
+
+interface Props {
+    target: string | null;
+    canViewIntel: boolean;
+    onOpenRequest: (req: HydratedServiceRequest) => void;
+    onChangeTarget: (handle: string) => void;
+}
+
+type RapTab = 'overview' | 'warrants' | 'intel' | 'requests';
+
+export default function MDTPanel({ target, canViewIntel, onOpenRequest, onChangeTarget }: Props) {
+    const { rpcAction } = useData();
+    const { allUsers } = useMembers();
+    const { openIntelReportWindow } = useModalRegistry();
+
+    const [dossier, setDossier] = useState<DossierData | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [rapTab, setRapTab] = useState<RapTab>('overview');
+    const [formQuery, setFormQuery] = useState('');
+
+    // Resolve the subject User from allUsers if the handle belongs to a
+    // registered member. Missing match is fine — the RAP sheet still renders
+    // from dossier-only data.
+    const subject: User | undefined = useMemo(() => {
+        if (!target) return undefined;
+        const h = target.toLowerCase();
+        return allUsers.find(u => (u.rsiHandle || '').toLowerCase() === h);
+    }, [target, allUsers]);
+
+    // Fetch dossier when target changes. Only runs for users with intel view;
+    // otherwise the panel renders the permission-denied placeholder below.
+    useEffect(() => {
+        if (!target || !canViewIntel) {
+            setDossier(null);
+            return;
+        }
+        let cancelled = false;
+        setLoading(true);
+        setError(null);
+        rpcAction('intel:get_dossier', { targetId: target })
+            .then((data: any) => { if (!cancelled) setDossier(data || null); })
+            .catch((err: any) => { if (!cancelled) setError(err?.message || 'Failed to load dossier.'); })
+            .finally(() => { if (!cancelled) setLoading(false); });
+        return () => { cancelled = true; };
+    }, [target, canViewIntel, rpcAction]);
+
+    // Reset the inner tab each time a new subject loads so the operator sees
+    // the overview first rather than lingering on Requests from the last query.
+    useEffect(() => { setRapTab('overview'); }, [target]);
+
+    // Highest-severity threat observed in the dossier. Computed here (above
+    // any conditional returns) so the hook count is stable across renders —
+    // rules-of-hooks violation otherwise triggers React error #300 when the
+    // component flips between empty/permission-denied/loaded states.
+    const highestThreat: IntelThreatLevel | null = useMemo(() => {
+        const reports = dossier?.reports || [];
+        const order: IntelThreatLevel[] = ['Critical', 'High', 'Medium', 'Low'] as IntelThreatLevel[];
+        for (const level of order) {
+            if (reports.some(r => r.threatLevel === level)) return level;
+        }
+        return null;
+    }, [dossier]);
+
+    // --- Permission + empty states --- //
+
+    if (!canViewIntel) {
+        return (
+            <div className="px-4 sm:px-8 py-16">
+                <EmptyState
+                    icon="fa-lock"
+                    accent="cyan"
+                    heading="Intel-Zugriff erforderlich"
+                    description="Das MDT braucht die Berechtigung intel:view. Bitte einen Admin oder nutze CAD für die Live-Warteschlange."
+                />
+            </div>
+        );
+    }
+
+    if (!target) {
+        return (
+            <div className="px-4 sm:px-8 py-20">
+                <div className="max-w-xl mx-auto text-center">
+                    <i className="fa-solid fa-magnifying-glass-plus text-5xl text-cyan-500/30 mb-5" />
+                    <h2 className="text-xl font-black text-white tracking-tight">Mobiles Datenterminal</h2>
+                    <p className="mt-2 text-sm text-slate-400">
+                        Search any RSI handle to pull a subject RAP sheet — warrants, intel reports, request history, and reputation in one view.
+                    </p>
+                    <form
+                        onSubmit={(e) => { e.preventDefault(); if (formQuery.trim()) onChangeTarget(formQuery.trim()); }}
+                        className="mt-6 flex gap-2"
+                    >
+                        <input
+                            autoFocus
+                            type="search"
+                            value={formQuery}
+                            onChange={(e) => setFormQuery(e.target.value)}
+                            placeholder="e.g. ShadowRunner_07"
+                            className="flex-1 bg-slate-900/60 text-white px-4 py-3 rounded-lg border border-cyan-500/30 placeholder:text-slate-600 font-mono text-sm focus:ring-1 focus:ring-cyan-500/50 focus:border-cyan-500/50 outline-hidden"
+                        />
+                        <button
+                            type="submit"
+                            disabled={!formQuery.trim()}
+                            className="px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-widest text-white bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed transition whitespace-nowrap"
+                        >Führen du MDT aus</button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
+    // --- Loaded state --- //
+
+    const reports = dossier?.reports || [];
+    const warrants = dossier?.warrants || [];
+    const requests: HydratedServiceRequest[] = (dossier?.requests || []) as HydratedServiceRequest[];
+    const hasAnyData = reports.length + warrants.length + requests.length > 0;
+
+    const activeWarrants = warrants.filter(w => (w.status as WarrantStatus) === 'Active' || (w.status as WarrantStatus) === 'Standing');
+
+    return (
+        <div className="px-4 sm:px-8 py-6">
+            <div className="max-w-5xl mx-auto space-y-6">
+                {/* Subject header */}
+                <RapSheetHeader
+                    handle={target}
+                    subject={subject}
+                    onChangeTarget={onChangeTarget}
+                />
+
+                {/* Alerts */}
+                <RapSheetAlerts
+                    activeWarrants={activeWarrants}
+                    highestThreat={highestThreat}
+                    subject={subject}
+                />
+
+                {/* Stat strip */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <HeroStat icon="fa-bullseye" label="Warrants" value={warrants.length} accent="red" emphasize={activeWarrants.length > 0} sub={activeWarrants.length > 0 ? `${activeWarrants.length} active` : 'None active'} />
+                    <HeroStat icon="fa-folder-open" label="Intel Reports" value={reports.length} accent="rose" emphasize={highestThreat === 'Critical' || highestThreat === 'High'} sub={highestThreat ? `${highestThreat} max` : 'No reports'} />
+                    <HeroStat icon="fa-file-invoice" label="Anfragen" value={requests.length} accent="sky" sub="As client" />
+                    <HeroStat
+                        icon="fa-scale-balanced"
+                        label="Ruf"
+                        value={subject ? subject.reputation ?? '—' : '—'}
+                        sub={subject ? undefined : 'Unregistered'}
+                        accent={!subject ? 'slate' : (subject.reputation ?? 50) <= 15 ? 'rose' : (subject.reputation ?? 50) >= 75 ? 'emerald' : 'slate'}
+                        emphasize={!!subject && (subject.reputation ?? 100) <= 15}
+                    />
+                </div>
+
+                {/* Inner tab strip */}
+                <div className="border-b border-white/5">
+                    <div className="flex gap-0 -mb-px overflow-x-auto custom-scrollbar">
+                        {(['overview', 'warrants', 'intel', 'requests'] as RapTab[]).map(t => (
+                            <button
+                                key={t}
+                                onClick={() => setRapTab(t)}
+                                className={`flex items-center gap-2 px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest border-b-2 transition-colors whitespace-nowrap ${
+                                    rapTab === t
+                                        ? 'text-cyan-300 border-cyan-400'
+                                        : 'text-slate-500 border-transparent hover:text-slate-300'
+                                }`}
+                            >
+                                {t === 'overview' && <><i className="fa-solid fa-gauge-high"></i>Überblick</>}
+                                {t === 'warrants' && <><i className="fa-solid fa-bullseye"></i>Warrants {warrants.length > 0 && <span className="min-w-[18px] h-[18px] px-1.5 text-[10px] font-bold bg-red-500/20 text-red-300 rounded-full flex items-center justify-center">{warrants.length}</span>}</>}
+                                {t === 'intel' && <><i className="fa-solid fa-satellite-dish"></i>Intel {reports.length > 0 && <span className="min-w-[18px] h-[18px] px-1.5 text-[10px] font-bold bg-rose-500/20 text-rose-300 rounded-full flex items-center justify-center">{reports.length}</span>}</>}
+                                {t === 'requests' && <><i className="fa-solid fa-file-invoice"></i>Requests {requests.length > 0 && <span className="min-w-[18px] h-[18px] px-1.5 text-[10px] font-bold bg-sky-500/20 text-sky-300 rounded-full flex items-center justify-center">{requests.length}</span>}</>}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Loading / error / content */}
+                {loading && (
+                    <div className="flex items-center justify-center py-16">
+                        <i className="fa-solid fa-circle-notch fa-spin text-cyan-400 text-3xl" aria-hidden />
+                    </div>
+                )}
+
+                {!loading && error && (
+                    <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-4 text-sm text-red-300">
+                        <i className="fa-solid fa-triangle-exclamation mr-2"></i>
+                        {error}
+                    </div>
+                )}
+
+                {!loading && !error && !hasAnyData && (
+                    <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/30">
+                        <EmptyState
+                            icon="fa-folder-open"
+                            accent="cyan"
+                            heading="Keine Einträge in der Akte"
+                            description={`No intel, warrants, or request history on file for "${target}".`}
+                        />
+                    </div>
+                )}
+
+                {!loading && !error && hasAnyData && (
+                    <>
+                        {rapTab === 'overview' && (
+                            <OverviewTab
+                                reports={reports}
+                                warrants={warrants}
+                                requests={requests}
+                                summary={dossier?.cachedSummary}
+                                summaryDate={dossier?.cachedSummaryDate}
+                                onOpenReport={openIntelReportWindow}
+                                onOpenRequest={onOpenRequest}
+                            />
+                        )}
+                        {rapTab === 'warrants' && (
+                            warrants.length === 0
+                                ? <EmptyStateInline icon="fa-bullseye" heading="Keine Haftbefehle hinterlegt" />
+                                : (
+                                    <div className="space-y-2">
+                                        {warrants.map(w => <MdtWarrantRow key={w.id} warrant={w} />)}
+                                    </div>
+                                )
+                        )}
+                        {rapTab === 'intel' && (
+                            reports.length === 0
+                                ? <EmptyStateInline icon="fa-satellite-dish" heading="Keine Intel-Berichte" />
+                                : (
+                                    <div className="space-y-3">
+                                        {reports.map(r => (
+                                            <IntelligenceReportCard
+                                                key={r.id}
+                                                report={r}
+                                                onClick={() => openIntelReportWindow(r)}
+                                                onViewDossier={(id: string) => onChangeTarget(id)}
+                                            />
+                                        ))}
+                                    </div>
+                                )
+                        )}
+                        {rapTab === 'requests' && (
+                            requests.length === 0
+                                ? <EmptyStateInline icon="fa-file-invoice" heading="Keine Anfragenhistorie" />
+                                : (
+                                    <div className="space-y-2">
+                                        {requests.map(r => (
+                                            <MdtRequestRow key={r.id} request={r} onClick={() => onOpenRequest(r)} />
+                                        ))}
+                                    </div>
+                                )
+                        )}
+                    </>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// --- Overview tab — most recent of each + cached summary ---
+
+function OverviewTab({
+    reports, warrants, requests, summary, summaryDate, onOpenReport, onOpenRequest,
+}: {
+    reports: HydratedIntelligenceReport[];
+    warrants: HydratedWarrant[];
+    requests: HydratedServiceRequest[];
+    summary?: string;
+    summaryDate?: string;
+    onOpenReport: (r: HydratedIntelligenceReport) => void;
+    onOpenRequest: (r: HydratedServiceRequest) => void;
+}) {
+    const fmt = useFormatDate();
+    const recentWarrants = [...warrants].sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime()).slice(0, 3);
+    const recentReports = [...reports].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 3);
+    const recentRequests = [...requests].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 3);
+
+    return (
+        <div className="space-y-6">
+            {summary && (
+                <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+                    <div className="flex items-center gap-2 mb-2">
+                        <i className="fa-solid fa-robot text-cyan-400"></i>
+                        <span className="text-[10px] font-black text-cyan-300 uppercase tracking-[0.2em]">Zusammenfassung</span>
+                        {summaryDate && (
+                            <span className="text-[10px] text-slate-500 font-mono ml-auto">
+                                {fmt.date(summaryDate)}
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">{summary}</p>
+                </div>
+            )}
+
+            {recentWarrants.length > 0 && (
+                <div>
+                    <h3 className="text-[10px] font-black text-red-300 uppercase tracking-[0.25em] mb-2">Aktuelle Warnungen</h3>
+                    <div className="space-y-2">
+                        {recentWarrants.map(w => <MdtWarrantRow key={w.id} warrant={w} />)}
+                    </div>
+                </div>
+            )}
+
+            {recentReports.length > 0 && (
+                <div>
+                    <h3 className="text-[10px] font-black text-rose-300 uppercase tracking-[0.25em] mb-2">Aktuelle Intel</h3>
+                    <div className="space-y-3">
+                        {recentReports.map(r => (
+                            <IntelligenceReportCard
+                                key={r.id}
+                                report={r}
+                                onClick={() => onOpenReport(r)}
+                                onViewDossier={() => {}}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {recentRequests.length > 0 && (
+                <div>
+                    <h3 className="text-[10px] font-black text-sky-300 uppercase tracking-[0.25em] mb-2">Aktuelle Anfragen</h3>
+                    <div className="space-y-2">
+                        {recentRequests.map(r => (
+                            <MdtRequestRow key={r.id} request={r} onClick={() => onOpenRequest(r)} />
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function EmptyStateInline({ icon, heading }: { icon: string; heading: string }) {
+    return (
+        <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/30 py-10 text-center">
+            <i className={`fa-solid ${icon} text-3xl text-slate-600 mb-3`}></i>
+            <p className="text-sm text-slate-500 font-bold">{heading}</p>
+        </div>
+    );
+}

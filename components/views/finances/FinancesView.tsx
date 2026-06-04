@@ -1,0 +1,318 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useData } from '../../../contexts/DataContext';
+import { useAuth } from '../../../contexts/AuthContext';
+
+import { mergeRowSlice, byCreatedAtDesc } from '../../../lib/sliceMerge';
+import HeroShell from '../../shared/ui/HeroShell';
+import HeroActionButton from '../../shared/ui/HeroActionButton';
+import EmptyState from '../../shared/ui/EmptyState';
+import type { TreasuryAccount, LedgerEntry, FinancesOverview } from '../../../types';
+import FinancesOverviewTab from './FinancesOverviewTab';
+import FinancesLedgerTab from './FinancesLedgerTab';
+import FinancesRequestsTab from './FinancesRequestsTab';
+import FinancesAccountsTab from './FinancesAccountsTab';
+import SubmitDepositModal from './SubmitDepositModal';
+import SubmitWithdrawalModal from './SubmitWithdrawalModal';
+import RecordAdjustmentModal from './RecordAdjustmentModal';
+import CreateAccountModal from './CreateAccountModal';
+import { useNotification } from '../../../contexts/NotificationContext';
+
+type Tab = 'overview' | 'ledger' | 'requests' | 'accounts';
+
+const TABS: readonly { key: Tab; label: string; icon: string; permission?: string }[] = [
+    { key: 'overview', label: 'Überblick', icon: 'fa-gauge-high' },
+    { key: 'ledger',   label: 'Hauptbuch',   icon: 'fa-scroll' },
+    { key: 'requests', label: 'Anfragen', icon: 'fa-inbox', permission: 'finance:approve' },
+    { key: 'accounts', label: 'Konten', icon: 'fa-vault', permission: 'finance:manage' },
+];
+
+export default function FinancesView() {
+    const { rpcAction } = useData();
+    const { hasPermission, currentUser } = useAuth();
+    const { addToast } = useNotification();
+
+    const [tab, setTab] = useState<Tab>('overview');
+    const [overview, setOverview] = useState<FinancesOverview | null>(null);
+    const [accounts, setAccounts] = useState<TreasuryAccount[]>([]);
+    const [entries, setEntries] = useState<LedgerEntry[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedAccountId, setSelectedAccountId] = useState<number | null>(null);
+
+    const [depositOpen, setDepositOpen] = useState(false);
+    const [withdrawOpen, setWithdrawOpen] = useState(false);
+    const [adjustmentOpen, setAdjustmentOpen] = useState(false);
+    const [createAccountOpen, setCreateAccountOpen] = useState(false);
+
+    const canView     = hasPermission('finance:view');
+    const canDeposit  = hasPermission('finance:deposit');
+    const canWithdraw = hasPermission('finance:withdraw_request');
+    const canApprove  = hasPermission('finance:approve');
+    const canManage   = hasPermission('finance:manage');
+
+    const visibleTabs = useMemo(() => TABS.filter((t) => !t.permission || hasPermission(t.permission)), [hasPermission]);
+
+    const refresh = useCallback(async () => {
+        if (!canView) return;
+        setIsLoading(true);
+        try {
+            const [ov, accs, led] = await Promise.all([
+                rpcAction('finance:get_overview', {}),
+                rpcAction('finance:list_accounts', {}),
+                rpcAction('finance:list_ledger', { limit: 200 }),
+            ]);
+            setOverview(ov);
+            setAccounts(accs || []);
+            setEntries(led || []);
+        } catch (err: any) {
+            addToast("Die Finanzen konnten nicht geladen werden", <i className="fa-solid fa-xmark" />, 'bg-red-500/10 text-red-400 border-red-500/50', {
+                description: err?.message || 'Check your permissions or reload the page.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }, [rpcAction, canView, addToast]);
+
+    useEffect(() => { refresh(); }, [refresh]);
+
+    // The overview tab is an aggregate (balances + pending counts + 30-day
+    // net) — recompute-only; refreshed alongside every row splice below.
+    const refreshOverview = useCallback(async () => {
+        if (!canView) return;
+        try {
+            setOverview(await rpcAction('finance:get_overview', {}));
+        } catch {
+            // Non-fatal: the next full refresh self-heals the aggregate.
+        }
+    }, [rpcAction, canView]);
+
+    // Listen for broadcast events on the org's realtime channel. The db layer
+    // fires `finances:*` broadcasts on every mutation; subscribing here keeps
+    // the UI live without relying on postgres_changes (which would need RLS
+    // policies wide open for authenticated users).
+    //
+    // Row-slice path: ledger emits carry entryId/entryIds and account emits
+    // carry accountId, so instead of the previous blanket refresh() (3 RPCs:
+    // overview + all accounts + 200 embedded ledger rows) we fetch ONLY the
+    // changed row(s) via finance:get_entry / finance:get_account and splice
+    // them in, plus the overview aggregate. null = row gone → removed.
+    // Id-less payloads and slice-fetch errors fall back to the full refresh.
+    //
+    // ACCEPTED RACE (no generation guard here, unlike DataContext): a local
+    // mutation's own refresh() can resolve after the broadcast splice and
+    // briefly re-apply the pre-splice list. Both read the same primary and
+    // every subsequent broadcast self-heals, so the stale window is small —
+    // deliberately not worth a per-view guard.
+    useEffect(() => {
+        const onLedgerUpdate = async (payload: { payload?: { entryId?: string; entryIds?: string[] } }) => {
+            const p = payload.payload ?? {};
+            const ids = Array.isArray(p.entryIds)
+                ? p.entryIds.filter((s): s is string => typeof s === 'string')
+                : (typeof p.entryId === 'string' && p.entryId ? [p.entryId] : []);
+            if (ids.length === 0) { void refresh(); return; }
+            try {
+                const fetched: (LedgerEntry | null)[] = await Promise.all(
+                    ids.map((entryId) => rpcAction('finance:get_entry', { entryId })),
+                );
+                setEntries(prev => {
+                    let next = prev;
+                    fetched.forEach((entry, i) => {
+                        next = mergeRowSlice(next, entry ?? null, ids[i], byCreatedAtDesc);
+                    });
+                    return next;
+                });
+                void refreshOverview();
+            } catch (err) {
+                console.error('finance entry slice failed; falling back to full refresh:', err);
+                void refresh();
+            }
+        };
+        const onAccountUpdate = async (payload: { payload?: { accountId?: number } }) => {
+            const accountId = payload.payload?.accountId;
+            if (typeof accountId !== 'number') { void refresh(); return; }
+            try {
+                const account: TreasuryAccount | null = await rpcAction('finance:get_account', { accountId });
+                setAccounts(prev => mergeRowSlice(prev, account ?? null, accountId));
+                void refreshOverview();
+            } catch (err) {
+                console.error('finance account slice failed; falling back to full refresh:', err);
+                void refresh();
+            }
+        };
+        // SECURITY: don't wire handlers when the viewer can't read finances —
+        // the locked view otherwise fires a denied RPC on every org mutation.
+        if (!canView) return;
+        // The finances:* broadcasts arrive via DataCore's single PRIVATE
+        // 'db-changes' channel and are relayed as window CustomEvents (the
+        // handler attachment is finance:view-gated there). NEVER subscribe to
+        // the 'db-changes' topic from a view: supabase-js dedupes channels by
+        // topic, so a view-owned channel object IS DataCore's channel and
+        // removeChannel() on unmount would kill all org realtime app-wide.
+        const ledger = (e: Event) => { void onLedgerUpdate({ payload: (e as CustomEvent).detail }); };
+        const account = (e: Event) => { void onAccountUpdate({ payload: (e as CustomEvent).detail }); };
+        const reset = () => { void refresh(); }; // post-admin-reset: module is empty — full refresh
+        window.addEventListener('app:realtime:finances:ledger_update', ledger);
+        window.addEventListener('app:realtime:finances:account_update', account);
+        window.addEventListener('app:realtime:finance:reset', reset);
+        return () => {
+            window.removeEventListener('app:realtime:finances:ledger_update', ledger);
+            window.removeEventListener('app:realtime:finances:account_update', account);
+            window.removeEventListener('app:realtime:finance:reset', reset);
+        };
+    }, [refresh, refreshOverview, rpcAction, canView]);
+
+    useEffect(() => {
+        // Auto-select the first active account for the ledger filter
+        if (selectedAccountId === null && accounts.length > 0) {
+            const firstActive = accounts.find((a) => a.isActive) || accounts[0];
+            setSelectedAccountId(firstActive.id);
+        }
+    }, [accounts, selectedAccountId]);
+
+    if (!canView) {
+        return (
+            <div className="p-8">
+                <EmptyState
+                    icon="fa-lock"
+                    accent="amber"
+                    heading="Du hast keinen Zugriff auf Finanzen"
+                    description="Bitte einen Admin, dir die Berechtigung finance:view zu gewähren."
+                />
+            </div>
+        );
+    }
+
+    const firstRun = !isLoading && accounts.length === 0;
+
+    return (
+        <div className="h-full flex flex-col overflow-hidden bg-slate-950 text-white animate-fade-in">
+            <HeroShell
+                chipLabel="MODULE · FINANCES"
+                chipIcon="fa-vault"
+                chipAccent="amber"
+                title="Org Treasury"
+                subtitle="Verfolge das Ingame-Bank-Alt der Org. Einzahlungen von Mitgliedern, Bestätigung durch Offiziere am echten Alt. Jede Einzahlung, Auszahlung, Anpassung und Stornierung wird auditiert."
+                actions={<>
+                    {canManage && accounts.length > 0 && (
+                        <HeroActionButton onClick={() => setAdjustmentOpen(true)} accent="slate" icon="fa-wrench">Einstellung</HeroActionButton>
+                    )}
+                    {canWithdraw && accounts.length > 0 && (
+                        <HeroActionButton onClick={() => setWithdrawOpen(true)} accent="rose" icon="fa-minus">Zurückziehen</HeroActionButton>
+                    )}
+                    {canDeposit && accounts.length > 0 && (
+                        <HeroActionButton onClick={() => setDepositOpen(true)} accent="emerald" icon="fa-plus">Kaution</HeroActionButton>
+                    )}
+                </>}
+                tabs={!firstRun ? visibleTabs.map((t) => {
+                    const active = tab === t.key;
+                    return (
+                        <button
+                            key={t.key}
+                            onClick={() => setTab(t.key)}
+                            className={`px-4 py-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
+                                active ? 'border-amber-400 text-amber-300' : 'border-transparent text-slate-500 hover:text-slate-300'
+                            }`}
+                        >
+                            <i className={`fa-solid ${t.icon}`} /> {t.label}
+                            {t.key === 'requests' && overview && (overview.pendingDepositsCount + overview.pendingWithdrawalsCount) > 0 && (
+                                <span className="ml-1 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold px-1.5">
+                                    {overview.pendingDepositsCount + overview.pendingWithdrawalsCount}
+                                </span>
+                            )}
+                        </button>
+                    );
+                }) : undefined}
+            />
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                {isLoading && (
+                    <div className="flex items-center justify-center py-20">
+                        <i className="fa-solid fa-circle-notch fa-spin text-amber-400 text-3xl" aria-hidden />
+                    </div>
+                )}
+
+                {!isLoading && firstRun && (
+                    <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-10">
+                        <EmptyState
+                            icon="fa-vault"
+                            accent="amber"
+                            heading="Lege dein erstes Treasury-Konto an"
+                            description="Die meisten Orgs nutzen ein „General“-Konto am Ingame-ORGNAME_BANK-Alt. Reserve- oder Projektkonten kannst du später hinzufügen."
+                            action={canManage ? (
+                                <button
+                                    onClick={() => setCreateAccountOpen(true)}
+                                    className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-lg font-bold uppercase tracking-widest text-xs transition-all"
+                                >
+                                    <i className="fa-solid fa-plus" />Benutzerkonto erstellen</button>
+                            ) : (
+                                <p className="text-xs text-slate-500 font-mono uppercase tracking-widest">
+                                    Ask an admin with finance:manage to create the first account.
+                                </p>
+                            )}
+                        />
+                    </div>
+                )}
+
+                {!isLoading && !firstRun && tab === 'overview' && overview && (
+                    <FinancesOverviewTab
+                        overview={overview}
+                        accounts={accounts}
+                        onOpenLedger={() => setTab('ledger')}
+                        onOpenRequests={() => setTab('requests')}
+                    />
+                )}
+                {!isLoading && !firstRun && tab === 'ledger' && (
+                    <FinancesLedgerTab
+                        accounts={accounts}
+                        selectedAccountId={selectedAccountId}
+                        onSelectAccount={setSelectedAccountId}
+                        entries={entries}
+                        canManage={canManage}
+                        onRefresh={refresh}
+                    />
+                )}
+                {!isLoading && !firstRun && tab === 'requests' && canApprove && (
+                    <FinancesRequestsTab entries={entries} onRefresh={refresh} />
+                )}
+                {!isLoading && !firstRun && tab === 'accounts' && canManage && (
+                    <FinancesAccountsTab
+                        accounts={accounts}
+                        onCreate={() => setCreateAccountOpen(true)}
+                        onRefresh={refresh}
+                    />
+                )}
+                </div>
+            </div>
+
+            {/* Modals */}
+            {depositOpen && (
+                <SubmitDepositModal
+                    accounts={accounts.filter((a) => a.isActive)}
+                    onClose={() => setDepositOpen(false)}
+                    onSubmitted={() => { setDepositOpen(false); refresh(); }}
+                />
+            )}
+            {withdrawOpen && (
+                <SubmitWithdrawalModal
+                    accounts={accounts.filter((a) => a.isActive)}
+                    onClose={() => setWithdrawOpen(false)}
+                    onSubmitted={() => { setWithdrawOpen(false); refresh(); }}
+                />
+            )}
+            {adjustmentOpen && (
+                <RecordAdjustmentModal
+                    accounts={accounts.filter((a) => a.isActive)}
+                    onClose={() => setAdjustmentOpen(false)}
+                    onSubmitted={() => { setAdjustmentOpen(false); refresh(); }}
+                />
+            )}
+            {createAccountOpen && (
+                <CreateAccountModal
+                    onClose={() => setCreateAccountOpen(false)}
+                    onSubmitted={() => { setCreateAccountOpen(false); refresh(); }}
+                />
+            )}
+        </div>
+    );
+}

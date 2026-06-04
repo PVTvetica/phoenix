@@ -1,0 +1,2295 @@
+
+                                                        >
+                                                            <i className=
+
+                                                    className=
+
+                                className=
+
+                                name=
+
+                                value={config.description}
+                                onChange={handleChange}
+                                rows={3}
+                                placeholder=
+
+                                value={config.subtitle}
+                                onChange={handleChange}
+                                rows={5}
+                                className=
+
+                                value={config.title}
+                                onChange={handleChange}
+                                className=
+
+                                value={config.title}
+                                onChange={handleChange}
+                                placeholder=
+
+                label=
+
+                title=
+
+            />
+            <Divider />
+            <ToolbarButton
+                onClick={() => editor.chain().focus().toggleBulletList().run()}
+                isActive={editor.isActive(
+ />
+            <dl className=
+ />
+            <ul className=
+ />
+        <div className=
+ className=
+ cmd=
+ name=
+ title=
+ value={config.loginSubtitle || 
+, channelName);
+                                    }}
+                                    channels={guildChannels}
+                                    loading={guildLoading}
+                                    error={guildError}
+                                    onRefresh={onRefreshGuild}
+                                />
+                            )}
+
+                            {meta.fields.address && (
+                                <div className=
+, color: 
+, e.target.value)}
+                                            className={`${inputClass} h-24 resize-none`}
+                                            placeholder=
+, e.target.value)}
+                                    placeholder={provider === 
+, value: e.target.value })}
+                rows={4} placeholder=
+, { level: 1 })} icon=
+, { level: 2 })}
+                icon=
+, { level: 2 })} icon=
+, { level: 3 })}
+                icon=
+, { level: 3 })} icon=
+;
+import Image from 
+;
+import Link from 
+>
+                <button onClick={onLogin} className=
+>
+                {items.length > 1 && (
+                    <div className=
+>
+            <CardHeader icon=
+>
+            <span className=
+>
+        <CardHeader icon=
+AAR Submitted
+AAR Summary
+AAR tab unlocks for retrospective entries.
+ACCESS_DENIED_0x004
+AI Configuration
+AI Draft
+AI Key Not Installed
+AI Tactical Analysis
+ALERT
+ALLY
+AMENDMENT
+AO / Location
+API Access Management
+API Key
+AUTH CODE REQUIRED
+Abort
+Aborted
+Abstain
+Accept all risks associated with in-game operations
+Accept the Terms of Service and click
+Accepted
+Access Control
+Access PIN Code
+Access RSI Control
+Access levels and information control markers.
+Accessing Registry...
+Account
+Account Settings
+Account archived
+Account created
+Accounts
+Acknowledge
+Acknowledge & Dismiss
+Acknowledgment Required to Restore Terminal Control
+Action
+Action Items
+Action Required
+Action required for unit transfer applications.
+Actions
+Active
+Active Caution
+Active Caution Found
+Active Cautions
+Active Comm
+Active EAM
+Active Files
+Active Investigations Found
+Active Op
+Active Request tile:
+Active Requests
+Active Roster
+Active Score
+Active Since
+Active Speakers
+Active training credentials.
+Active:
+Activity Log
+Actor
+Ad-Hoc Logged
+Ad-hoc Entry
+Add
+Add Branch
+Add Channel Failed
+Add Commodity
+Add Entry
+Add Failed
+Add Feed
+Add Independent Position
+Add Item
+Add Link
+Add Location
+Add Marker
+Add Node
+Add Participant
+Add Partner
+Add Phase
+Add Ship
+Add Stock
+Add Tags
+Add Testimonial
+Add channel
+Add item
+Add to Home Screen
+Add to Home screen
+Additional Feedback
+Additional Locations
+Additional Party Members
+Adjudication
+Adjust
+Adjust Manually
+Adjust Rating
+Adjust Stock
+Adjustment
+Adjustment failed
+Adjustment recorded
+Admin
+Admin & Logistics
+Admin &rarr; Optional Features
+Admin Actions
+Admin Console
+Admin Panel → External Tools
+Admin Panel → Member Achievements
+Admin console
+Admin setup required
+Admin-configured, staff-only (e.g. Dispatch, Patrol).
+Admins and dispatchers post
+Admins cannot delete their own account.
+Advance Failed
+Advance To
+Advanced
+Advisories
+Affiliate
+Affiliated Organization
+After-Action Report
+Against
+Alerts
+All
+All Categories
+All Channels
+All HR Records
+All Manufacturers
+All Roles
+All Sizes
+All Statuses
+All Threat Levels
+All Tiers
+All accounts
+All clear
+All locations
+All operations are conducted
+All reasons
+All result types are filtered out
+All stock
+All systems
+Alliance Directory
+Alliance Partners
+Allied Joint Operations
+Allied Organizations
+Allow runoff
+Ally
+Ally Invited
+Already holds
+Already processed
+Also import wiki home layout
+Amount
+Amount (aUEC)
+Analyzing intelligence data…
+Anchoring Identity
+Android / Desktop
+Announcement Details
+App Icon URL (PWA / Mobile Home Screen)
+Application Attribution
+Application Status
+Application Submitted
+Applications
+Applies to every line
+Apply
+Apply Now
+Applying
+Appointment Confirmed
+Appointment Failed
+Approval failed
+Approve
+Approve failed
+Approved
+Approving will move this member to the target unit.
+Archive
+Archive failed
+Archived
+Archived History
+Are you sure you want to change your handle to
+Arm System
+Armed
+Armory
+Assessment
+Assign
+Assign Failed
+Assign Participant
+Assign to…
+Assigned
+Assigned Officer
+Assigned Role
+Assignee
+Assignment
+Assignment Failed
+Assignment Sound URL
+Assignment:
+Attendance Status
+Attended
+Attention Required
+Audience
+Audience Access
+Audio Volume
+Audit History
+Audit Log
+Authenticate & Join
+Authenticate &amp; Claim
+Authentication Failure // Access Restricted
+Authorization
+Authorization Code (PIN)
+Authorization code required.
+Auto-Off Duty Timeout (Minutes)
+Auto-file Intelligence Report
+Avatar
+Avg Rating
+Avoid hostile or deceptive conduct.
+Awaiting Diagnosis
+Awaiting Query Input
+Award Cert
+Award Medal
+Award Name
+Awarded
+Awards and ribbons received.
+Back
+Back to Elections
+Back to Help
+Back to Legislation
+Back to Levels
+Back to Operations
+Back to Org Chart
+Background Check
+Background Image URL
+Banner Preview
+Basic Info
+Become a member of our organisation.
+Bi-directional sync:
+Bill Created
+Bill Text
+Bind Gamepad
+Bind HID
+Binding directives issued by authorized position holders.
+Blurb
+Body
+Boot Sound URL
+Bot requirement:
+Branch
+Branch Deleted
+Branch Saved
+Branches
+Branches &amp; Positions
+Branding & Identity
+Branding Settings
+Bring on
+Broadcast Alert
+Broadcast Effects
+Broadcast Failed
+Broken
+Browse Catalog
+Browser detected:
+Built by
+Bulk Assign Clearance
+Bulletin
+Buy (avg/SCU)
+By Manufacturer
+By Member
+By Role
+By-election
+CAD · Dispatch
+CAUTION
+CONSTITUTIONAL AMENDMENT
+Calendar
+Call Election
+Can call elections
+Can issue executive orders
+Can propose legislation
+Can vote on legislation
+Cancel
+Cancel Failed
+Cancel Request
+Cancel failed
+Cancelled
+Candidacy Declared
+Candidacy Withdrawn
+Candidate has no open internal case files.
+Capacity
+Card Subtitle
+Card Title
+Career
+Career Timeline
+Carve out reserves, project funds, or op budgets
+Case Details
+Case File Created
+Case File Opened
+Case Files
+Case Management
+Case Officer
+Case Overview
+Case Sections
+Case Status Override
+Case file not found or access denied.
+Case files
+Cast Your Vote
+Catalog
+Catalog exported
+Catalog item
+Catalog item added
+Catalog item deleted
+Catalog:
+Categories
+Category
+Category (Optional)
+Caution
+Cautions
+Certification
+Certification Name
+Certifications
+Certified
+Certify Failed
+Certify Results
+Change
+Change by (use - to decrease)
+Changelog
+Changing your handle requires re-verification.
+Channel
+Channel Empty
+Channel ID
+Channel Settings:
+Channel Tuned
+Character death or respawn penalties
+Checking…
+Choose
+Choose File
+Chrome
+Chrome &amp; Edge only
+Claim
+Claimed
+Claimed By
+Classification
+Classification & Privacy
+Classification Flags
+Classification Level
+Classified
+Classified Only
+Classified Record
+Clean Record
+Clear
+Clear All
+Clear Search
+Clear Selection
+Clear all
+Clearance
+Clearance Assignment
+Clearance History
+Clearance Level
+Clearance Level (0–5)
+Clearance Request Submitted
+Clearance upgrade requests and background checks.
+Click
+Click & drag to draw · Esc to cancel
+Click any tile to open the request detail and act on it.
+Click ships to select
+Click to add to ranking:
+Click to place or drag to size · Esc to cancel
+Click to place · Esc to cancel
+Client
+Client Conduct
+Client Conduct Assessment
+Client Feedback
+Client Identity
+Client Rating
+Client Ratings
+Client Satisfaction
+Clients Only
+Close
+Close File
+Close Record
+Close picker
+Closed
+Closed (Claimed/Cancelled)
+Closing a request opens the
+Collapse
+Collapse all
+Color
+Come back and verify.
+Command
+Command & Signals
+Command / Top Secret.
+Commander
+Commander's Notes
+Commendation
+Commendation Name
+Commendations
+Comment Failed
+Commit Notes
+Commodity
+Commodity Catalog
+Commodity deleted
+Comms Matrix
+Communications Plan
+Communications Uplink
+Company
+Compartment Markers (Optional)
+Complete
+Completed
+Completed History
+Compliance
+Compose Message
+Computing diff…
+Conclude
+Conclude Failed
+Conclude Vote
+Concluded
+Concluded:
+Condition
+Conduct Record
+Conduct Type
+Conduct entries
+Config Saved
+Configuration
+Configuration Debug
+Configuration Flags
+Configure
+Confirm
+Confirm & Verify
+Confirm Handle Change
+Confirm and tap
+Confirm deletion
+Confirm — Full Member
+Conflict Policy
+Connect
+Constitution
+Constitution Saved
+Constitutional Amendment
+Constitutional Monarchy
+Consumed
+Contact (Discord)
+Contact Command
+Contact admin to change hierarchy.
+Contact admin to change precedence.
+Content
+Context
+Context / File Type
+Context / Referral Source
+Contingency
+Continue
+Controller
+Controller (Gamepad API)
+Copied
+Copy
+Copy Channel ID
+Copy this key now. You will not be able to see it again.
+Copy this whitelabel verification code:
+Core Details
+Corporate Board
+Cost
+Could not create location
+Could not create stock
+Could not load locations
+Create
+Create Account
+Create Award
+Create Cert
+Create Discord Event:
+Create Failed
+Create Group
+Create Location
+Create New Page
+Create Notice
+Create Operation
+Create Rank
+Create Role
+Create Tag
+Create Tool
+Create Unit
+Create Vacancy
+Create failed
+Create first location
+Create radio frequency for this unit
+Create requests on behalf of clients (registered or not).
+Created
+Created from template:
+Creating
+Creating…
+Credit
+Critical:
+Current
+Current Assignment
+Current Classification
+Current Position
+Current Release
+Current Role
+Current Score
+Current Unit
+Current on hand
+Current:
+Custom
+Custom Name
+Custom name
+Custom override · Discord:
+Custom...
+DELETE
+DISCORD_BOT_TOKEN
+DISCORD_CLIENT_ID
+DISCORD_CLIENT_SECRET
+DISCORD_GUILD_ID
+Damaged
+Danger Zone
+Database Tools:
+Date
+Date & Time
+Date Filed
+Date Format
+Date Opened
+Debit
+Debrief modal
+Decision Date
+Decision Failed
+Decision Notes
+Decision Rationale / Closing Note
+Declaration Failed
+Declare Candidacy
+Decline
+Decrypting Protocol
+Default Boot Frequency ID
+Default outcome
+Default system roles cannot be renamed.
+Define standardized job titles and functional roles.
+Delete
+Delete Account
+Delete Draft
+Delete Element
+Delete Failed
+Delete Operation
+Delete Selected
+Delete failed
+Deleting Operation...
+Deleting...
+Delta
+Delta (+/-)
+Democratic Republic
+Demote
+Demote to Client
+Denied
+Deny
+Deny failed
+Deployment Schedule
+Deployments and training exercises you participated in.
+Deposit
+Description
+Description (Optional)
+Description (optional)
+Description / Briefing
+Desktop:
+Destination
+Details
+Detect from browser
+Developer Mode
+Device PTT
+Device Registered
+Devices:
+Diagnostics Failed
+Disable
+Disconnect
+Discord Announcement
+Discord Announcement Failed
+Discord Bot Not Configured
+Discord Channel Configuration
+Discord Channel ID
+Discord Event Failed
+Discord Identifier
+Discord Invite URL
+Discord Not Configured
+Discord Role
+Discord Role Mapping
+Discord integration requires bot credentials. Set
+Dismiss
+Dispatch
+Dispatcher Notes / Refusal Reason
+Display Name
+Don't show recent edits on the wiki home page.
+Done
+Dossier
+Download JSON
+Draft
+Draft Bill
+Draft Constitution
+Draft Deleted
+Draft an Order
+Drafting roster, ORBAT, logistics. Hidden by default.
+Drafting...
+Drag and drop reordering is disabled while searching.
+Draw freehand · Esc to cancel
+Due back (optional)
+Duration
+EAM Alert Sound URL
+EAM Broadcast Channel ID
+EAM Broadcasts
+EAM Transmitted
+EAM:
+ELECTED
+ERROR_CODE: REP_LOW_RESTRICT
+EXECUTE
+EXPIRED
+EXT
+Edit
+Edit All Details
+Edit Caution
+Edit Commodity
+Edit Home
+Edit Item
+Edit Location
+Edit Operation
+Edit Profile
+Edit Profile → Short Bio
+Edit Ship
+Edit Wiki Home
+Edit commodity
+Edit →
+Election Advanced
+Election Cancelled
+Election Created
+Election Type
+Elections
+Elevated Threat
+Elgato Stream Deck, Elgato Pedal, custom HID hardware
+Emergency Action Message
+Empty Message
+Enable
+Enable AI Features
+Enable Government in
+Enable Uplink
+Enable at least one type in the filter panel
+Enacted
+Enacted Laws
+End Date
+End Time
+End of File
+Ended
+Enter
+Entry confirmed
+Entry rejected
+Entry reversed
+Equal
+Error
+Error Code: 0xCRASH // Contact Admin if persistent
+Esc
+Establish Government
+Establishing Uplink...
+Establishing...
+Estimated Payouts
+Evidence Links (one per line)
+Exception Trace
+Excluded from search.
+Excused
+Execution Plan
+Executive Orders
+Existing File
+Expand
+Expand all
+Expand the section, click
+Experimental
+Expires
+Expiry Date (Optional)
+Export
+Export CSV
+Export File
+Export cancelled
+Export failed
+Export from
+Export ready
+Exported:
+Exporting CSV
+External Source:
+External Tools
+Extreme Caution
+Facebook/Meta Debugger
+Faction
+Failed
+Failed to Change Mode
+Failed to add stock
+Failed to load finances
+Failed to load inventory
+Failed to load movements
+Failed to load stock
+Falls back to org logo
+Fast
+Favicon URL (Browser Tab)
+Feedback Required
+Feedback Submitted
+Fetch Failed
+Fetch Roles
+Fetching
+Field Notes
+File / Context
+File Caution
+File Intelligence Report
+File Report
+File an
+File contents
+File:
+Filed
+Fill Method
+Filled
+Filters
+Final Assessment
+Final Determination
+Finances
+Financial Ledger
+Find the
+First time loading may take a moment.
+First-run setup
+Five entry types:
+Fix before creating
+Flags
+Flash-Lite
+Flat
+Fleet Readiness
+Fleet Summary
+Focus search
+Font Awesome
+Font Awesome Icon
+For bi-directional sync, your Discord bot needs the
+Force Logout All Now
+Force Logout All Sessions
+Force Logout Failed
+Formation Status
+Found at
+Free-text — pick a banding scheme that fits your org.
+Frequency Deleted
+Frequency Matrix
+From
+From Catalog
+From Discord · set a custom name to override
+From:
+Fulfil
+Fulfil failed
+Fulfilment failed
+GEMINI_API_KEY
+Game Version
+Game server stability or outages
+Gemini 2.5 Flash (Recommended - Fast)
+Gemini 2.5 Flash Lite (Highest Quota)
+Gemini 2.5 Pro (High Reasoning - Low Quota)
+General (Unphased)
+General Pool
+General awareness.
+Generate
+Generate Draft
+Generate Key
+Generate Pairing Code
+Global Search Center
+Go On Duty:
+Government
+Government Established
+Government Feature Disabled
+Government Identity
+Government Name
+Government Type
+Government is enabled. Toggle the feature itself from
+Group Deleted
+Group Failed
+HID / Gamepad PTT:
+HID Device
+HID Device (WebHID API)
+HR Command Center
+HR Hub → ATS → New Case
+HR Hub → Gazette
+HR Hub → My Certifications
+HR Hub → My Conduct
+HR Hub → My Transfers → Request Transfer
+HR Hub → Probation
+HR data unavailable — retry
+Hangar
+Hardware Standby
+Harvestable
+Has veto power
+Have read and understood these Terms
+Health & Integrity
+Hero Banner Image URL
+Hidden
+Hide "Recently Updated"
+Hide vehicle items
+Hierarchy
+High Caution
+High:
+Hold to Transmit
+Holder Removed
+Holders
+Home
+Host Unit
+Hosting Unit (Optional)
+How It Works
+How to get Channel IDs:
+How was your experience?
+ID / Slug
+IDLE
+Icon
+Icon & Color
+Icon (FontAwesome class)
+Icon (FontAwesome)
+Icon (Optional)
+Icon URL
+Identity
+Identity Saved
+Identity Verification
+Identity verified. Enter your
+Identity_Provisioning_Protocol
+If Gemini is configured, open any dossier → Overview →
+Illegal Only
+Image URL
+Image colors are not tinted by the UI.
+Immediate Assignment (Optional)
+Immediate danger — triggers staff notifications.
+Import
+Import / Export
+Import / Export…
+Import Failed
+Import complete
+Import failed
+Importing
+Importing...
+Importing…
+Improve
+In short:
+In-Progress
+Inbound max
+Incident Report
+Incident Summary
+Include decommissioned
+Include hidden
+Include internal (orbits)
+Include platform catalog
+Includes:
+Independent Positions
+Individual
+Init Link
+Initial Briefing
+Initial Notes
+Initial Report
+Initial Statement / Report
+Initial quantity (optional)
+Initiate
+Initiate Broadcast
+Initiate Identity Handshake
+Insignia
+Install App
+Intel
+Intel Analysis
+Intel Bulletin Channel ID
+Intel Database
+Intel Hub
+Intel Report
+Intel reports rate this subject at
+Intel → Maintenance → Feed Ingest
+Intelligence & Cautions
+Intelligence Management:
+Interaction History
+Internal
+Internal Affairs Check
+Interview
+Interview Finding
+Interview Questions
+Interview Records
+Interview Templates
+Interview Updated
+Interviewer
+Interviews
+Invalid File
+Invalid JSON
+Invalid Public Page Config
+Invalid Sound URL
+Invalid file
+Invalid quantity
+Invalid template
+Investigative Notes
+Invite
+Invite Failed
+Issuance closed
+Issuance fulfilled
+Issuance statuses:
+Issuance written off
+Issuances
+Issue EAM
+Issue Kit
+Issue Order
+Issue more
+Issue to
+Issue →
+Issued
+Issued At
+Issued By
+Issued by
+Issuing Position
+Item Catalog
+Item Name
+Items at or near zero on hand
+Items in kit
+JSON-importable
+Jenk0
+Job Gazette
+Job Postings
+Job Title
+Join Code / PIN
+Join Discord
+Join Failed
+Join Our Organisation
+Join our Discord
+Join the Organization
+Joined
+Joint
+Joint Operation
+Joint · Read-only
+Justification / Need to Know
+Key Prefix
+Keyboard
+Keys
+Keywords (Comma Separated)
+Kind
+LIVE
+LIVE TX
+LIVEKIT_API_KEY
+LIVEKIT_API_SECRET
+LIVEKIT_URL
+LOCAL
+Label
+Large Image (Recommended)
+Last 10 entries
+Last 10 events
+Last Update
+Last Used
+Last update
+Late
+Launch
+Launch from the App Drawer / Start Menu.
+Lead Assigned
+Lead Interviewer
+Lead Responder
+Leaderboard
+Ledger
+Ledger:
+Legacy entry — edit to convert
+Legacy note (pre-attribution)
+Legal & Illegal
+Legal Only
+Legislation
+Legislation Vetoed
+Legislative Powers
+Lessons Learned
+Let's go
+Level 0 — Unclassified
+Level 0 — Unclassified Only
+Level 0:
+Level 1 — Restricted
+Level 1 — Restricted & Below
+Level 1–3:
+Level 2 — Confidential
+Level 2 — Confidential & Below
+Level 3 — Secret
+Level 3 — Secret & Below
+Level 4 — Top Secret
+Level 4 — Top Secret & Below
+Level 4–5:
+Lifecycle:
+Limitations
+Limiting Markers
+Link Existing Channel (Optional)
+Linked
+Linked Role (Optional)
+LinkedIn Inspector
+Linking…
+List
+List us publicly in allied directories
+Live
+Live Bulletins
+Live Identity Preview
+Live Preview
+Live balances
+LiveKit Not Configured
+LiveKit not configured.
+Load Failed
+Loading
+Loading Data...
+Loading HR data...
+Loading Module
+Loading Record...
+Loading Roster...
+Loading channels…
+Loading destinations…
+Loading directory…
+Loading dossier...
+Loading feed...
+Loading more
+Loading movements…
+Loading security profiles...
+Loading wiki...
+Loading…
+Loadout Notes
+Location
+Location / AO
+Location Catalog
+Location Name
+Location created
+Location deleted
+Location renamed
+Locations
+Lock menu position
+Locked-in start time. RSVPs open.
+Log Ad-Hoc:
+Log Ad-hoc
+Log in to Request
+Login failed
+Logistics
+Logistics tab:
+Logistics:
+Logo URL
+Look for the
+Loss of in-game currency or character reputation
+Loss of ships, vehicles, equipment, or cargo
+Low Trust
+Low stock
+Low:
+Lower numbers appear higher in the chain of command.
+MANAGE_ROLES
+MDT
+MSRP
+Maintenance &amp; Sessions
+Maintenance Message
+Maintenance Settings Saved
+Manage
+Manage Interviews
+Manage Job Roles
+Manage Skills
+Manage Team
+Manage Vacancies
+Manage preset tactical frequencies. Drag rows to reorder.
+Manufacturer
+Manufacturer Code
+Markers are tags that compound the clearance gate.
+Master mute
+Master volume
+Match
+Matching Commodities
+Max Holders
+Max Participants
+Max Participants (Optional)
+Max Shareable Level
+Media & Links
+Medigel
+Medigel (L)
+Medium:
+Member
+Member Demoted
+Member Roster
+Member Standing
+Member availability
+Members
+Members acknowledge a caution note by clicking
+Members browse open postings via
+Membership Promotion
+Memo / In-game reference
+Menu position locked. Unlock below to re-parent.
+Merge
+Merge Ship
+Message
+Message Content
+Meta Description
+Meta Title
+Mic-click and squelch for PTT feedback.
+Milestone
+Milestones
+Military Junta
+Min Candidates
+Min Turnout %
+Minimum Clearance Level
+Mission Accepted
+Mission Briefing
+Mission Completed
+Mission Control
+Mission In Progress
+Mission Started
+Mission Statement / Description
+Mission channels:
+Missions
+Mobile Data Terminal
+Mobile:
+Mode
+Module Reset (Destructive)
+Monitor and review new members on probation.
+More
+More features coming soon
+More options…
+Motion Cancelled
+Motion Concluded
+Motion Created
+Motions
+Motto
+Move Failed
+Movements ledger:
+My Account
+My Account → Communications Uplink
+My Active Deployments
+My Applications
+My Clearance
+My Commendations
+My Hangar
+My Interviews
+My Posting
+My Requests
+My Service Record
+My Specializations
+MyRSI is now open source.
+NODE_VERIFY_v2.1
+Name
+Name required
+Network Rebooted
+New Account
+New Applicant
+New Case
+New Channel ID
+New Entry
+New Freq
+New Hire Assignment
+New Location
+New Motion
+New Operation
+New Page
+New Position
+New Query
+New Reputation Score (0-100)
+New Request
+New Request / Log Ad-Hoc:
+New Request Channel ID
+New Request Sound URL
+New Request, Intel, EAM, and the new
+New Request:
+New Role
+New Status
+New Template
+New Type
+New page
+New requests land in
+New total
+New users will tune to this frequency on power-up.
+Next
+Next Step
+Nickname (admin override)
+No AAR entries submitted yet.
+No Active Cautions
+No Active Investigations
+No Assignment
+No Available Channels
+No Branch
+No Clearance
+No Government Established
+No Grouping
+No HR case files linked to this member.
+No Members on Probation
+No ROE defined.
+No Role
+No Show
+No Sound Configured
+No Sync
+No Targets Selected
+No Units Available
+No actions pending on you.
+No active API keys.
+No active participants
+No active participants.
+No activity logged.
+No additional markers available.
+No additional members added.
+No additional notes recorded.
+No alliance partners yet.
+No alliances match these filters.
+No allied organizations invited.
+No analysis generated yet
+No available frequencies for your role.
+No available members found.
+No briefing provided.
+No candidates have declared yet.
+No career events on record yet.
+No categories yet. Run sync first.
+No certifications found.
+No certifications on file.
+No changes to save
+No clearance assigned.
+No clients found.
+No commendations awarded.
+No commendations found.
+No comments yet.
+No communications plan defined.
+No conduct entries on record.
+No conduct entries recorded.
+No constitution has been drafted yet.
+No data available.
+No elections have been called yet.
+No entries match the current filters.
+No execution plan defined yet.
+No featured articles selected.
+No government structure has been defined yet.
+No higher levels available
+No historical requests found.
+No history records found.
+No image set
+No intelligence reports filed.
+No intelligence reports on file
+No interactions on file
+No internal conduct entries found on file.
+No interviews found.
+No interviews scheduled.
+No issuances match the current filter.
+No known affiliations
+No legislation has been drafted yet.
+No limiting markers applied.
+No limiting markers defined.
+No links added yet.
+No location
+No locations yet. Create one to assign stock to.
+No logistics items tracked.
+No markers configured.
+No markers defined.
+No matches.
+No matching channels found.
+No members found
+No members match the current filters.
+No milestones or tasks in this phase.
+No motions have been raised yet.
+No movements match the current filters.
+No notes added yet.
+No notices match your criteria.
+No off-duty members match the current filters.
+No operations active.
+No operations scheduled
+No ops
+No org-custom commodities.
+No org-custom items.
+No other channels
+No pages yet
+No participants on the roster.
+No participants yet.
+No pending requests
+No pending requests.
+No pending transfer requests.
+No permissions match your filter.
+No personnel found.
+No platform matches.
+No positions defined
+No positions in this branch
+No questions added yet.
+No radio frequencies configured.
+No ranks found.
+No rated missions found for this member.
+No rated service requests with written feedback yet.
+No receive-only feeds configured.
+No reports found.
+No reputation history found for this user.
+No roles fetched. Click "Fetch Server Roles" to begin.
+No roles found.
+No service types defined.
+No ships found
+No ships in hangar — add ships in Fleet Manager
+No specializations configured.
+No specializations set.
+No summary written yet.
+No tactical board elements.
+No tags found.
+No testimonials selected yet.
+No tools match your criteria.
+No transactions recorded.
+No transfer history found.
+No transfer history yet.
+No unit
+No units found.
+No vacancies listed.
+No vetting requests found.
+Node
+        const nodesById = new Map
+Node Type
+None
+None (Top Level)
+None / Clear
+None yet — click to choose
+None — this op happens at the primary location only.
+None.
+Not in any fleet group — assign or remove
+Not interfere with or obstruct ORG operations.
+Notable activity — monitor closely.
+Note:
+Notes
+Notes (optional)
+Notes / Approver
+Nothing requires your attention.
+Notice Type
+Notices &amp; Bulletins
+Number (Optional)
+OG Image Preview
+ON DUTY
+OPEN MYRSI.ORG
+ORBAT
+ORBAT Structure
+OVERDUE
+Observations
+Off Duty
+Officers
+Official communications and department updates.
+Official observations and disciplinary actions.
+Offline
+Oldest first · confirm after matching memo in-game
+On Duty
+On Duty Only
+On Foot
+On first login you'll see a
+On hand
+On issue
+On the request, click
+One unified queue for all five HR workflows:
+Only works while the dashboard tab is visible
+Op Radio
+Op tile:
+Op transitions to Active, broadcast alerts, etc.
+Open
+Open Debate
+Open Discord
+Open Discord Uplink
+Open Government
+Open Graph Image URL (Social Share)
+Open MyRSI.org
+Open Positions
+Open the site in
+Open your RSI profile →
+Open-Source, Self-Hosted Build
+Opened
+Operation
+Operation Administration
+Operation Announcement
+Operation Announcement Channel ID
+Operation Details
+Operation Failed
+Operation Name
+Operation Status
+Operation Type
+Operation Updated
+Operation alerts:
+Operational Field Manual
+Operational details encrypted.
+Operational tempo &amp; current mission load
+Operational updates and version history of the platform.
+Operations
+Operations Alert
+Operations Log
+Operations Terminal
+Operative Body
+Operative Text
+Operatives are coordinating.
+Optimization & Pruning
+Optional
+Order
+Order Revoked
+Orders
+Org Fleet
+Org History
+Org Name
+Org Tag
+Org Wiki
+Organization Name
+Organization URL
+Organization-wide retreat or emergency orders
+Origin: [REDACTED]
+Outbound Feed Sharing Policy
+Outbound max
+Outcome
+Overall Fulfillment
+Overdue
+Overview
+PAGE_SIZE && (
+PIN:
+PU environment.
+PWAs. Register your device in
+Page Title
+Pages:
+Paid
+Pair with an Ally
+Panel
+Panel Members
+Panel members can view and participate in this interview.
+Parent
+Parent (optional)
+Parent Group
+Parent Location
+Parent Node
+Parent Page
+Parent Unit
+Participant
+Partner Name
+Party Members
+Party manifest cross-reference:
+Past
+Past Elections
+Paste into your RSI "Bio" section and commit changes.
+Paste the code into your
+Paste this code anywhere in your bio and save:
+Path
+Payload JSON
+Pending
+Pending Assignment
+Pending Requests
+Pending Review
+Permanently remove old data to reduce database size.
+Permission Level
+Permissions Saved
+Personal Status
+Personnel
+Personnel Notes
+Personnel will appear here once they join the operation.
+Phase
+Pick JSON
+Pick JSON File
+Pick Testimonials
+Pick a channel
+Ping Failed
+Ping Sent
+Pirate Code
+Planning:
+Platform
+Platform Category
+Platform Rank
+Platform Statement (optional)
+Platform-wide item database synced from uexcorp.space.
+Plays for staff when a client submits a request.
+Please stand by.
+Please type
+Pledge Store URL
+Pledge URL
+Position
+Position Assignment
+Position Deleted
+Position Saved
+Positions
+Post Announcement Embed:
+Post Failed
+Post Note
+Post to Discord
+Posted
+Posted as
+Posting
+Posting…
+Preamble (Optional)
+Precedence
+Precedence (Sort Order)
+Preset channels:
+Prev
+Preview Failed
+Preview failed
+Previous
+Previously approved or denied requests.
+Pricing & Weight
+Primary
+Primary Client Handle
+Primary Location
+Primary Position
+Priority
+Priority Alpha // Override Authorized
+Pristine
+Probation Cleared
+Probation Settings
+Probation Tracker
+Probation cannot be applied automatically
+Processing
+Processing...
+Production Status
+Profile Image URL
+Profile Preview
+Progress
+Promise
+Promoted
+Promotion Failed
+Properties
+Propose
+Protocol
+Protocol Name
+Protocol Template
+Pruning Complete:
+Pruning Failed
+Public / Affiliate.
+Push to Talk
+Push works only for
+Push-to-Talk Key
+Qty Needed
+Quality
+Quality label (optional)
+Quantity
+Quartermaster
+Quick Options
+Quick Setup Templates
+REF: 
+RSI Check
+RSI Handle
+RSI Org Page
+RSVP
+RSVP Failed
+RSVP Updated
+Radio
+Radio Configuration
+Radio Cues:
+Radio Mic Click URL
+Radio Offline
+Radio Squelch URL
+Radio System Configuration
+Radio mute
+Radio volume
+Rank
+Rank Name
+Rank Synchronization
+Ranks Reordered
+Rate
+Rate Now
+Rate Service
+Rate limit active
+Rating
+Rationale &amp; Compliance
+Rationale (Compliance)
+Re-check
+Readiness
+Ready
+Ready to start. Click 'Start Sync' to begin.
+Reason
+Reason (optional)
+Reason / Observation
+Reason / Source
+Reason for Adjustment
+Reason for Award
+Reason for Transfer
+Reassign Failed
+Reassign all
+Rebind Controller
+Rebind HID
+Reboot Failed
+Reboot Net
+Reboot Terminal
+Receive-Only Feeds
+Recent Cautions
+Recent Intel
+Recent Requests
+Recent activity
+Recent issuance activity
+Recommend
+Recommended Setup
+Recommended: 1200x630px
+Recommended: 30–60 Minutes
+Recommended: 32x32px or 64x64px PNG/ICO
+Reconnect
+Records as an "initial" movement.
+Recovery of ship, cargo, gear, corps, or equipment
+Recruitment &amp; vacancy control.
+Recruitment, Vetting, Internal Cases, Transfers, Jobs
+Redirect URI:
+Reference
+Referral Code:
+Refresh
+Refusal Failed
+Refusal requires notes.
+Refuse
+Register Device
+Registered
+Reinitialize System
+Reject
+Rejection failed
+Related Application
+Reliability and tidy up.
+Reliable
+Reload
+Reload the app to load the imported data.
+Remove
+Remove Failed
+Rename failed
+Reopen AAR
+Reopening...
+Reorder Failed
+Reordering Ranks
+Reordering ranks...
+Repair Complete
+Repair Failed
+Repair Issues
+Reported
+Repost Announcement
+Reputation
+Reputation Score
+Reputation Standing ·
+Request
+Request Cancelled
+Request Change
+Request Clearance
+Request Created
+Request Data
+Request Deleted
+Request ID
+Request Refused
+Request Review
+Request Status
+Request Transfer
+Request Triaged
+Request Type
+Request access
+Request cancelled
+Request change
+Request failed
+Request submitted
+Request →
+Requested
+Requested Unit
+Requested by
+Requested:
+Requests
+Requests are held as
+Required Markers
+Requirements
+Rescue:
+Reserved
+Reset
+Reset Failed
+Reset Finances
+Reset Quartermaster
+Reset Readiness
+Reset Template
+Reset filters
+Reset to Even
+Reset view
+Resetting...
+Resolve the required items above to continue.
+Responder Log
+Responders
+Restart required
+Restrict from External Sync
+Restrict this unit to members only
+Restrict voting to positions (optional)
+Restricted
+Restricted Access
+Restructure
+Result
+Result Types
+Results Certified
+Retention Period:
+Retrieving Records...
+Retry
+Return
+Return failed
+Return to Intel Hub
+Return to Registry
+Return to Roster
+Return to feed
+Returned quantity
+Reversal failed
+Reverse
+Review
+Revocation
+Revocation Reason (Optional)
+Revoke Failed
+Revoke Order
+Reward Value
+Right Control
+Right-click the desired text channel in your server.
+Role
+Role Mapping:
+Role Name
+Role Title
+Role not found.
+Roles Fetched
+Root
+Root (No Parent)
+Roster
+Rules of Conduct
+Rules of Engagement
+Run Import
+Run MDT
+Running
+Runoff enabled
+SETUP-XXXXXXXX
+SHARED
+STAR-2GNM-TTHD
+STC-2955 Compliance Confirmed
+SYNCING
+Safari
+Save
+Save Failed
+Save Note
+Save Preferences
+Save Profile
+Save Progress
+Save as Template
+Save failed
+Saved
+Saving
+Saving Changes
+Saving...
+Saving…
+Scaffolding only — never user-facing.
+Scanning Spectrum...
+Scanning database...
+Scanning inventory…
+Schedule
+Schedule Interview
+Scheduled
+Scheduled End
+Scheduled Start
+Scheduled Time
+Scheduled:
+Score
+Screenshot URL
+Scroll and tap
+Scroll for more records
+Search
+Search Members
+Searching…
+Secondary
+Secondary Position (Optional)
+Secret
+Secret ballot (votes are anonymous)
+Secure
+Secure Comms Available
+Secure Enrollment
+Secure channel established. Silence on comms.
+Security Classification
+Security Profile
+Security Protocol
+Security Vetting
+Security and privacy came first.
+Security note:
+Security:
+Select
+Select Certification
+Select Commendation
+Select Specializations
+Select a page to feature...
+Select active personnel to assign to
+Select all candidates you approve of:
+Select an ally…
+Select location…
+Select members to award this commendation to.
+Select position...
+Select ship…
+Select target ship to keep
+Select up to
+Select your preferred candidate:
+Self-hosted Star Citizen org operations.
+Sell
+Sell (avg/SCU)
+Send Alert
+Sending...
+Sends push notifications to all subscribed members.
+Sequential
+Server crashes or critical downtime
+Service
+Service Access Restricted
+Service Request
+Service Restricted
+Service Type
+Service requests and missions you have responded to.
+Services Unavailable
+Sessions Revoked
+Set Affiliation
+Set Clearance Level
+Set new total
+Set the Gemini API key via the
+Set the Gemini API key, model (e.g.
+Set up branches and positions from the admin panel.
+Settings
+Settings Updated
+Setup Code
+Setup Failed
+Share
+Share Channels
+Share with Allies
+Shared
+Ship
+Ship Added
+Ship Assigned
+Ship Catalog
+Ship Removed
+Ship Unassigned
+Ship Updated
+Ships Removed
+Show archived
+Sidebar → Government
+Sign In with Discord
+Sign in with Discord
+Signal Color
+Signal Failed
+Signed in as
+Significant threat — heightened alert.
+Single handle only.
+Situation Overview
+Size
+Skip
+Skip to sign in
+Skip — I'll do this later
+Skipped
+Sort
+Sort Order (Precedence)
+Sort: Joined
+Sort: Name
+Sort: Ready
+Sort: Role
+Sort: most recent first
+Source
+Source Available
+Source Name
+Source org:
+Special Operation
+Specializations
+Specifications
+Splits Saved
+Sponsoring Position
+Squad channels:
+Stacked
+Staff Only
+Standard Member tiers.
+Standardized recruitment questionnaires.
+Standing
+Standing Caution (Permanent)
+Star Citizen universe — synced from uexcorp.space.
+Start Date
+Start Failed
+Start From Template
+Start Import
+Start Sync
+Start Time
+Start Vote
+Start typing to search…
+Statement of Interest
+Station
+Status
+Status / Log
+Status Control
+Status Tracking Only
+Status Updated
+Stock added
+Stock adjusted
+Stock created
+Stock deleted
+Stock exported
+Stock transferred
+Stock:
+Structure
+Subcategory
+Subcategory (UEX label)
+Subject
+Subject / Candidate
+Subject / Handle
+Subject Name
+Subject Name (Optional)
+Subject Name / Alias
+Subject RSI Handle
+Subject Type
+Submission failed
+Submit
+Submit Application
+Submit Request
+Submit Vote
+Submit your application to Human Resources.
+Submitted
+Submitting...
+Submitting…
+Success
+Success / Failed / Cancelled / Refused / Aborted
+Successful
+Summary
+Summary (Small)
+Sustain
+Sync All Users
+Sync Cooldown
+Sync Failed
+Sync Filters
+Sync Restricted
+Sync Verification Payload
+Sync-restricted
+Syncing
+Syncing Link...
+Syncing Signal...
+Syncing...
+System Broadcast
+System Changelog
+System Critical
+System ID
+System Initialization
+System Module Failure
+System Online
+System Ready
+System Role
+System Role Name
+TERMINAL
+TRANSMITTING
+TX level
+Table
+Tables:
+Tactical Board
+Tactical Model Selection
+Tactical Radio Unit
+Tag Name
+Tags (comma separated)
+Tap the
+Target Clearance Level (Optional)
+Target Handle/Tag
+Target Identity
+Target RSI Handle
+Target Tables
+Target Unit
+Target has active cautions in the system.
+Task
+Tasks
+Technocracy
+Template Applied
+Template Failed
+Template Name
+Template imported
+Template saved
+Templates
+Tenure
+Tenure Start Date
+Term Length (days)
+Terminal
+Terminate Uplink
+Terms of Service
+Terms of Service Protocol
+Terms of Service not configured.
+Test Audio
+Test Send
+Test Signal
+Thank you.
+The
+The Client accepts all operational risks.
+The Client agrees to:
+The Organisation does not guarantee:
+The client sees the reason.
+The queue is empty
+Their API Key
+Their Dashboard URL
+Their Pairing Code
+Theme Color
+This ally hasn't shared their fleet.
+This ally hasn't shared their roster.
+This will alert all active sessions
+This will appear in dropdowns for clients and members.
+Threat
+Threat Level
+Three payout modes:
+Thumbnail URL
+Time Preferences
+Time preferences saved
+Time-Weighted
+Time-sensitive directives requiring immediate attention
+Timezone
+Tip: Drag and drop rows to change rank precedence.
+Title
+Title, content, and settings save together.
+To receive
+To request a clearance bump, open
+To:
+Today
+Toggle
+Toggle in the sidebar to be eligible for dispatch.
+Top Level Command
+Total Personnel:
+Total Registered:
+Total Reviews
+Total rows:
+Track UEC
+Track status
+Training Exercise
+Transaction Log
+Transfer
+Transfer Action
+Transfer Failed
+Transfer History
+Transfer Submitted
+Transfer Unit
+Transfer failed
+Transfer to
+Transfer your aUEC to the org's bank alt
+Transferring…
+Transmission Failed
+Transmit
+Transmitting...
+Treasury accounts
+Triage
+Triage Console
+Triage Failed
+Triaged
+Triggers the EAM alarm sound on all connected devices.
+Try a different day or create a new operation.
+Try a different term or relax filters
+Twitter Card Type
+Twitter Card Validator
+Two independent gates: a numeric
+Two views:
+Type
+Type Name
+UEC Earned
+UEC Reward
+UEX Code
+UEX Source
+Unassign Failed
+Unassigned
+Unavailable
+Unique identifier (slug), lower case, no spaces.
+Unit
+Unit / Department
+Unit Assignment
+Unit Comms
+Unit Created
+Unit Deleted
+Unit Dispatched
+Unit Hierarchy
+Unit Leader
+Unit Moved
+Unit Name
+Unit Reordered
+Unit Updated
+Unit assignment history and transfer requests.
+Unit unassigned
+Unlocks when the op concludes. Four entry categories:
+Unranked
+Unregistered
+Upcoming
+Upcoming Operations
+Upcoming scheduled protocols assigned to you.
+Update
+Update All Users
+Update Failed
+Update Status
+Updated
+Updates Not Reflecting?
+Updating unit structure...
+Urgency
+Urgency Level
+Usage
+Usage Guidelines
+Use a
+Use the filter panel to narrow scope
+Used
+Used for "Add to Home Screen". Recommended:
+User Settings
+VIP
+Vacancies
+Vacant
+Validation Error
+Vehicle Item
+Vehicle Name (if attached)
+Verification Sequence
+Verify & Save
+Verify later — I'm offline
+Verifying...
+Version History
+Veto
+Veto Failed
+Vetoed
+Vetting Checks
+View
+View &amp; apply
+View / Edit Questions
+View All
+View Details
+View Diagnostic Stack
+View File
+View History
+View Intel Dossier
+View Terms of Service
+View all
+View all operations →
+View all requests →
+View errors
+View full ledger
+View government →
+View intel net →
+View roster &amp; fleet
+View your own under
+Visibility
+Visible to you and administrators only.
+Visit
+Voice radio requires LiveKit API credentials. Set
+Vote Cast
+Vote Failed
+Vote Tally
+Voting Booth
+Voting Started
+Warehouse
+Warrants are now Caution Notes.
+We operate on an
+We provide the following service categories:
+Weight (SCU)
+Welcome Subtitle
+Welcome Title
+Westminster
+When
+When a request reaches
+Where commodities sit · shared with Quartermaster
+Where your stock lives
+Which of these is you?
+Wiki
+Wiki Home
+Wiki Tools:
+Wiki URL
+Wiki data unavailable — retry
+Wiki home layout
+Win Threshold %
+Winners
+Withdraw
+Withdrawal Failed
+Withdrawal fulfilled
+Working…
+Works in all major browsers
+Works while another app is focused
+Write Off
+Write Summary
+Write-off failed
+Xbox, PlayStation, HOTAS, joysticks
+You can only have
+You have already voted in this election.
+You have voted
+You haven't voted yet
+Your Directory Card
+Your Feed Endpoint
+Your Unit
+Your feedback helps
+Your vote is secret and cannot be traced back to you.
+],
+        searchTerm
+    );
+
+    const handleDelete = async (id: number) => {
+        const confirmed = await confirm({ title: 
+],
+        searchTerm
+    );
+
+    const handleDelete = async (role: Role & { memberCount: number }) => {
+        if (systemRoleIds.has(role.id)) {
+            await confirm({
+                title: 
+],
+        searchTerm
+    );
+
+    const handleDelete = async (type: ServiceTypeConfig) => {
+        const confirmed = await confirm({ title: 
+],
+        searchTerm
+    );
+
+    const openModal = (cert?: Certification) => {
+        setEditingCert(cert);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setEditingCert(undefined);
+        setIsModalOpen(false);
+    };
+
+    const openAwardModal = (cert: Certification) => {
+        setAwardingCert(cert);
+        setIsAwardModalOpen(true);
+    };
+    
+    const closeAwardModal = () => {
+        setAwardingCert(undefined);
+        setIsAwardModalOpen(false);
+    };
+
+    const handleDelete = async (cert: Certification & { memberCount: number }) => {
+        if (cert.memberCount > 0) {
+            await confirm({ title: 
+],
+        searchTerm
+    );
+
+    const openModal = (commend?: Commendation) => {
+        setEditingCommend(commend);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setEditingCommend(undefined);
+        setIsModalOpen(false);
+    };
+    
+    const openAwardModal = (commend: Commendation) => {
+        setAwardingCommend(commend);
+        setIsAwardModalOpen(true);
+    };
+
+    const closeAwardModal = () => {
+        setAwardingCommend(undefined);
+        setIsAwardModalOpen(false);
+    };
+
+    const handleDelete = async (commend: Commendation & { awardCount: number }) => {
+        if (commend.awardCount > 0) {
+            await confirm({ title: 
+],
+        searchTerm
+    );
+
+    const openModal = (tag?: SpecializationTag) => {
+        setEditingTag(tag);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setEditingTag(undefined);
+        setIsModalOpen(false);
+    };
+    
+    const handleDelete = async (tag: SpecializationTag & { memberCount: number }) => {
+        if (tag.memberCount > 0) {
+            await confirm({
+                title: 
