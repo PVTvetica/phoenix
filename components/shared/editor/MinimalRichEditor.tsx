@@ -72,7 +72,7 @@ const MinimalToolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
                 isActive={editor.isActive('italic')}
                 icon="fa-solid fa-italic"
                 title="Italic"
-            /><Teiler /><ToolbarButton
+            /><Divider /><ToolbarButton
                 onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                 isActive={editor.isActive('heading', { level: 2 })}
                 icon="fa-solid fa-heading"
@@ -83,7 +83,7 @@ const MinimalToolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
                 isActive={editor.isActive('heading', { level: 3 })}
                 icon="fa-solid fa-h fa-sm"
                 title="Subheading"
-            /><Teiler /><ToolbarButton
+            /><Divider /><ToolbarButton
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 isActive={editor.isActive('bulletList')}
                 icon="fa-solid fa-list-ul"
@@ -94,7 +94,7 @@ const MinimalToolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
                 isActive={editor.isActive('orderedList')}
                 icon="fa-solid fa-list-ol"
                 title="Ordered list"
-            /><Teiler /><ToolbarButton
+            /><Divider /><ToolbarButton
                 onClick={promptLink}
                 isActive={editor.isActive('link')}
                 icon="fa-solid fa-link"

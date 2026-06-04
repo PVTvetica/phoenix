@@ -111,13 +111,13 @@ const WikiToolbar: React.FC<WikiToolbarProps> = ({ editor }) => {
 
     // Secondary groups — on desktop these render inline; on mobile they collapse into "..." popover
     const secondaryGroups = (
-        <><Teiler /><ToolbarButton onClick={() => editor.chain().focus().toggleUnderline().run()} isActive={editor.isActive('underline')} icon="fa-solid fa-underline" title="Underline" />
+        <><Divider /><ToolbarButton onClick={() => editor.chain().focus().toggleUnderline().run()} isActive={editor.isActive('underline')} icon="fa-solid fa-underline" title="Underline" />
             <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')} icon="fa-solid fa-strikethrough" title="Strikethrough" />
             <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} isActive={editor.isActive('heading', { level: 1 })} icon="fa-solid fa-heading fa-lg" title="Heading 1" />
-            <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} isActive={editor.isActive('heading', { level: 3 })} icon="fa-solid fa-h fa-sm" title="Heading 3" /><Teiler /><ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} icon="fa-solid fa-quote-left" title="Blockquote" />
-            <ToolbarButton onClick={() => editor.chain().focus().toggleCodeBlock().run()} isActive={editor.isActive('codeBlock')} icon="fa-solid fa-code" title="Code Block" /><Teiler /><ToolbarButton onClick={() => editor.chain().focus().setTextAlign('left').run()} isActive={editor.isActive({ textAlign: 'left' })} icon="fa-solid fa-align-left" title="Align Left" />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} isActive={editor.isActive('heading', { level: 3 })} icon="fa-solid fa-h fa-sm" title="Heading 3" /><Divider /><ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} icon="fa-solid fa-quote-left" title="Blockquote" />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleCodeBlock().run()} isActive={editor.isActive('codeBlock')} icon="fa-solid fa-code" title="Code Block" /><Divider /><ToolbarButton onClick={() => editor.chain().focus().setTextAlign('left').run()} isActive={editor.isActive({ textAlign: 'left' })} icon="fa-solid fa-align-left" title="Align Left" />
             <ToolbarButton onClick={() => editor.chain().focus().setTextAlign('center').run()} isActive={editor.isActive({ textAlign: 'center' })} icon="fa-solid fa-align-center" title="Align Center" />
-            <ToolbarButton onClick={() => editor.chain().focus().setTextAlign('right').run()} isActive={editor.isActive({ textAlign: 'right' })} icon="fa-solid fa-align-right" title="Align Right" /><Teiler /><ToolbarButton
+            <ToolbarButton onClick={() => editor.chain().focus().setTextAlign('right').run()} isActive={editor.isActive({ textAlign: 'right' })} icon="fa-solid fa-align-right" title="Align Right" /><Divider /><ToolbarButton
                 onClick={() => promptAndInsert('image', (url) => editor.chain().focus().setImage({ src: url }).run())}
                 icon="fa-solid fa-image"
                 title="Insert Image (URL)"
@@ -139,7 +139,7 @@ const WikiToolbar: React.FC<WikiToolbarProps> = ({ editor }) => {
                 onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
                 icon="fa-solid fa-table"
                 title="Insert Table"
-            /><Teiler /><ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()} icon="fa-solid fa-minus" title="Horizontal Rule" />
+            /><Divider /><ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()} icon="fa-solid fa-minus" title="Horizontal Rule" />
             <ToolbarButton onClick={() => editor.chain().focus().undo().run()} icon="fa-solid fa-rotate-left" title="Undo" />
             <ToolbarButton onClick={() => editor.chain().focus().redo().run()} icon="fa-solid fa-rotate-right" title="Redo" />
         </>
@@ -174,7 +174,7 @@ const WikiToolbar: React.FC<WikiToolbarProps> = ({ editor }) => {
                 label="Del Col"
                 title="Delete the column containing the current cell"
                 danger
-            /><Teiler /><TableButton
+            /><Divider /><TableButton
                 onClick={() => editor.chain().focus().addRowBefore().run()}
                 icon="fa-solid fa-arrow-up"
                 label="+ Row Above"
@@ -192,7 +192,7 @@ const WikiToolbar: React.FC<WikiToolbarProps> = ({ editor }) => {
                 label="Del Row"
                 title="Delete the row containing the current cell"
                 danger
-            /><Teiler /><TableButton
+            /><Divider /><TableButton
                 onClick={() => editor.chain().focus().toggleHeaderRow().run()}
                 isActive={editor.isActive('tableHeader')}
                 icon="fa-solid fa-heading"
@@ -210,7 +210,7 @@ const WikiToolbar: React.FC<WikiToolbarProps> = ({ editor }) => {
                 icon="fa-solid fa-object-ungroup"
                 label="Split"
                 title="Split a previously-merged cell back into individual cells"
-            /><Teiler /><TableButton
+            /><Divider /><TableButton
                 onClick={() => editor.chain().focus().deleteTable().run()}
                 icon="fa-solid fa-trash"
                 label="Delete Table"
