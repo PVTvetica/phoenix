@@ -59,7 +59,7 @@ const IssueEamModal: React.FC<IssueEamModalProps> = ({ isOpen, onClose }) => {
             }, 1000);
         } catch (err) {
             console.error(err);
-            addToast("Übertragung fehlgeschlagen", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "EAM-Rundfunk konnte nicht gesendet werden. Bitte versuche es erneut." });
+            addToast("Übertragung fehlgeschlagen", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Notfall-Rundfunk konnte nicht gesendet werden. Bitte versuche es erneut." });
             setIsTransmitting(false);
         }
     };
@@ -68,7 +68,7 @@ const IssueEamModal: React.FC<IssueEamModalProps> = ({ isOpen, onClose }) => {
         <WindowFrame
             isOpen={isOpen}
             onClose={onClose}
-            title="Problem EAM"
+            title="Notfall senden"
             subtitle="Prioritäts-Unterbrechungsprotokoll"
             icon="fa-solid fa-radiation"
             color="red"
@@ -92,7 +92,7 @@ const IssueEamModal: React.FC<IssueEamModalProps> = ({ isOpen, onClose }) => {
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         className="w-full bg-slate-900/90 border border-red-500/30 rounded-lg p-4 text-red-50 font-mono text-lg uppercase focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-hidden h-32 resize-none shadow-inner relative z-10 backdrop-blur-xs"
-                        placeholder="ENTER EAM CONTENT..."
+                        placeholder="NOTFALL-NACHRICHT EINGEBEN…"
                         disabled={isArming || isArmed || isTransmitting}
                     />
                 </div>

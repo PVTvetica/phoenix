@@ -39,7 +39,7 @@ const CreateWarrantModal: React.FC<CreateWarrantModalProps> = ({ isOpen, onClose
                 onClose();
             } catch (err) {
                 console.error(err);
-                addToast("Fehler", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Vorsichtshinweis konnte nicht hinterlegt werden. Bitte versuche es erneut." });
+                addToast("Fehler", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Kopfgeld konnte nicht hinterlegt werden. Bitte versuche es erneut." });
             } finally {
                 setIsLoading(false);
             }
@@ -53,8 +53,8 @@ const CreateWarrantModal: React.FC<CreateWarrantModalProps> = ({ isOpen, onClose
         <WindowFrame
             isOpen={isOpen}
             onClose={onClose}
-            title="File Caution Note"
-            subtitle="Vorsichts-Hinweiseintrag"
+            title="Kopfgeld ausstellen"
+            subtitle="Kopfgeld-Eintrag"
             icon="fa-solid fa-triangle-exclamation"
             color="red"
             width="max-w-lg"
@@ -132,7 +132,7 @@ const CreateWarrantModal: React.FC<CreateWarrantModalProps> = ({ isOpen, onClose
                                 className="h-4 w-4 rounded-sm bg-slate-900 border-slate-700 text-red-500 focus:ring-red-500 transition-colors"
                                 disabled={isLoading}
                             />
-                            <span className="text-xs">Ständige Verwarnung (permanent)</span>
+                            <span className="text-xs">Ständiges Kopfgeld (permanent)</span>
                         </label>
                         <label className="flex items-center space-x-3 text-slate-300 cursor-pointer group">
                             <input
@@ -154,7 +154,7 @@ const CreateWarrantModal: React.FC<CreateWarrantModalProps> = ({ isOpen, onClose
                         className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-red-900/30 disabled:opacity-50"
                         disabled={isLoading}
                     >
-                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'File Caution Note'}
+                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Kopfgeld ausstellen'}
                     </button>
                 </div>
             </form>

@@ -208,13 +208,35 @@ function reducer(state: WizardState, action: Action): WizardState {
 const inputClass = "w-full bg-slate-900/60 border border-slate-700 rounded-lg p-2.5 text-white text-sm focus:border-purple-500/40 focus:ring-1 focus:ring-purple-500/50 outline-hidden transition-all scheme-light";
 const labelClass = "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5";
 
+const operationTypeLabel = (t: OperationType): string => {
+    switch (t) {
+        case OperationType.PvP: return 'PvP';
+        case OperationType.PvE: return 'PvE';
+        case OperationType.Mixed: return 'Gemischt';
+        case OperationType.NonCombat: return 'Nicht-Kampf';
+        case OperationType.Training: return 'Training';
+        case OperationType.Social: return 'Social';
+        default: return t;
+    }
+};
+
+const taskPriorityLabel = (p: TaskPriority): string => {
+    switch (p) {
+        case TaskPriority.Low: return 'Niedrig';
+        case TaskPriority.Normal: return 'Normal';
+        case TaskPriority.High: return 'Hoch';
+        case TaskPriority.Critical: return 'Kritisch';
+        default: return p;
+    }
+};
+
 // Step metadata
 const STEPS = [
-    { key: 'basics',    label: 'Basics',    icon: 'fa-circle-info' },
+    { key: 'basics',    label: 'Grundlagen',    icon: 'fa-circle-info' },
     { key: 'locations', label: 'Standorte', icon: 'fa-map-pin' },
-    { key: 'phases',    label: 'Phases',    icon: 'fa-layer-group' },
-    { key: 'security',  label: 'Security & Schedule', icon: 'fa-lock' },
-    { key: 'review',    label: 'Rezension',    icon: 'fa-clipboard-check' },
+    { key: 'phases',    label: 'Phasen',    icon: 'fa-layer-group' },
+    { key: 'security',  label: 'Sicherheit & Termin', icon: 'fa-lock' },
+    { key: 'review',    label: 'Prüfung',    icon: 'fa-clipboard-check' },
 ] as const;
 type StepKey = typeof STEPS[number]['key'];
 
@@ -246,12 +268,12 @@ const CreateOperationWizard: React.FC<CreateOperationWizardProps> = ({ isOpen, o
         const v: Record<StepKey, string | null> = {
             basics: null, locations: null, phases: null, security: null, review: null,
         };
-        if (!state.name.trim()) v.basics = 'Operation name is required.';
-        else if (!state.description.trim()) v.basics = 'Briefing description is required.';
-        else if (state.isSpecial && !state.joinCode.trim()) v.basics = 'Special Operations require a Join Code/PIN.';
+        if (!state.name.trim()) v.basics = 'Ein Einsatzname ist erforderlich.';
+        else if (!state.description.trim()) v.basics = 'Ein Briefing ist erforderlich.';
+        else if (state.isSpecial && !state.joinCode.trim()) v.basics = 'Sondereinsätze erfordern einen PIN-Code.';
 
-        if (state.isScheduled && !state.scheduledStart) v.security = 'Scheduled operations require a start time.';
-        if (state.createDiscordEvent && (!state.scheduledStart || !state.scheduledEnd)) v.security = 'Discord events need a start AND end time.';
+        if (state.isScheduled && !state.scheduledStart) v.security = 'Geplante Einsätze benötigen eine Startzeit.';
+        if (state.createDiscordEvent && (!state.scheduledStart || !state.scheduledEnd)) v.security = 'Discord-Ereignisse benötigen Start- und Endzeit.';
         // Discord rejects scheduled events whose start is in the past or whose end is
         // not strictly after start. Catch both client-side so the user gets a clear
         // message instead of Discord's generic "Invalid Form Body" response.
@@ -259,12 +281,12 @@ const CreateOperationWizard: React.FC<CreateOperationWizardProps> = ({ isOpen, o
             const startMs = new Date(state.scheduledStart).getTime();
             const endMs = new Date(state.scheduledEnd).getTime();
             if (Number.isFinite(startMs) && startMs <= Date.now()) {
-                v.security = 'Discord events need a start time in the future.';
+                v.security = 'Discord-Ereignisse benötigen eine Startzeit in der Zukunft.';
             } else if (Number.isFinite(startMs) && Number.isFinite(endMs) && endMs <= startMs) {
-                v.security = 'Discord event end time must be after the start time.';
+                v.security = 'Die Endzeit muss nach der Startzeit liegen.';
             }
         }
-        if (state.postDiscordAnnouncement && !state.discordAnnouncementChannelId) v.security = 'Pick a Discord channel for the announcement embed.';
+        if (state.postDiscordAnnouncement && !state.discordAnnouncementChannelId) v.security = 'Wähle einen Discord-Kanal für die Ankündigung.';
 
         return v;
     }, [state]);
@@ -338,16 +360,16 @@ const CreateOperationWizard: React.FC<CreateOperationWizardProps> = ({ isOpen, o
                 inlinePhases: phasesPayload,
             } as any);
             if (newOp?.discordEventFailed) {
-                addToast("Discord Ereignis fehlgeschlagen", <i className="fa-brands fa-discord"></i>, 'bg-amber-500/10 text-amber-400 border-amber-500/50', { description: typeof newOp.discordEventFailed === 'string' ? newOp.discordEventFailed : 'Failed to create Discord event.' });
+                addToast("Discord Ereignis fehlgeschlagen", <i className="fa-brands fa-discord"></i>, 'bg-amber-500/10 text-amber-400 border-amber-500/50', { description: typeof newOp.discordEventFailed === 'string' ? newOp.discordEventFailed : 'Discord-Ereignis konnte nicht erstellt werden.' });
             }
             if (newOp?.discordAnnouncementFailed) {
-                addToast("Discord Ankündigung fehlgeschlagen", <i className="fa-brands fa-discord"></i>, 'bg-amber-500/10 text-amber-400 border-amber-500/50', { description: typeof newOp.discordAnnouncementFailed === 'string' ? newOp.discordAnnouncementFailed : 'Failed to post Discord announcement.' });
+                addToast("Discord Ankündigung fehlgeschlagen", <i className="fa-brands fa-discord"></i>, 'bg-amber-500/10 text-amber-400 border-amber-500/50', { description: typeof newOp.discordAnnouncementFailed === 'string' ? newOp.discordAnnouncementFailed : 'Discord-Ankündigung konnte nicht gepostet werden.' });
             }
             onClose();
             viewOperationDetails(newOp);
         } catch (err: any) {
             console.error('Failed to create operation:', err);
-            addToast("Vorgang fehlgeschlagen", <i className="fa-solid fa-xmark"></i>, 'bg-red-500/10 text-red-400 border-red-500/50', { description: err?.message || 'An error occurred while creating the operation.' });
+            addToast("Einsatz fehlgeschlagen", <i className="fa-solid fa-xmark"></i>, 'bg-red-500/10 text-red-400 border-red-500/50', { description: err?.message || 'Beim Erstellen des Einsatzes ist ein Fehler aufgetreten.' });
         } finally {
             setIsLoading(false);
         }
@@ -369,7 +391,7 @@ const CreateOperationWizard: React.FC<CreateOperationWizardProps> = ({ isOpen, o
             key={isOpen ? 'open' : 'closed'}
             isOpen={isOpen}
             onClose={onClose}
-            title="Create New Operation"
+            title="Einsatz planen"
             subtitle="Missionsplanung"
             icon="fa-solid fa-chess-board"
             color="purple"
@@ -433,7 +455,7 @@ const CreateOperationWizard: React.FC<CreateOperationWizardProps> = ({ isOpen, o
                         ) : (
                             <button onClick={handleSubmit} disabled={isLoading || !canAdvance || Object.values(validation).some(v => !!v)}
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-500 border border-purple-500/40 text-white text-[11px] font-bold uppercase tracking-wider shadow-lg shadow-purple-900/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                {isLoading ? <><i className="fa-solid fa-spinner animate-spin"></i>Erstellen</> : <><i className="fa-solid fa-plus"></i>Vorgang erstellen</>}
+                                {isLoading ? <><i className="fa-solid fa-spinner animate-spin"></i>Erstellen</> : <><i className="fa-solid fa-plus"></i>Einsatz erstellen</>}
                             </button>
                         )}
                     </div>
@@ -458,7 +480,7 @@ const BasicsStep: React.FC<{
             <div>
                 <label className={labelClass}>Operationsname</label>
                 <input type="text" value={state.name} onChange={e => dispatch({ type: 'set', key: 'name', value: e.target.value })}
-                    placeholder="e.g., Operation Silent Blade" className={inputClass} required disabled={disabled} />
+                    placeholder="z. B. Operation Silent Blade" className={inputClass} required disabled={disabled} />
             </div>
             <div>
                 <label className={labelClass}>Operationstyp</label>
@@ -468,14 +490,14 @@ const BasicsStep: React.FC<{
                     if (t === OperationType.Training) dispatch({ type: 'set', key: 'isTraining', value: true });
                     else dispatch({ type: 'set', key: 'isTraining', value: false });
                 }} className={inputClass} disabled={disabled}>
-                    {Object.values(OperationType).map(t => <option key={t} value={t}>{t}</option>)}
+                    {Object.values(OperationType).map(t => <option key={t} value={t}>{operationTypeLabel(t)}</option>)}
                 </select>
             </div>
         </div>
         <div>
             <label className={labelClass}>Beschreibung / Briefing</label>
             <textarea value={state.description} onChange={e => dispatch({ type: 'set', key: 'description', value: e.target.value })}
-                rows={4} placeholder="Provide a detailed description of the operation's objectives..."
+                rows={4} placeholder="Ausführliche Beschreibung der Einsatzziele und des Briefings…"
                 className={`${inputClass} resize-none`} required disabled={disabled} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -483,7 +505,7 @@ const BasicsStep: React.FC<{
                 <label className={labelClass}>Hosting-Einheit (optional)</label>
                 <select value={state.unitId} onChange={e => dispatch({ type: 'set', key: 'unitId', value: e.target.value })}
                     className={inputClass} disabled={disabled}>
-                    <option value="">- Global / Public -</option>
+                    <option value="">- Global / Öffentlich -</option>
                     {[...units].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0) || a.name.localeCompare(b.name)).map(u =>
                         <option key={u.id} value={u.id}>{u.name}</option>
                     )}
@@ -494,20 +516,20 @@ const BasicsStep: React.FC<{
                 <input type="number" min="0" value={state.maxParticipants}
                     onChange={e => dispatch({ type: 'set', key: 'maxParticipants', value: e.target.value })}
                     onKeyDown={e => { if (e.key === '-' || e.key === '+' || e.key === 'e') e.preventDefault(); }}
-                    className={inputClass} placeholder="Unlimited" disabled={disabled} />
+                    className={inputClass} placeholder="Unbegrenzt" disabled={disabled} />
             </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-slate-800 pt-4">
-            <Switch label="Track aUEC Earnings" hint="Enable financial ledger" checked={state.tracksUec}
+            <Switch label="aUEC-Einnahmen erfassen" hint="Finanzbuchhaltung aktivieren" checked={state.tracksUec}
                 onChange={v => dispatch({ type: 'set', key: 'tracksUec', value: v })} accent="purple" disabled={disabled} />
-            <Switch label="Sondereinsatz" hint="Standard members cannot see/join" checked={state.isSpecial}
+            <Switch label="Sondereinsatz" hint="Standardmitglieder können nicht sehen/beitreten" checked={state.isSpecial}
                 onChange={v => dispatch({ type: 'set', key: 'isSpecial', value: v })} accent="amber" disabled={disabled} />
         </div>
         {state.isSpecial && (
             <div className="bg-amber-950/20 p-3 rounded-lg border border-amber-500/20 animate-fade-in">
                 <label className="block text-[10px] font-black text-amber-300 uppercase tracking-widest mb-2">Auf den PIN-Code zugreifen</label>
                 <input type="text" value={state.joinCode} onChange={e => dispatch({ type: 'set', key: 'joinCode', value: e.target.value })}
-                    placeholder="e.g. 1234"
+                    placeholder="z. B. 1234"
                     className="w-full bg-slate-950/50 border border-amber-500/30 rounded-lg p-2 text-white font-mono text-center tracking-widest outline-hidden focus:ring-1 focus:ring-amber-500"
                     required disabled={disabled} />
             </div>
@@ -528,7 +550,7 @@ const LocationsStep: React.FC<{
     return (
         <div className="space-y-5">
             <p className="text-xs text-slate-400">
-                Search the Star Citizen platform location index. Pick a primary location, then add secondary locations if the operation spans multiple sites. The primary is shown on operation cards and headers; secondaries appear on the detail view.
+                Durchsuche den Star-Citizen-Standortindex. Wähle einen primären Standort und füge bei Bedarf weitere hinzu, wenn der Einsatz mehrere Orte umfasst. Der primäre Standort erscheint auf Einsatzkarten und in der Kopfzeile; weitere nur in der Detailansicht.
             </p>
 
             {/* Primary */}
@@ -552,7 +574,7 @@ const LocationsStep: React.FC<{
                         <i className="fa-solid fa-plus mr-1"></i>Standort hinzufügen</button>
                 </div>
                 {state.additionalLocationTexts.length === 0 ? (
-                    <p className="text-[11px] text-slate-600 italic">Keine – dieser Vorgang findet nur am primären Standort statt.</p>
+                    <p className="text-[11px] text-slate-600 italic">Keine – dieser Einsatz findet nur am primären Standort statt.</p>
                 ) : (
                     <ul className="space-y-2">
                         {state.additionalLocationTexts.map((value, idx) => (
@@ -567,7 +589,7 @@ const LocationsStep: React.FC<{
                                 <button type="button"
                                     onClick={() => dispatch({ type: 'promote_additional_to_primary', index: idx })}
                                     className="shrink-0 mt-1.5 text-[10px] text-amber-400 hover:text-amber-300 px-2 py-1.5 rounded-sm hover:bg-slate-800 uppercase tracking-wider font-bold disabled:opacity-30 disabled:cursor-not-allowed"
-                                    title="Promote this location to primary"
+                                    title="Als primären Standort festlegen"
                                     disabled={disabled || !value.trim()}>
                                     <i className="fa-solid fa-star"></i>
                                 </button>
@@ -587,7 +609,7 @@ const LocationsStep: React.FC<{
             {hasPrimary && (
                 <p className="text-[10px] text-slate-600 italic">
                     <i className="fa-solid fa-circle-info mr-1"></i>
-                    Primary stays on the operation card and timeline; additional locations are listed on the detail view.
+                    Der primäre Standort bleibt auf der Einsatzkarte und in der Timeline; zusätzliche Standorte erscheinen in der Detailansicht.
                 </p>
             )}
         </div>
@@ -604,12 +626,12 @@ const PhasesStep: React.FC<{
     return (
         <div className="space-y-5">
             <p className="text-xs text-slate-400">
-                Optional execution plan. Pick a template to seed phases, milestones, and tasks — then edit inline. Or skip
-                this step and build the plan later from the operation detail view.
+                Optionaler Ausführungsplan. Wähle eine Vorlage für Phasen, Meilensteine und Aufgaben — bearbeite sie dann inline. Oder überspringe
+                diesen Schritt und erstelle den Plan später in der Einsatz-Detailansicht.
             </p>
 
             <div className="bg-slate-900/40 p-4 rounded-xl border border-slate-700/40">
-                <label className={labelClass}>Beginnen du mit der Vorlage</label>
+                <label className={labelClass}>Mit Vorlage beginnen</label>
                 <div className="flex items-center gap-2">
                     <select value={state.templateId ?? ''}
                         onChange={e => {
@@ -618,18 +640,18 @@ const PhasesStep: React.FC<{
                             dispatch({ type: 'apply_template', templateId: id, payload: tpl ? tpl.payload : null });
                         }}
                         className={inputClass} disabled={disabled}>
-                        <option value="">- Build from scratch -</option>
+                        <option value="">- Von Grund auf -</option>
                         {sortedTemplates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                     </select>
                     {state.phases.length > 0 && (
                         <button type="button" onClick={() => dispatch({ type: 'apply_template', templateId: null, payload: null })}
                             className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-red-400 border border-slate-700 rounded-lg hover:border-red-500/40"
-                            disabled={disabled} title="Clear all phases">Klar</button>
+                            disabled={disabled} title="Alle Phasen leeren">Leeren</button>
                     )}
                 </div>
                 {state.templateId && state.phases.length > 0 && (
                     <p className="text-[10px] text-slate-500 italic mt-2">
-                        Edits below override the template. Use the operation's Administer tab later to save the edited plan as a new template.
+                        Änderungen unten überschreiben die Vorlage. Speichere den bearbeiteten Plan später im Tab „Verwalten“ als neue Vorlage.
                     </p>
                 )}
             </div>
@@ -642,7 +664,7 @@ const PhasesStep: React.FC<{
                             <span className="text-[10px] font-mono text-slate-500 w-6">P{phaseIdx + 1}</span>
                             <input type="text" value={phase.name}
                                 onChange={e => dispatch({ type: 'update_phase', key: phase._key, patch: { name: e.target.value } })}
-                                placeholder="Phase name"
+                                placeholder="Phasenname"
                                 className="flex-1 bg-transparent text-white text-sm font-bold outline-hidden placeholder:text-slate-600"
                                 disabled={disabled} />
                             <select value={phase.phaseType || 'sequential'}
@@ -654,7 +676,7 @@ const PhasesStep: React.FC<{
                             </select>
                             <button type="button" onClick={() => dispatch({ type: 'remove_phase', key: phase._key })}
                                 className="text-slate-500 hover:text-red-400 p-1.5 rounded-sm hover:bg-slate-800/60"
-                                title="Remove phase" disabled={disabled}>
+                                title="Phase entfernen" disabled={disabled}>
                                 <i className="fa-solid fa-trash text-xs"></i>
                             </button>
                         </div>
@@ -676,13 +698,13 @@ const PhasesStep: React.FC<{
                                             <li key={i} className="flex items-center gap-2 bg-slate-900/40 rounded-sm p-2 border border-slate-800">
                                                 <input type="text" value={m.label}
                                                     onChange={e => dispatch({ type: 'update_milestone', phaseKey: phase._key, index: i, patch: { label: e.target.value } })}
-                                                    placeholder="Milestone label"
+                                                    placeholder="Meilenstein-Bezeichnung"
                                                     className="flex-1 bg-transparent text-white text-xs outline-hidden placeholder:text-slate-600"
                                                     disabled={disabled} />
                                                 <input type="number" value={m.offsetMinutes ?? ''}
                                                     onChange={e => dispatch({ type: 'update_milestone', phaseKey: phase._key, index: i, patch: { offsetMinutes: e.target.value === '' ? undefined : parseInt(e.target.value) } })}
                                                     placeholder="±min"
-                                                    title="Minutes offset from operation start. Optional — leave blank to time it later."
+                                                    title="Minuten-Offset ab Einsatzbeginn. Optional — leer lassen für spätere Planung."
                                                     className="w-20 bg-slate-950/40 text-white text-[11px] outline-hidden border border-slate-800 rounded-sm px-2 py-1 text-right"
                                                     disabled={disabled} />
                                                 <button type="button" onClick={() => dispatch({ type: 'remove_milestone', phaseKey: phase._key, index: i })}
@@ -712,14 +734,14 @@ const PhasesStep: React.FC<{
                                             <li key={i} className="flex items-center gap-2 bg-slate-900/40 rounded-sm p-2 border border-slate-800">
                                                 <input type="text" value={t.title}
                                                     onChange={e => dispatch({ type: 'update_task', phaseKey: phase._key, index: i, patch: { title: e.target.value } })}
-                                                    placeholder="Task title"
+                                                    placeholder="Aufgabentitel"
                                                     className="flex-1 bg-transparent text-white text-xs outline-hidden placeholder:text-slate-600"
                                                     disabled={disabled} />
                                                 <select value={t.priority || TaskPriority.Normal}
                                                     onChange={e => dispatch({ type: 'update_task', phaseKey: phase._key, index: i, patch: { priority: e.target.value as TaskPriority } })}
                                                     className="bg-slate-950/40 text-white text-[10px] uppercase font-bold rounded-sm px-2 py-1 border border-slate-800"
                                                     disabled={disabled}>
-                                                    {Object.values(TaskPriority).map(p => <option key={p} value={p}>{p}</option>)}
+                                                    {Object.values(TaskPriority).map(p => <option key={p} value={p}>{taskPriorityLabel(p)}</option>)}
                                                 </select>
                                                 <button type="button" onClick={() => dispatch({ type: 'remove_task', phaseKey: phase._key, index: i })}
                                                     className="text-slate-600 hover:text-red-400 p-1 rounded-sm"
@@ -769,7 +791,7 @@ const SecurityStep: React.FC<{
             setChannelsError(result?.error || null);
         } catch (err: any) {
             setChannels([]);
-            setChannelsError(err?.message || 'Failed to load Discord channels.');
+            setChannelsError(err?.message || 'Discord-Kanäle konnten nicht geladen werden.');
         } finally {
             setChannelsLoading(false);
         }
@@ -833,8 +855,8 @@ const SecurityStep: React.FC<{
         <div className="bg-slate-900/40 p-4 rounded-xl border border-slate-700/40">
             <div className="mb-3">
                 <Switch
-                    label="Schedule for Later"
-                    hint={state.createDiscordEvent ? 'Required for Discord event' : undefined}
+                    label="Später terminieren"
+                    hint={state.createDiscordEvent ? 'Erforderlich für Discord-Ereignis' : undefined}
                     checked={state.isScheduled}
                     disabled={disabled || state.createDiscordEvent}
                     accent="purple"
@@ -845,7 +867,7 @@ const SecurityStep: React.FC<{
                 <div className="space-y-3 animate-fade-in">
                     <p className="text-[10px] text-slate-500 italic flex items-center gap-1.5">
                         <i className="fa-solid fa-globe text-purple-400/60"></i>
-                        Times are in your local timezone ({Intl.DateTimeFormat().resolvedOptions().timeZone})
+                        Zeiten in deiner lokalen Zeitzone ({Intl.DateTimeFormat().resolvedOptions().timeZone})
                     </p>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -855,7 +877,7 @@ const SecurityStep: React.FC<{
                                 className={inputClass} disabled={disabled} />
                         </div>
                         <div>
-                            <label className={labelClass}>End Time {state.createDiscordEvent ? '(Required)' : '(Approx)'}</label>
+                            <label className={labelClass}>Endzeit {state.createDiscordEvent ? '(erforderlich)' : '(ca.)'}</label>
                             <input type="datetime-local" value={state.scheduledEnd}
                                 onChange={e => dispatch({ type: 'set', key: 'scheduledEnd', value: e.target.value })}
                                 className={`${inputClass} ${state.createDiscordEvent && !state.scheduledEnd ? 'border-amber-500/50' : ''}`}
@@ -865,7 +887,7 @@ const SecurityStep: React.FC<{
                 </div>
             )}
             {discordConfigured && (
-                <Switch label="Create Discord Event" hint="Post a scheduled event to your server" checked={state.createDiscordEvent}
+                <Switch label="Discord-Ereignis erstellen" hint="Geplantes Ereignis auf deinem Server posten" checked={state.createDiscordEvent}
                     onChange={v => {
                         dispatch({ type: 'set', key: 'createDiscordEvent', value: v });
                         if (v) dispatch({ type: 'set', key: 'isScheduled', value: true });
@@ -875,8 +897,8 @@ const SecurityStep: React.FC<{
             {discordConfigured && (
                 <div className="mt-3">
                     <Switch
-                        label="Post Announcement Embed"
-                        hint="Posts an embed with ✅ ❌ ❓ reactions to a channel of your choice — useful for role-restricted comms."
+                        label="Ankündigungs-Embed posten"
+                        hint="Postet ein Embed mit ✅ ❌ ❓ Reaktionen in einen Kanal deiner Wahl — nützlich für rollenbeschränkte Kommunikation."
                         checked={state.postDiscordAnnouncement}
                         onChange={v => dispatch({ type: 'set', key: 'postDiscordAnnouncement', value: v })}
                         accent="discord"
@@ -891,7 +913,7 @@ const SecurityStep: React.FC<{
                                     onClick={() => loadChannels(true)}
                                     disabled={disabled || channelsLoading}
                                     className="text-[10px] text-indigo-400 hover:text-indigo-300 disabled:opacity-40"
-                                    title="Refresh channel list"
+                                    title="Kanalliste aktualisieren"
                                 >
                                     <i className={`fa-solid fa-rotate ${channelsLoading ? 'fa-spin' : ''}`}></i>
                                 </button>
@@ -905,7 +927,7 @@ const SecurityStep: React.FC<{
                                     className={inputClass}
                                     disabled={disabled || channelsLoading || channels.length === 0}
                                 >
-                                    <option value="">{channelsLoading ? 'Loading channels…' : 'Select a channel…'}</option>
+                                    <option value="">{channelsLoading ? 'Kanäle werden geladen…' : 'Kanal auswählen…'}</option>
                                     {channels.map(c => (
                                         <option key={c.id} value={c.id}>
                                             {c.type === 5 ? '📢 ' : '# '}{c.name}
@@ -914,7 +936,7 @@ const SecurityStep: React.FC<{
                                 </select>
                             )}
                             {defaultAnnounceChannelId && state.discordAnnouncementChannelId === defaultAnnounceChannelId && (
-                                <p className="text-[10px] text-slate-500 italic">Pre-selected from your org's default announcement channel.</p>
+                                <p className="text-[10px] text-slate-500 italic">Vorausgewählt aus dem Standard-Ankündigungskanal deiner Organisation.</p>
                             )}
                         </div>
                     )}
@@ -934,7 +956,7 @@ const ReviewStep: React.FC<{
     setStepKey: (s: StepKey) => void;
 }> = ({ state, units, securityClearances, limitingMarkers, validation, setStepKey }) => {
     const unit = units.find(u => String(u.id) === state.unitId);
-    const primaryLocationLabel = state.locationText.trim() || 'Unknown';
+    const primaryLocationLabel = state.locationText.trim() || 'Unbekannt';
     const additionalLocationLabels = state.additionalLocationTexts.map(s => s.trim()).filter(Boolean);
     const clearance = securityClearances.find(c => String(c.level) === state.clearanceLevel);
     const markers = state.selectedMarkers.map(id => limitingMarkers.find(m => m.id === id)).filter(Boolean);
@@ -966,38 +988,38 @@ const ReviewStep: React.FC<{
                 </div>
             )}
 
-            <ReviewBlock title="Basics">
+            <ReviewBlock title="Grundlagen">
                 <ReviewRow label="Name" value={state.name || '—'} />
-                <ReviewRow label="Typ" value={state.type} />
-                <ReviewRow label="Hosting Unit" value={unit?.name || 'Global / Public'} />
-                <ReviewRow label="Maximale Teilnehmerzahl" value={state.maxParticipants || 'Unlimited'} />
-                <ReviewRow label="Tracks aUEC" value={state.tracksUec ? 'Yes' : 'No'} />
-                <ReviewRow label="Special Op" value={state.isSpecial ? `Yes (PIN: ${state.joinCode || '—'})` : 'No'} />
+                <ReviewRow label="Typ" value={operationTypeLabel(state.type)} />
+                <ReviewRow label="Hosting-Einheit" value={unit?.name || 'Global / Öffentlich'} />
+                <ReviewRow label="Maximale Teilnehmerzahl" value={state.maxParticipants || 'Unbegrenzt'} />
+                <ReviewRow label="aUEC erfassen" value={state.tracksUec ? 'Ja' : 'Nein'} />
+                <ReviewRow label="Sondereinsatz" value={state.isSpecial ? `Ja (PIN: ${state.joinCode || '—'})` : 'Nein'} />
                 <ReviewRow label="Briefing" value={state.description || '—'} multiline />
             </ReviewBlock>
 
             <ReviewBlock title="Standorte">
                 <ReviewRow label="Primär" value={primaryLocationLabel} />
-                <ReviewRow label="Additional"
-                    value={additionalLocationLabels.length === 0 ? 'None' : additionalLocationLabels.join(', ')} />
+                <ReviewRow label="Zusätzlich"
+                    value={additionalLocationLabels.length === 0 ? 'Keine' : additionalLocationLabels.join(', ')} />
             </ReviewBlock>
 
             <ReviewBlock title="Plan">
-                <ReviewRow label="Phases / Tasks / Milestones" value={`${phaseTotals.phases} / ${phaseTotals.tasks} / ${phaseTotals.milestones}`} />
+                <ReviewRow label="Phasen / Aufgaben / Meilensteine" value={`${phaseTotals.phases} / ${phaseTotals.tasks} / ${phaseTotals.milestones}`} />
                 {state.templateId && phaseTotals.phases > 0 && (
-                    <ReviewRow label="Quelle" value="Template (with edits)" />
+                    <ReviewRow label="Quelle" value="Vorlage (bearbeitet)" />
                 )}
             </ReviewBlock>
 
-            <ReviewBlock title="Security & Schedule">
+            <ReviewBlock title="Sicherheit & Termin">
                 <ReviewRow label="Freigabe" value={clearance ? `Level ${clearance.level} — ${clearance.name}` : `Level ${state.clearanceLevel}`} />
-                <ReviewRow label="Markers"
+                <ReviewRow label="Markierungen"
                     value={markers.length === 0
-                        ? 'None'
-                        : markers.map((m: any) => m.syncRestricted ? `${m.code} (sync-restricted)` : m.code).join(', ')} />
+                        ? 'Keine'
+                        : markers.map((m: any) => m.syncRestricted ? `${m.code} (sync-eingeschränkt)` : m.code).join(', ')} />
                 <ReviewRow label="Geplant"
-                    value={state.isScheduled ? `${state.scheduledStart || '—'} → ${state.scheduledEnd || '—'}` : 'No'} />
-                <ReviewRow label="Discord Event" value={state.createDiscordEvent ? 'Yes' : 'No'} />
+                    value={state.isScheduled ? `${state.scheduledStart || '—'} → ${state.scheduledEnd || '—'}` : 'Nein'} />
+                <ReviewRow label="Discord-Ereignis" value={state.createDiscordEvent ? 'Ja' : 'Nein'} />
             </ReviewBlock>
         </div>
     );

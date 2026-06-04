@@ -41,7 +41,7 @@ export default function IntelPanel() {
             <EmptyState
                 icon="fa-satellite-dish"
                 heading="Intel-Netz ruhig"
-                description="Keine Live-Bulletins oder aktiven Vorsichtshinweise."
+                description="Keine Live-Meldungen oder aktiven Kopfgelder."
                 accent="rose"
             />
         );
@@ -52,7 +52,7 @@ export default function IntelPanel() {
             {bulletins.length > 0 && (
                 <>
                     <div className="px-3 py-2 bg-slate-950/40 flex items-center justify-between">
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500">Live-Bulletins</span>
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500">Live-Meldungen</span>
                         <span className="text-[10px] font-mono text-slate-600">{bulletins.length}</span>
                     </div>
                     {bulletins.map((b) => (
@@ -76,7 +76,7 @@ export default function IntelPanel() {
             {activeWarrants.length > 0 && (
                 <>
                     <div className="px-3 py-2 bg-slate-950/40 flex items-center justify-between">
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500">Aktive Vorsichtsmaßnahmen</span>
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500">Aktive Kopfgelder</span>
                         <span className="text-[10px] font-mono text-slate-600">{activeWarrants.length}</span>
                     </div>
                     {activeWarrants.map((w) => (

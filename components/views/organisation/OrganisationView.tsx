@@ -121,14 +121,14 @@ const OrganisationView: React.FC = () => {
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             <HeroShell
-                chipLabel="MODULE · ORGANISATION"
+                chipLabel="MODUL · ORGANISATION"
                 chipIcon="fa-sitemap"
                 chipAccent="indigo"
                 title="Organisation"
                 subtitle="Durchstöbere die Einheitshierarchie. Öffne eine Einheit, um Mitglieder, Feed und Einsätze zu sehen."
                 statsCols={3}
                 stats={<>
-                    <HeroStat icon="fa-people-group" label="Units" value={stats.units} accent="indigo" emphasize={stats.units > 0} />
+                    <HeroStat icon="fa-people-group" label="Einheiten" value={stats.units} accent="indigo" emphasize={stats.units > 0} />
                     <HeroStat icon="fa-users" label="Personal" value={stats.members} accent="cyan" emphasize={stats.members > 0} />
                     <HeroStat icon="fa-lock" label="Eingeschränkt" value={stats.restricted} accent="amber" emphasize={stats.restricted > 0} />
                 </>}
@@ -141,7 +141,7 @@ const OrganisationView: React.FC = () => {
                         <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
                         <input
                             type="search"
-                            placeholder="Search units by name or motto…"
+                            placeholder="Einheiten nach Name oder Motto suchen…"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="w-full bg-slate-900/60 text-white pl-12 pr-4 py-2.5 rounded-lg border border-slate-700 outline-hidden placeholder:text-slate-600 font-mono text-sm focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/40 transition-all"

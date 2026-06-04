@@ -100,7 +100,7 @@ const HelpView: React.FC = () => {
                 {/* 1. INSTALLATION & ALERTS */}
                 <HelpCard title="App Installation & Alerts" icon="fa-solid fa-mobile-screen" iconBgClass="bg-emerald-500/10" iconColorClass="text-emerald-400">
                     <Section title="Why Install?">
-                        <p>Empfangen<strong>EAM Sendungen</strong>, <strong>service request alerts</strong>, and <strong>operation updates</strong> while the app is closed, install the terminal as a PWA on your device. Browser tabs alone don't deliver background push.
+                        <p>Empfangen<strong>Notfall-Sendungen</strong>, <strong>service request alerts</strong>, and <strong>operation updates</strong> while the app is closed, install the terminal as a PWA on your device. Browser tabs alone don't deliver background push.
                         </p>
                     </Section>
 
@@ -508,7 +508,7 @@ const HelpView: React.FC = () => {
                         <ul className="list-disc pl-5 space-y-1">
                             <li><strong>Neue Anfrage:</strong>Spielt für Mitarbeiter, wenn ein Client eine Anfrage einreicht.</li>
                             <li><strong>Abtretung:</strong> Plays when you're added to a request, when responders join your request (clients), or when a status changes.</li>
-                            <li><strong>EAM:</strong> Full-screen emergency alert with mandatory acknowledgment countdown.</li>
+                            <li><strong>Notfall:</strong> Full-screen emergency alert with mandatory acknowledgment countdown.</li>
                             <li><strong>Radiohinweise:</strong>Mikrofonklick und Squelch für PTT-Feedback.</li>
                             <li><strong>Betriebswarnungen:</strong>Betriebsübergänge zu „Aktiv“, Broadcast-Benachrichtigungen usw.</li>
                         </ul>
@@ -537,13 +537,13 @@ const HelpView: React.FC = () => {
                                 Members log in via Discord OAuth (Client ID / Secret are configured in Admin → Settings, or your server's .env). The bot (using Bot Token) posts notifications and reads server roles.
                             </p>
                             <ul className="list-disc pl-5 space-y-1">
-                                <li><strong>Kanaleinstellungen:</strong>Neue Anfrage, Intel, EAM und das Neue<strong>Operationsankündigung</strong> default channel. <strong>Testversand</strong> verifies bot access.</li>
+                                <li><strong>Kanaleinstellungen:</strong>Neue Anfrage, Intel, Notfall und das Neue<strong>Operationsankündigung</strong> default channel. <strong>Testversand</strong> verifies bot access.</li>
                                 <li><strong>Rollenzuordnung:</strong>Klicken<strong>Rollen abrufen</strong> to pull server roles. Map each Discord role to a Rank + (optionally) a platform Role. Click <strong>Alle Benutzer aktualisieren</strong> to apply — Discord is the source of truth, the sync is one-way.</li>
                             </ul>
                         </Section>
-                        <Section title="EAM Sendungen">
+                        <Section title="Notfall-Sendungen">
                             <p>
-                                Emergency Action Messages override every active session with a full-screen siren and mandatory ack. Friction by design: type the message → <strong>Einleiten</strong> → confirm → <strong>Arm</strong> (3-sec countdown) → <strong>Übertragen</strong>. Posts to the Discord EAM channel and pushes to PWA devices. Reserve for genuine emergencies.
+                                Emergency Action Messages override every active session with a full-screen siren and mandatory ack. Friction by design: type the message → <strong>Einleiten</strong> → confirm → <strong>Arm</strong> (3-sec countdown) → <strong>Übertragen</strong>. Posts to the Discord-Notfall-Kanal and pushes to PWA devices. Reserve for genuine emergencies.
                             </p>
                         </Section>
                         <Section title="AI Konfiguration">

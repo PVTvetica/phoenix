@@ -105,10 +105,10 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
     const handleBulkDeleteWarrants = async () => {
         if (selectedIds.size === 0) return;
         const confirmed = await confirm({
-            title: 'Bulk Delete Caution Notes',
-            message: `Permanently delete ${selectedIds.size} selected caution note${selectedIds.size > 1 ? 's' : ''}? This cannot be undone.`,
+            title: 'Kopfgelder löschen',
+            message: `${selectedIds.size} ${selectedIds.size === 1 ? 'ausgewähltes Kopfgeld' : 'ausgewählte Kopfgelder'} dauerhaft löschen? Das kann nicht rückgängig gemacht werden.`,
             variant: 'danger',
-            confirmText: `Delete ${selectedIds.size} Caution Notes`
+            confirmText: `${selectedIds.size} ${selectedIds.size === 1 ? 'Kopfgeld' : 'Kopfgelder'} löschen`
         });
         if (!confirmed) return;
         try {
@@ -139,15 +139,15 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             <HeroShell
-                chipLabel="MODUL · VERWARNUNGEN"
+                chipLabel="MODUL · KOPFGELDER"
                 chipIcon="fa-crosshairs"
                 chipAccent="red"
-                title="Verwarnungen"
-                subtitle="Markierte Handles, Hinweise und Feld-Vorsichtsverfolgung."
+                title="Kopfgelder"
+                subtitle="Markierte Handles, Belohnungen und Feldverfolgung."
                 syncing={isFetching['warrants']}
                 actions={<>
                     {hasPermission('warrant:create') && (
-                        <HeroActionButton onClick={openCreateModal} accent="red" icon="fa-plus">Neue Verwarnung</HeroActionButton>
+                        <HeroActionButton onClick={openCreateModal} accent="red" icon="fa-plus">Neues Kopfgeld</HeroActionButton>
                     )}
                     <div className="flex bg-slate-900/60 rounded-lg border border-slate-700 p-0.5">
                         <button onClick={() => { setViewMode('cards'); setSelectedIds(new Set()); }}
@@ -241,8 +241,8 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
                         <EmptyState
                             icon="fa-folder-open"
                             accent="red"
-                            heading="Keine passenden Vorsichtshinweise"
-                            description={searchTerm ? 'Probiere einen anderen Suchbegriff.' : 'Neue Verwarnungen erscheinen hier nach Einreichung.'}
+                            heading="Keine passenden Kopfgelder"
+                            description={searchTerm ? 'Probiere einen anderen Suchbegriff.' : 'Neue Kopfgelder erscheinen hier nach Einreichung.'}
                         />
                     </div>
                 )}

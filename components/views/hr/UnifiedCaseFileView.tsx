@@ -903,7 +903,7 @@ const UnifiedCaseFileView: React.FC<UnifiedCaseFileViewProps> = ({ applicationId
 
                             {/* External Intel / Warrants */}
                             <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-6">
-                                <h3 className="text-lg font-bold text-white mb-4">IntelGewalt und Vorsichtsmaßnahmen</h3>
+                                <h3 className="text-lg font-bold text-white mb-4">Intel und Kopfgelder</h3>
                                 {dossier ? (
                                     <div className="space-y-4">
                                         {dossier.warrants.filter(w => w.status === WarrantStatus.Active || w.status === WarrantStatus.Standing).length > 0 ? (
@@ -918,7 +918,7 @@ const UnifiedCaseFileView: React.FC<UnifiedCaseFileViewProps> = ({ applicationId
                                             <div className="bg-green-900/10 border-l-4 border-green-500 p-4 rounded-r">
                                                 <div className="flex items-center gap-2 text-green-400 font-bold mb-1">
                                                     <i className="fa-solid fa-check-circle"></i>
-                                                    <span>Keine aktiven Vorsichtsmaßnahmen</span>
+                                                    <span>Keine aktiven Kopfgelder</span>
                                                 </div>
                                             </div>
                                         )}

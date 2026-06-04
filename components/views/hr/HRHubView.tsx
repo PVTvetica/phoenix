@@ -146,25 +146,25 @@ const HRHubView: React.FC = () => {
         type NavGroup = { title: string; items: NavItem[] };
         const groups: NavGroup[] = [
             {
-                title: "Self Service",
+                title: "Self-Service",
                 items: [
-                    { id: 'overview' as HRTab, label: 'My Career', icon: 'fa-solid fa-id-badge' },
-                    { id: 'my-unit' as HRTab, label: 'My Unit', icon: 'fa-solid fa-shield-cat' },
+                    { id: 'overview' as HRTab, label: 'Meine Karriere', icon: 'fa-solid fa-id-badge' },
+                    { id: 'my-unit' as HRTab, label: 'Meine Einheit', icon: 'fa-solid fa-shield-cat' },
                     { id: 'my-posting' as HRTab, label: 'Mein Beitrag', icon: 'fa-solid fa-map-location-dot' },
                     { id: 'my-clearance' as HRTab, label: 'Meine Freigabe', icon: 'fa-solid fa-user-shield' },
-                    { id: 'my-specializations' as HRTab, label: 'My Specialisations', icon: 'fa-solid fa-tags' },
+                    { id: 'my-specializations' as HRTab, label: 'Meine Spezialisierungen', icon: 'fa-solid fa-tags' },
                     { id: 'my-applications' as HRTab, label: 'Meine Bewerbungen', icon: 'fa-solid fa-file-signature' },
                 ]
             },
             {
-                title: "My Organisation",
+                title: "Meine Organisation",
                 items: [
                     { id: 'gazette' as HRTab, label: 'Stellenanzeiger', icon: 'fa-solid fa-newspaper', badge: heroStats.openVacancies > 0 ? heroStats.openVacancies : undefined },
-                    { id: 'notices' as HRTab, label: 'Notices', icon: 'fa-solid fa-bullhorn' },
+                    { id: 'notices' as HRTab, label: 'Mitteilungen', icon: 'fa-solid fa-bullhorn' },
                 ]
             },
             {
-                title: "Service History",
+                title: "Dienstgeschichte",
                 items: [
                     { id: 'ops-log' as HRTab, label: 'Betriebsprotokoll', icon: 'fa-solid fa-person-military-rifle' },
                     { id: 'responder-log' as HRTab, label: 'Responder-Protokoll', icon: 'fa-solid fa-truck-medical' },
@@ -200,7 +200,7 @@ const HRHubView: React.FC = () => {
                 hrItems.push({ id: 'manage-templates' as HRTab, label: 'Interviewvorlagen', icon: 'fa-solid fa-clipboard-question' });
             }
 
-            groups.push({ title: "HR Management", items: hrItems });
+            groups.push({ title: "HR-Verwaltung", items: hrItems });
         }
         return groups;
     }, [canRecruit, canManageJobs, canAdminHR, canManagePositions, heroStats]);
@@ -208,17 +208,17 @@ const HRHubView: React.FC = () => {
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             <HeroShell
-                chipLabel="MODULE · HR HUB"
+                chipLabel="MODUL · HR-ZENTRALE"
                 chipIcon="fa-id-badge"
                 chipAccent="emerald"
-                title="HR Hub"
+                title="HR-Zentrale"
                 subtitle="Personalakten, Rekrutierung, Interviews, Versetzungen und Freigabeverwaltung."
                 syncing={isFetching['hr']}
                 stats={<>
-                    <HeroStat icon="fa-folder-tree" label="Open Cases" value={heroStats.openCases} accent="emerald" emphasize={heroStats.openCases > 0} onClick={(canRecruit || canAdminHR) ? () => setActiveTab('case-management') : undefined} />
-                    <HeroStat icon="fa-calendar-check" label="Pending Interviews" value={heroStats.pendingInterviews} accent="amber" emphasize={heroStats.pendingInterviews > 0} onClick={(canRecruit || canAdminHR) ? () => setActiveTab('manage-interviews') : undefined} />
-                    <HeroStat icon="fa-newspaper" label="Open Vacancies" value={heroStats.openVacancies} accent="sky" emphasize={heroStats.openVacancies > 0} onClick={() => setActiveTab('gazette')} />
-                    <HeroStat icon="fa-hourglass-half" label="Probation" value={heroStats.probationTracked} accent="purple" emphasize={heroStats.probationTracked > 0} onClick={(canRecruit || canAdminHR) ? () => setActiveTab('probation') : undefined} />
+                    <HeroStat icon="fa-folder-tree" label="Offene Fälle" value={heroStats.openCases} accent="emerald" emphasize={heroStats.openCases > 0} onClick={(canRecruit || canAdminHR) ? () => setActiveTab('case-management') : undefined} />
+                    <HeroStat icon="fa-calendar-check" label="Ausstehende Interviews" value={heroStats.pendingInterviews} accent="amber" emphasize={heroStats.pendingInterviews > 0} onClick={(canRecruit || canAdminHR) ? () => setActiveTab('manage-interviews') : undefined} />
+                    <HeroStat icon="fa-newspaper" label="Offene Stellen" value={heroStats.openVacancies} accent="sky" emphasize={heroStats.openVacancies > 0} onClick={() => setActiveTab('gazette')} />
+                    <HeroStat icon="fa-hourglass-half" label="Bewährung" value={heroStats.probationTracked} accent="purple" emphasize={heroStats.probationTracked > 0} onClick={(canRecruit || canAdminHR) ? () => setActiveTab('probation') : undefined} />
                 </>}
             />
 

@@ -1,6 +1,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { ServiceType, UrgencyLevel, ThreatLevel, HydratedServiceRequest, ServiceRequestStatus } from '../../types';
+import { urgencyLabel, threatLevelLabel, serviceTypeLabel } from '../views/operations/requests/requestStyles';
 import { useRequests } from '../../contexts/RequestsContext';
 
 import { useData } from '../../contexts/DataContext';
@@ -52,7 +53,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
         e.preventDefault();
 
         if (rsiHandle.includes(',') || rsiHandle.trim().split(/\s+/).length > 1) {
-            addToast("Validierungsfehler", <i className="fa-solid fa-triangle-exclamation"></i>, "bg-amber-500/10 text-amber-400 border-amber-500/50", { description: "Trage hier nur den Handle des PRIMÄREN Kontakts ein. Weitere Gruppenmitglieder in das Feld Party Members." });
+            addToast("Validierungsfehler", <i className="fa-solid fa-triangle-exclamation"></i>, "bg-amber-500/10 text-amber-400 border-amber-500/50", { description: "Trage hier nur den Handle des PRIMÄREN Kontakts ein. Weitere Gruppenmitglieder ins Feld „Zusätzliche Parteimitglieder“." });
             return;
         }
 
@@ -101,7 +102,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
 
             } catch (err) {
                 console.error("Failed to create ad-hoc request:", err);
-                addToast("Fehler", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Beim Erstellen der Ad-hoc-Anfrage ist ein Fehler aufgetreten. Bitte versuche es erneut." });
+                addToast("Fehler", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Beim Erstellen der Eilmeldung ist ein Fehler aufgetreten. Bitte versuche es erneut." });
             } finally {
                 setIsLoading(false);
             }
@@ -115,7 +116,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
         <WindowFrame
             isOpen={isOpen}
             onClose={onClose}
-            title="Log Ad-Hoc Request"
+            title="Eilmeldung protokollieren"
             subtitle="Manueller Eingabemodus"
             icon="fa-solid fa-file-pen"
             color="amber"
@@ -130,7 +131,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
                                 type="text"
                                 value={rsiHandle}
                                 onChange={(e) => setRsiHandle(e.target.value)}
-                                placeholder="e.g., SquadLeader_1"
+                                placeholder="z. B. SquadLeader_1"
                                 className={inputClass}
                                 required
                                 disabled={isLoading}
@@ -147,7 +148,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
                                 disabled={isLoading}
                             >
                                 {activeServiceTypes.map(t => (
-                                    <option key={t.id} value={t.name}>{t.name}</option>
+                                    <option key={t.id} value={t.name}>{serviceTypeLabel(t.name)}</option>
                                 ))}
                             </select>
                         </div>
@@ -162,7 +163,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
                                 disabled={isLoading}
                             >
                                 {Object.values(UrgencyLevel).map(level => (
-                                    <option key={level} value={level}>{level}</option>
+                                    <option key={level} value={level}>{urgencyLabel(level)}</option>
                                 ))}
                             </select>
                         </div>
@@ -175,7 +176,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
                                 disabled={isLoading}
                             >
                                 {Object.values(ThreatLevel).map(level => (
-                                    <option key={level} value={level}>{level}</option>
+                                    <option key={level} value={level}>{threatLevelLabel(level)}</option>
                                 ))}
                             </select>
                         </div>
@@ -198,7 +199,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
                                 value={currentHandle}
                                 onChange={(e) => setCurrentHandle(e.target.value)}
                                 onKeyDown={(e) => { if (e.key === 'Enter') handleAddHandle(e); }}
-                                placeholder="RSI Handle (e.g. Wingman_Bob)"
+                                placeholder="RSI-Handle (z. B. Wingman_Bob)"
                                 className={inputClass}
                                 disabled={isLoading}
                             />
@@ -232,7 +233,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
                             type="text"
                             value={partyInfo}
                             onChange={(e) => setPartyInfo(e.target.value)}
-                            placeholder="Party Status / Context (e.g. All injured)"
+                            placeholder="Gruppenstatus / Kontext (z. B. alle verletzt)"
                             className={inputClass}
                             disabled={isLoading}
                         />
@@ -244,7 +245,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             rows={3}
-                            placeholder="Situation report..."
+                            placeholder="Lagebericht…"
                             className={`${inputClass} resize-none`}
                             required
                             disabled={isLoading}
@@ -260,7 +261,7 @@ const CreateAdHocRequestModal: React.FC<CreateAdHocRequestModalProps> = ({ isOpe
                         className="px-6 py-2 bg-amber-500/10 text-amber-400 border border-amber-500/50 hover:bg-amber-500/20 rounded-lg text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50"
                         disabled={isLoading}
                     >
-                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Log Request'}
+                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Eilmeldung protokollieren'}
                     </button>
                 </div>
             </form>

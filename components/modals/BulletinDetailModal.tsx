@@ -51,7 +51,7 @@ const BulletinDetailModal: React.FC<BulletinDetailModalProps> = ({ isOpen, onClo
         <WindowFrame
             isOpen={isOpen}
             onClose={onClose}
-            title="Intel Bulletin"
+            title="Intel-Meldung"
             subtitle={`BLT-${bulletin.id.substring(0, 6)}`}
             icon="fa-solid fa-satellite-dish"
             color={frameColor}

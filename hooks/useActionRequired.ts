@@ -243,8 +243,8 @@ export function useActionRequired(): UseActionRequiredResult {
                 out.push({
                     type: 'intel',
                     id: `bulletin-${b.id}`,
-                    title: 'Critical intel bulletin',
-                    subtitle: b.title || 'New bulletin',
+                    title: 'Kritische Intel-Meldung',
+                    subtitle: b.title || 'Neue Meldung',
                     icon: 'fa-satellite-dish',
                     accent: 'rose',
                     priority: 1,

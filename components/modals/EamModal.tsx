@@ -61,7 +61,7 @@ const EamModal: React.FC<EamModalProps> = ({ message, onClose, soundUrl, volume 
                         </div>
                     </div>
                     <div className="hidden sm:block text-right">
-                        <p className="text-red-500/20 font-black text-6xl font-mono leading-none tracking-tighter select-none">EAM</p>
+                        <p className="text-red-500/20 font-black text-6xl font-mono leading-none tracking-tighter select-none">NOTFALL</p>
                     </div>
                 </div>
 

@@ -80,7 +80,7 @@ const tabGroups = {
     "Communications": [
         { id: 'notices', label: 'Announcements', icon: 'fa-solid fa-bullhorn', permission: 'admin:config:notices' },
         { id: 'tools', label: 'Externe Tools', icon: 'fa-solid fa-toolbox', permission: 'admin:config:tools' },
-        { id: 'eam', label: 'EAM Broadcast', icon: 'fa-solid fa-tower-broadcast', permission: 'admin:broadcast:eam' },
+        { id: 'eam', label: 'Notfall-Rundfunk', icon: 'fa-solid fa-tower-broadcast', permission: 'admin:broadcast:eam' },
     ],
     "Governance": [
         { id: 'government', label: 'Regierung', icon: 'fa-solid fa-landmark', permission: 'gov:admin' },

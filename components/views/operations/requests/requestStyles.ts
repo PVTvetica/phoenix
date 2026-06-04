@@ -63,6 +63,40 @@ export const urgencyIcon = (u: UrgencyLevel): string => {
     }
 };
 
+export const urgencyLabel = (u: UrgencyLevel): string => {
+    switch (u) {
+        case UrgencyLevel.Low: return 'Niedrig';
+        case UrgencyLevel.Medium: return 'Mittel';
+        case UrgencyLevel.High: return 'Hoch';
+        case UrgencyLevel.Critical: return 'Kritisch';
+        default: return u;
+    }
+};
+
+export const threatLevelLabel = (t: ThreatLevel): string => {
+    switch (t) {
+        case ThreatLevel.None: return 'Keine';
+        case ThreatLevel.Low: return 'Niedrig';
+        case ThreatLevel.Medium: return 'Mittel';
+        case ThreatLevel.High: return 'Hoch';
+        case ThreatLevel.Critical: return 'Kritisch';
+        case ThreatLevel.PVP: return 'PVP';
+        default: return t;
+    }
+};
+
+const SERVICE_TYPE_LABELS: Record<string, string> = {
+    Logistics: 'Logistik',
+    Rescue: 'Rettung',
+    Security: 'Sicherheit',
+    Medical: 'Medizin',
+    Escort: 'Eskorte',
+    Transport: 'Transport',
+};
+
+export const serviceTypeLabel = (name: string): string =>
+    SERVICE_TYPE_LABELS[name] ?? name;
+
 export const threatAccent = (t: ThreatLevel | IntelThreatLevel): AccentKey => {
     switch (t) {
         case ThreatLevel.PVP:

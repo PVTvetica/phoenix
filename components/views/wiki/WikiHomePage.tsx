@@ -167,7 +167,7 @@ const WikiHomePage: React.FC<WikiHomePageProps> = ({ config, visiblePages, canEd
                 </div>
 
                 <div className="space-y-3">
-                    <SectionLabel label="Welcome Content" icon="fa-message" />
+                    <SectionLabel label="Willkommensinhalt" icon="fa-message" />
                     <WikiEditor
                         content={config.welcomeContent || EMPTY_CONTENT}
                         editable={true}
@@ -177,7 +177,7 @@ const WikiHomePage: React.FC<WikiHomePageProps> = ({ config, visiblePages, canEd
                 </div>
 
                 <div className="space-y-3 pt-4 border-t border-slate-700/50">
-                    <SectionLabel label="Featured Articles" icon="fa-star" />
+                    <SectionLabel label="Hervorgehobene Artikel" icon="fa-star" />
 
                     {editFeaturedPages.length > 0 ? (
                         <div className="space-y-2">
@@ -294,15 +294,15 @@ const WikiHomePage: React.FC<WikiHomePageProps> = ({ config, visiblePages, canEd
                 <PortalCard variant="dashed" padding="lg">
                     <p className="text-sm text-slate-500 text-center">
                         {canEdit
-                            ? 'No welcome content yet. Click "Edit Home" to add a welcome message.'
-                            : 'Welcome to the wiki. Pick a page from the tree or use the search to begin.'}
+                            ? 'Noch kein Willkommensinhalt. Klicke auf „Startseite bearbeiten“, um eine Willkommensnachricht hinzuzufügen.'
+                            : 'Willkommen im Wiki. Wähle eine Seite aus dem Baum oder nutze die Suche.'}
                     </p>
                 </PortalCard>
             )}
 
             {hasFeatured && (
                 <div>
-                    <SectionLabel label="Featured Articles" icon="fa-star" count={featuredPages.length} />
+                    <SectionLabel label="Hervorgehobene Artikel" icon="fa-star" count={featuredPages.length} />
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {featuredPages.map(page => (
                             <PageCard
@@ -318,7 +318,7 @@ const WikiHomePage: React.FC<WikiHomePageProps> = ({ config, visiblePages, canEd
 
             {hasRecent && (
                 <div>
-                    <SectionLabel label="Recently Updated" icon="fa-clock-rotate-left" count={recentlyUpdated.length} />
+                    <SectionLabel label="Kürzlich aktualisiert" icon="fa-clock-rotate-left" count={recentlyUpdated.length} />
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {recentlyUpdated.map(page => (
                             <PageCard

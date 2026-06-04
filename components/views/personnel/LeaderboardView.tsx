@@ -140,25 +140,25 @@ const LeaderboardView: React.FC = () => {
 
     const sortTabs: Array<{ key: SortKey; label: string; icon: string }> = [
         { key: 'totalMissions', label: 'Missionen', icon: 'fa-check-double' },
-        { key: 'totalUec', label: 'Total UEC', icon: 'fa-coins' },
-        { key: 'largestPayout', label: 'Top Payout', icon: 'fa-sack-dollar' },
+        { key: 'totalUec', label: 'UEC gesamt', icon: 'fa-coins' },
+        { key: 'largestPayout', label: 'Top-Auszahlung', icon: 'fa-sack-dollar' },
         { key: 'medigel', label: 'Medigel', icon: 'fa-kit-medical' },
-        { key: 'avgRating', label: 'Satisfaction', icon: 'fa-star' },
+        { key: 'avgRating', label: 'Zufriedenheit', icon: 'fa-star' },
     ];
 
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             <HeroShell
-                chipLabel="MODULE · LEADERBOARD"
+                chipLabel="MODUL · BESTENLISTE"
                 chipIcon="fa-trophy"
                 chipAccent="amber"
-                title="Service Leaderboard"
+                title="Service-Bestenliste"
                 subtitle="Einsatzleistung und Bewertungen. Rankings aktualisieren sich mit abgeschlossenen Missionen."
                 statsCols={3}
                 stats={<>
-                    <HeroStat icon="fa-check-double" label="Missions Completed" value={heroStats.totalMissions} accent="emerald" emphasize={heroStats.totalMissions > 0} />
-                    <HeroStat icon="fa-sack-dollar" label="Total UEC Earned" value={heroStats.totalUec.toLocaleString()} accent="amber" emphasize={heroStats.totalUec > 0} />
-                    <HeroStat icon="fa-user-group" label="Active Operators" value={heroStats.activeOperators} accent="cyan" emphasize={heroStats.activeOperators > 0} />
+                    <HeroStat icon="fa-check-double" label="Missionen abgeschlossen" value={heroStats.totalMissions} accent="emerald" emphasize={heroStats.totalMissions > 0} />
+                    <HeroStat icon="fa-sack-dollar" label="UEC gesamt verdient" value={heroStats.totalUec.toLocaleString()} accent="amber" emphasize={heroStats.totalUec > 0} />
+                    <HeroStat icon="fa-user-group" label="Aktive Operatoren" value={heroStats.activeOperators} accent="cyan" emphasize={heroStats.activeOperators > 0} />
                 </>}
                 tabs={sortTabs.map(tab => (
                     <button
@@ -263,7 +263,7 @@ const LeaderboardView: React.FC = () => {
                                     ? 'No rated missions found. Client ratings appear here once requests are resolved.'
                                     : sortKey === 'medigel'
                                         ? 'No medigel consumption has been logged yet.'
-                                        : 'Rankings will appear here as operators complete missions.'
+                                        : 'Rankings erscheinen hier, sobald Operatoren Missionen abschließen.'
                             }
                         />
                     </div>

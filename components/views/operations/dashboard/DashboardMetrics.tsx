@@ -66,7 +66,7 @@ export default function DashboardMetrics() {
                 emphasize={criticalRequestsCount > 0}
             />
             <MetricCard
-                label="Aktive Vorsichtsmaßnahmen"
+                label="Aktive Kopfgelder"
                 value={activeWarrantsCount}
                 sub={activeWarrantsCount === 0 ? 'Keine aktiv' : 'Live'}
                 icon="fa-triangle-exclamation"

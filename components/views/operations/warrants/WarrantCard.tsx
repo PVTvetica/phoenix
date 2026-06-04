@@ -37,9 +37,9 @@ const WarrantCard: React.FC<Props> = ({ warrant, canManage, onUpdate, onDelete, 
     const handleDelete = async (e: React.MouseEvent) => {
         e.stopPropagation();
         const confirmed = await confirm({
-            title: 'Delete Caution Note',
-            message: `Are you sure you want to delete the caution note for ${warrant.targetRsiHandle}?`,
-            confirmText: 'Delete',
+            title: 'Kopfgeld löschen',
+            message: `Kopfgeld für ${warrant.targetRsiHandle} wirklich löschen?`,
+            confirmText: 'Löschen',
             variant: 'danger',
         });
         if (confirmed) await onDelete(warrant.id);

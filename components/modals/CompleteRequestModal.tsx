@@ -183,7 +183,7 @@ const CompleteRequestModal: React.FC<CompleteRequestModalProps> = ({ isOpen, onC
                                         disabled={isLoading}
                                     />
                                     <div>
-                                        <span className="text-red-400 font-bold block text-sm">Reichen du den IntelGerichtsbericht ein</span>
+                                        <span className="text-red-400 font-bold block text-sm">Intel-Bericht einreichen</span>
                                         <span className="text-xs text-red-300/60 block mt-1">Flag this client or incident in the Intelligence Hub due to negative outcome.</span>
                                     </div>
                                 </label>

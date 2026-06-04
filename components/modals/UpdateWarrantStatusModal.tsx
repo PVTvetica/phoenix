@@ -56,7 +56,7 @@ const UpdateWarrantModal: React.FC<UpdateWarrantModalProps> = ({ isOpen, onClose
                 onClose();
             } catch (err) {
                 console.error("Failed to update warrant:", err);
-                addToast("Fehler", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Beim Aktualisieren der Vorsichtsmitteilung ist ein Fehler aufgetreten. Bitte versuche es erneut." });
+                addToast("Fehler", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Beim Aktualisieren des Kopfgelds ist ein Fehler aufgetreten. Bitte versuche es erneut." });
                 setIsLoading(false);
             }
         }
@@ -83,7 +83,7 @@ const UpdateWarrantModal: React.FC<UpdateWarrantModalProps> = ({ isOpen, onClose
         <WindowFrame
             isOpen={isOpen}
             onClose={onClose}
-            title="Update Caution"
+            title="Kopfgeld aktualisieren"
             subtitle={`CN-${warrant.id.substring(0, 6)}`}
             icon="fa-solid fa-triangle-exclamation"
             color="red"
@@ -144,7 +144,7 @@ const UpdateWarrantModal: React.FC<UpdateWarrantModalProps> = ({ isOpen, onClose
                         className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-red-900/30 disabled:opacity-50"
                         disabled={isLoading}
                     >
-                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Update Caution'}
+                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Kopfgeld aktualisieren'}
                     </button>
                 </div>
             </form>

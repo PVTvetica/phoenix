@@ -337,7 +337,7 @@ const FleetManagerView: React.FC = () => {
         ];
         if (canViewFleet) {
             t.push({ key: 'fleet', label: 'Org-Flotte', icon: 'fa-solid fa-layer-group' });
-            t.push({ key: 'organization', label: 'Manage Fleet', icon: 'fa-solid fa-sitemap' });
+            t.push({ key: 'organization', label: 'Flotte verwalten', icon: 'fa-solid fa-sitemap' });
         }
         return t;
     }, [canViewFleet]);
@@ -351,10 +351,10 @@ const FleetManagerView: React.FC = () => {
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             <HeroShell
-                chipLabel="MODULE · FLEET MANAGER"
+                chipLabel="MODUL · FLOTTENVERWALTUNG"
                 chipIcon="fa-rocket"
                 chipAccent="orange"
-                title="Fleet Manager"
+                title="Flottenverwaltung"
                 subtitle="Hangar, Org-Flotte und Flottengruppen. Schiffskatalog synchronisiert aus dem Star Citizen Wiki."
                 actions={<>
                     {activeTab === 'hangar' && canManageOwn && (
@@ -405,9 +405,9 @@ const FleetManagerView: React.FC = () => {
                 </>}
                 stats={<>
                     <HeroStat icon="fa-warehouse" label="Mein Hangar" value={myShips.length} accent="orange" emphasize={myShips.length > 0} onClick={() => setActiveTab('hangar')} />
-                    <HeroStat icon="fa-rocket" label="Org Ships" value={fleetStats.total} accent="sky" emphasize={fleetStats.total > 0} onClick={canViewFleet ? () => setActiveTab('fleet') : undefined} />
-                    <HeroStat icon="fa-sitemap" label="Fleet Groups" value={fleetGroups.length} accent="indigo" emphasize={fleetGroups.length > 0} onClick={canViewFleet ? () => setActiveTab('organization') : undefined} />
-                    <HeroStat icon="fa-users" label="Members w/ Ships" value={ownersCount} accent="emerald" emphasize={ownersCount > 0} />
+                    <HeroStat icon="fa-rocket" label="Org-Schiffe" value={fleetStats.total} accent="sky" emphasize={fleetStats.total > 0} onClick={canViewFleet ? () => setActiveTab('fleet') : undefined} />
+                    <HeroStat icon="fa-sitemap" label="Flottengruppen" value={fleetGroups.length} accent="indigo" emphasize={fleetGroups.length > 0} onClick={canViewFleet ? () => setActiveTab('organization') : undefined} />
+                    <HeroStat icon="fa-users" label="Mitglieder m. Schiffen" value={ownersCount} accent="emerald" emphasize={ownersCount > 0} />
                 </>}
                 tabs={tabs.map(tab => (
                     <button
@@ -433,7 +433,7 @@ const FleetManagerView: React.FC = () => {
                             <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                             <input
                                 type="search"
-                                placeholder={activeTab === 'hangar' ? 'Search your hangar…' : 'Search fleet ships, owners, manufacturers…'}
+                                placeholder={activeTab === 'hangar' ? 'Hangar durchsuchen…' : 'Flottenschiffe, Besitzer, Hersteller suchen…'}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full bg-slate-900/60 text-white pl-12 pr-4 py-2.5 rounded-lg border border-slate-700 outline-hidden placeholder:text-slate-500 font-mono text-sm focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/40 transition-all"

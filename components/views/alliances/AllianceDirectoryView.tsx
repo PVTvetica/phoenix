@@ -11,6 +11,11 @@ const typeStyles: Record<string, { ring: string; chip: string; icon: string }> =
     Rivalry: { ring: 'border-red-500/30', chip: 'bg-red-500/15 text-red-300 border-red-500/30', icon: 'fa-bolt' },
 };
 
+const STATUS_LABELS: Record<StatusFilter, string> = { All: 'Alle', Active: 'Aktiv', Pending: 'Ausstehend' };
+const TYPE_LABELS: Record<TypeFilter, string> = { All: 'Alle', Alliance: 'Allianz', Neutral: 'Neutral', Rivalry: 'Rivalität' };
+const ALLIANCE_TYPE_LABELS: Record<string, string> = { Alliance: 'Allianz', Neutral: 'Neutral', Rivalry: 'Rivalität' };
+const ALLIANCE_STATUS_LABELS: Record<string, string> = { Active: 'Aktiv', Pending: 'Ausstehend' };
+
 const FilterChip: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button onClick={onClick}
         className={`text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full border transition-colors ${active ? 'bg-indigo-600/30 text-indigo-200 border-indigo-500/50' : 'bg-slate-800/40 text-slate-400 border-slate-700 hover:text-slate-200'}`}>
@@ -71,7 +76,7 @@ const AllianceDirectoryView: React.FC = () => {
                     </span>
                     <div>
                         <h2 className="text-2xl font-bold text-white tracking-tight">Allianzverzeichnis</h2>
-                        <p className="text-slate-400 text-sm mt-1">Organizations your org has a standing diplomatic relationship with.</p>
+                        <p className="text-slate-400 text-sm mt-1">Organisationen, mit denen deine Org eine diplomatische Beziehung pflegt.</p>
                     </div>
                 </div>
                 <button onClick={load} className="text-xs text-slate-400 hover:text-white self-start md:self-auto"><i className="fa-solid fa-rotate mr-1"></i>Aktualisieren</button>
@@ -80,11 +85,11 @@ const AllianceDirectoryView: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mr-1">Status</span>
                 {(['All', 'Active', 'Pending'] as StatusFilter[]).map(s => (
-                    <FilterChip key={s} active={statusFilter === s} onClick={() => setStatusFilter(s)}>{s}</FilterChip>
+                    <FilterChip key={s} active={statusFilter === s} onClick={() => setStatusFilter(s)}>{STATUS_LABELS[s]}</FilterChip>
                 ))}
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mx-1 ml-4">Typ</span>
                 {(['All', 'Alliance', 'Neutral', 'Rivalry'] as TypeFilter[]).map(t => (
-                    <FilterChip key={t} active={typeFilter === t} onClick={() => setTypeFilter(t)}>{t}</FilterChip>
+                    <FilterChip key={t} active={typeFilter === t} onClick={() => setTypeFilter(t)}>{TYPE_LABELS[t]}</FilterChip>
                 ))}
             </div>
 
@@ -114,10 +119,10 @@ const AllianceDirectoryView: React.FC = () => {
                                 {entry.peerBlurb && <p className="text-sm text-slate-400 line-clamp-3">{entry.peerBlurb}</p>}
                                 <div className="mt-auto flex items-center gap-2 pt-1">
                                     <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${ts.chip}`}>
-                                        <i className={`fa-solid ${ts.icon} mr-1`} />{entry.type}
+                                        <i className={`fa-solid ${ts.icon} mr-1`} />{ALLIANCE_TYPE_LABELS[entry.type] || entry.type}
                                     </span>
                                     <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${entry.status === 'Active' ? 'bg-green-500/15 text-green-400 border-green-500/30' : 'bg-amber-500/15 text-amber-400 border-amber-500/30'}`}>
-                                        {entry.status}
+                                        {ALLIANCE_STATUS_LABELS[entry.status] || entry.status}
                                     </span>
                                 </div>
                                 {entry.status === 'Active' && (

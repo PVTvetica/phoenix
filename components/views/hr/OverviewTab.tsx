@@ -64,8 +64,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ setActiveTab }) => {
                 date: new Date(c.awardedAt),
                 icon: c.icon || 'fa-solid fa-medal',
                 tint: 'amber',
-                title: `Awarded "${c.name}"`,
-                subtitle: c.reason || (c.awardedBy ? `Issued by ${c.awardedBy.name}` : undefined),
+                title: `Ausgezeichnet: „${c.name}"`,
+                subtitle: c.reason || (c.awardedBy ? `Vergeben von ${c.awardedBy.name}` : undefined),
             });
         });
 
@@ -76,8 +76,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ setActiveTab }) => {
                 date: new Date(c.awardedAt),
                 icon: c.icon || 'fa-solid fa-certificate',
                 tint: 'sky',
-                title: `Certified in ${c.name}`,
-                subtitle: c.awardedBy ? `Issued by ${c.awardedBy.name}` : undefined,
+                title: `Zertifiziert: ${c.name}`,
+                subtitle: c.awardedBy ? `Vergeben von ${c.awardedBy.name}` : undefined,
             });
         });
 
@@ -89,7 +89,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ setActiveTab }) => {
                     date: end,
                     icon: 'fa-solid fa-hourglass-end',
                     tint: 'emerald',
-                    title: 'Probation Completed',
+                    title: 'Bewährung abgeschlossen',
                 });
             }
         }
@@ -100,8 +100,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ setActiveTab }) => {
                 date: memberSince,
                 icon: 'fa-solid fa-user-plus',
                 tint: 'slate',
-                title: 'Enlisted',
-                subtitle: currentUser?.rank?.name ? `as ${currentUser.rank.name}` : undefined,
+                title: 'Eingestellt',
+                subtitle: currentUser?.rank?.name ? `als ${currentUser.rank.name}` : undefined,
             });
         }
 

@@ -58,10 +58,10 @@ export default function MemberIdCard({ user, accent = 'emerald' }: Props) {
     const tenureLabel = tenureDays === null
         ? null
         : tenureDays < 30
-            ? `${tenureDays} day${tenureDays !== 1 ? 's' : ''}`
+            ? `${tenureDays} Tag${tenureDays !== 1 ? 'e' : ''}`
             : tenureDays < 365
-                ? `${Math.floor(tenureDays / 30)} mo`
-                : `${(tenureDays / 365).toFixed(1)} yr`;
+                ? `${Math.floor(tenureDays / 30)} Mon.`
+                : `${(tenureDays / 365).toFixed(1)} J.`;
 
     return (
         <div className="relative bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-xl overflow-hidden shadow-lg">
@@ -82,11 +82,11 @@ export default function MemberIdCard({ user, accent = 'emerald' }: Props) {
 
                 <div className="mt-3 flex flex-wrap justify-center gap-1.5">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-sm border text-[10px] font-black uppercase tracking-wider ${a.bg} ${a.border} ${a.text}`}>
-                        {user.rank?.name || 'Unranked'}
+                        {user.rank?.name || 'Ohne Rang'}
                     </span>
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-sm border text-[10px] font-black uppercase tracking-wider ${user.isDuty ? 'bg-green-500/10 text-green-400 border-green-500/30' : 'bg-slate-500/10 text-slate-400 border-slate-500/30'}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${user.isDuty ? 'bg-green-400 animate-pulse' : 'bg-slate-500'}`} />
-                        {user.isDuty ? 'On Duty' : 'Off Duty'}
+                        {user.isDuty ? 'Im Dienst' : 'Nicht im Dienst'}
                     </span>
                 </div>
             </div>
@@ -94,11 +94,11 @@ export default function MemberIdCard({ user, accent = 'emerald' }: Props) {
             <div className="relative z-10 border-t border-slate-800/80 divide-y divide-slate-800/80">
                 <div className="flex items-center justify-between gap-3 px-5 py-3 min-w-0">
                     <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black shrink-0">Einheit</span>
-                    <span className="text-sm font-bold text-white truncate min-w-0 text-right">{user.unit?.name || 'Unassigned'}</span>
+                    <span className="text-sm font-bold text-white truncate min-w-0 text-right">{user.unit?.name || 'Nicht zugewiesen'}</span>
                 </div>
                 <div className="flex items-center justify-between gap-3 px-5 py-3 min-w-0">
                     <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black shrink-0">Hauptposition</span>
-                    <span className="text-sm font-bold text-white truncate min-w-0 text-right">{user.position?.name || 'Unassigned'}</span>
+                    <span className="text-sm font-bold text-white truncate min-w-0 text-right">{user.position?.name || 'Nicht zugewiesen'}</span>
                 </div>
                 <div className="flex items-center justify-between gap-3 px-5 py-3 min-w-0">
                     <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black shrink-0">Systemrolle</span>

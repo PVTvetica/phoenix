@@ -5,6 +5,7 @@ import { useMembers } from '../../contexts/MembersContext';
 import { useAuth } from '../../contexts/AuthContext';
 
 import WindowFrame from '../layout/WindowFrame';
+import { threatLabel } from '../views/intel/intelStyles';
 import { useNotification } from '../../contexts/NotificationContext';
 
 interface CreateIntelReportModalProps {
@@ -100,7 +101,7 @@ const CreateIntelReportModal: React.FC<CreateIntelReportModalProps> = ({ isOpen,
             isOpen={isOpen}
             onClose={onClose}
             onMinimize={onMinimize}
-            title="Reichen du den IntelGerichtsbericht ein"
+            title="Intel-Bericht einreichen"
             subtitle="Taktischer Eintrag"
             icon="fa-solid fa-file-shield"
             color="indigo"
@@ -112,12 +113,14 @@ const CreateIntelReportModal: React.FC<CreateIntelReportModalProps> = ({ isOpen,
                         <div>
                             <label className={labelClass}>Betrefftyp</label>
                             <select value={subjectType} onChange={(e) => setSubjectType(e.target.value as IntelSubjectType)} className={inputClass} disabled={isLoading}>
-                                {Object.values(IntelSubjectType).map(t => <option key={t} value={t}>{t}</option>)}
+                                {Object.values(IntelSubjectType).map(t => (
+                                    <option key={t} value={t}>{t === IntelSubjectType.Organization ? 'Organisation' : 'Person'}</option>
+                                ))}
                             </select>
                         </div>
                         <div>
                             <label className={labelClass}>Ziel-Handle/Tag</label>
-                            <input type="text" value={targetId} onChange={(e) => setTargetId(e.target.value)} placeholder="RSI Handle" className={inputClass} required disabled={isLoading} />
+                            <input type="text" value={targetId} onChange={(e) => setTargetId(e.target.value)} placeholder="RSI-Handle" className={inputClass} required disabled={isLoading} />
                         </div>
                     </div>
 
@@ -152,7 +155,7 @@ const CreateIntelReportModal: React.FC<CreateIntelReportModalProps> = ({ isOpen,
                     {subjectType === IntelSubjectType.Person && (
                         <div>
                             <label className={labelClass}>Angeschlossene Organisation</label>
-                            <input type="text" value={affiliatedOrg} onChange={(e) => setAffiliatedOrg(e.target.value)} placeholder="Org Code" className={inputClass} disabled={isLoading} />
+                            <input type="text" value={affiliatedOrg} onChange={(e) => setAffiliatedOrg(e.target.value)} placeholder="Org-Code" className={inputClass} disabled={isLoading} />
                         </div>
                     )}
 
@@ -170,7 +173,7 @@ const CreateIntelReportModal: React.FC<CreateIntelReportModalProps> = ({ isOpen,
                                             : 'bg-slate-900 text-slate-500 border-slate-800'
                                             }`}
                                     >
-                                        {level}
+                                        {threatLabel(level)}
                                     </button>
                                 ))}
                             </div>
@@ -179,13 +182,13 @@ const CreateIntelReportModal: React.FC<CreateIntelReportModalProps> = ({ isOpen,
 
                     <div>
                         <label className={labelClass}>Zusammenfassung des Vorfalls</label>
-                        <textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={4} placeholder="Describe the encounter..." className={`${inputClass} resize-none font-light leading-relaxed`} required disabled={isLoading} />
+                        <textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={4} placeholder="Begegnung beschreiben…" className={`${inputClass} resize-none font-light leading-relaxed`} required disabled={isLoading} />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>Tags (durch Kommas getrennt)</label>
-                            <input type="text" value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="Piracy, Medic..." className={inputClass} disabled={isLoading} />
+                            <input type="text" value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="Piraterie, Medizin…" className={inputClass} disabled={isLoading} />
                         </div>
                         <div>
                             <label className={labelClass}>Beweislinks (einer pro Zeile)</label>
@@ -197,7 +200,7 @@ const CreateIntelReportModal: React.FC<CreateIntelReportModalProps> = ({ isOpen,
                 <div className="p-4 border-t border-white/5 bg-slate-900/50 flex justify-end gap-3 rounded-b-xl">
                     <button type="button" onClick={onClose} className="px-4 py-2 text-xs font-bold uppercase text-slate-400 hover:text-white transition-colors" disabled={isLoading}>Abbrechen</button>
                     <button type="submit" disabled={isLoading} className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-900/20 disabled:opacity-50">
-                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Publish Report'}
+                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Bericht veröffentlichen'}
                     </button>
                 </div>
             </form>

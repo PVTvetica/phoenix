@@ -223,7 +223,7 @@ const DossierView: React.FC<DossierViewProps> = ({
         { label: 'Reports', value: reports.length, icon: 'fa-file-lines', accent: 'sky' },
         ...(!isOrg ? [
             { label: 'Operationen', value: operations.length, icon: 'fa-crosshairs', accent: 'emerald' as const },
-            { label: 'Vorsichtsmaßnahmen', value: warrants.length, icon: 'fa-triangle-exclamation', accent: 'red' as const },
+            { label: 'Kopfgelder', value: warrants.length, icon: 'fa-triangle-exclamation', accent: 'red' as const },
             { label: 'Interactions', value: requests.length, icon: 'fa-handshake', accent: 'amber' as const },
         ] : []),
         { label: isOrg ? 'Members' : 'Affiliations', value: affiliates.length, icon: isOrg ? 'fa-users' : 'fa-diagram-project', accent: 'purple' },
@@ -528,7 +528,7 @@ const DossierView: React.FC<DossierViewProps> = ({
                                 <div className="rounded-xl border border-red-500/20 bg-slate-900/40 overflow-hidden">
                                     <div className="px-5 py-3 bg-red-500/5 border-b border-red-500/10 flex items-center gap-2">
                                         <i className="fa-solid fa-bullseye text-red-400 text-sm" aria-hidden />
-                                        <h3 className="text-xs font-black text-red-300 uppercase tracking-widest">Aktive Vorsichtsmaßnahmen</h3>
+                                        <h3 className="text-xs font-black text-red-300 uppercase tracking-widest">Aktive Kopfgelder</h3>
                                         <span className="text-[10px] font-mono font-bold text-red-400/60 ml-auto">{activeWarrants.length}</span>
                                     </div>
                                     <div className="divide-y divide-white/5">

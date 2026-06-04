@@ -32,7 +32,7 @@ const WarrantRowContent: React.FC<Props> = ({ warrant, onClick, isSelected }) =>
             isSelected={isSelected}
         >
             <div className="flex items-center gap-2 min-w-0">
-                <span className="px-1.5 py-0.5 rounded-sm border bg-red-500/10 border-red-500/30 text-red-300 font-black text-[9px] uppercase tracking-widest shrink-0">Vorsicht</span>
+                <span className="px-1.5 py-0.5 rounded-sm border bg-red-500/10 border-red-500/30 text-red-300 font-black text-[9px] uppercase tracking-widest shrink-0">Kopfgeld</span>
                 <h3 className="text-white font-black font-mono text-sm uppercase truncate">{warrant.targetRsiHandle}</h3>
                 <span className="text-slate-700 shrink-0">·</span>
                 <span className="text-[10px] text-slate-500 font-mono whitespace-nowrap">

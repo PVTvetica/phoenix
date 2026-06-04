@@ -311,10 +311,10 @@ const ProfileView: React.FC = () => {
                 <div className="relative px-4 sm:px-8 pt-10 pb-8">
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div className="min-w-0">
-                            <CallsignChip label="MODULE · MY ACCOUNT" icon="fa-id-card" accent="sky" pulse />
+                            <CallsignChip label="MODUL · MEIN KONTO" icon="fa-id-card" accent="sky" pulse />
                             <h1 className="mt-3 text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">Mein Konto</h1>
                             <p className="mt-2 text-sm text-slate-400 max-w-2xl">
-                                Identity, account settings, and device registration. Manage how the platform recognizes you.
+                                Identität, Kontoeinstellungen und Geräteregistrierung. Verwalte, wie die Plattform dich erkennt.
                             </p>
                         </div>
                     </div>
@@ -353,7 +353,7 @@ const ProfileView: React.FC = () => {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                 <div className="bg-slate-950/40 p-3 rounded-xl border border-white/10">
                                     <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1.5">Einheit</p>
-                                    <p className="text-white font-bold truncate text-sm">{currentUser.unit?.name || 'Unassigned'}</p>
+                                    <p className="text-white font-bold truncate text-sm">{currentUser.unit?.name || 'Nicht zugewiesen'}</p>
                                 </div>
                                 <div className="bg-slate-950/40 p-3 rounded-xl border border-white/10">
                                     <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1.5">Position</p>
@@ -361,7 +361,7 @@ const ProfileView: React.FC = () => {
                                 </div>
                                 <div className="bg-slate-950/40 p-3 rounded-xl border border-white/10">
                                     <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1.5">Freigabe</p>
-                                    <p className="text-white font-bold truncate text-sm">{currentUser.clearanceLevel?.name || 'None'}</p>
+                                    <p className="text-white font-bold truncate text-sm">{currentUser.clearanceLevel?.name || 'Keine'}</p>
                                 </div>
                                 <div className="bg-slate-950/40 p-3 rounded-xl border border-white/10">
                                     <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1.5">Ruf</p>
@@ -426,7 +426,7 @@ const ProfileView: React.FC = () => {
                                             onClick={() => { setDisplayNameDraft(currentUser.displayName || ''); setIsEditingDisplayName(true); }}
                                             className="text-sky-300 hover:text-sky-200 text-[10px] font-black uppercase tracking-widest transition-colors"
                                         >
-                                            {currentUser.displayName ? 'Change' : 'Customize'}
+                                            {currentUser.displayName ? 'Ändern' : 'Anpassen'}
                                         </button>
                                     )}
                                 </div>
@@ -502,10 +502,10 @@ const ProfileView: React.FC = () => {
                                             syncSuccess ? <i className="fa-solid fa-check" /> :
                                                 syncCooldown ? <i className="fa-solid fa-clock" /> :
                                                     <i className="fa-brands fa-discord" />}
-                                        {isSyncing ? 'Syncing...' : syncSuccess ? 'Synced' : syncCooldown ? <span className="font-mono">{cooldownTime >= 60 ? `${Math.floor(cooldownTime / 60)}m ${cooldownTime % 60}s` : `${cooldownTime}s`}</span> : 'Sync Roles'}
+                                        {isSyncing ? 'Synchronisiere…' : syncSuccess ? 'Synchronisiert' : syncCooldown ? <span className="font-mono">{cooldownTime >= 60 ? `${Math.floor(cooldownTime / 60)}m ${cooldownTime % 60}s` : `${cooldownTime}s`}</span> : 'Rollen synchronisieren'}
                                     </button>
                                     <p className="text-xs text-slate-400 leading-relaxed">
-                                        Pull your latest roles from the Discord server to update your Rank and Permissions on the dashboard.
+                                        Discord-Rollen vom Server abrufen, um Rang und Berechtigungen auf der Plattform zu aktualisieren.
                                     </p>
                                 </div>
                             </div>
@@ -529,7 +529,7 @@ const ProfileView: React.FC = () => {
 
                         <div className="p-5 space-y-4">
                             <p className="text-xs text-slate-400 leading-relaxed bg-slate-950/40 p-3 rounded-lg border border-slate-700/50">
-                                Register this device to receive critical mission alerts and EAM broadcasts even when the dashboard is closed.
+                                Gerät registrieren, um kritische Missionsalarme und Notfall-Sendungen zu erhalten — auch wenn das Dashboard geschlossen ist.
                             </p>
                             <div className="grid grid-cols-2 gap-3">
                                 <button
@@ -538,7 +538,7 @@ const ProfileView: React.FC = () => {
                                     className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white bg-sky-600 hover:bg-sky-500 border border-sky-500/40 rounded-lg shadow-lg shadow-sky-900/30 transition disabled:opacity-50"
                                 >
                                     {isDiagnosing ? <i className="fa-solid fa-circle-notch animate-spin"></i> : <i className="fa-solid fa-mobile-screen"></i>}
-                                    Register Device
+                                    Gerät registrieren
                                 </button>
                                 <button
                                     onClick={handleTestSignal}

@@ -97,7 +97,7 @@ const NotificationListener: React.FC = () => {
                 if (user && createdById === user.id) return;
 
                 toast(
-                    `New Intel Bulletin`,
+                    `Neue Intel-Meldung`,
                     <i className="fa-solid fa-satellite-dish"></i>,
                     'bg-sky-600 text-white',
                     { silent: true }

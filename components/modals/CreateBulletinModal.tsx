@@ -5,6 +5,7 @@ import { useIntel } from '../../contexts/IntelContext';
 import { useAuth } from '../../contexts/AuthContext';
 
 import WindowFrame from '../layout/WindowFrame';
+import { threatLabel } from '../views/intel/intelStyles';
 import { useNotification } from '../../contexts/NotificationContext';
 
 interface CreateBulletinModalProps {
@@ -13,12 +14,12 @@ interface CreateBulletinModalProps {
 }
 
 const DURATION_OPTIONS: { value: BulletinDuration; label: string }[] = [
-    { value: 15, label: '15m' },
-    { value: 30, label: '30m' },
-    { value: 60, label: '1h' },
-    { value: 120, label: '2h' },
-    { value: 240, label: '4h' },
-    { value: 0, label: 'Indefinite' },
+    { value: 15, label: '15 Min' },
+    { value: 30, label: '30 Min' },
+    { value: 60, label: '1 Std' },
+    { value: 120, label: '2 Std' },
+    { value: 240, label: '4 Std' },
+    { value: 0, label: 'Unbegrenzt' },
 ];
 
 const CreateBulletinModal: React.FC<CreateBulletinModalProps> = ({ isOpen, onClose }) => {
@@ -80,15 +81,15 @@ const CreateBulletinModal: React.FC<CreateBulletinModalProps> = ({ isOpen, onClo
                 sharedWithAllies,
             });
             addToast(
-                'Bulletin Published',
+                'Meldung gesendet',
                 <i className="fa-solid fa-satellite-dish"></i>,
                 'bg-amber-600 text-white shadow-amber-900/50',
-                { description: 'Dein Intel-Bulletin wurde erfolgreich gesendet.' }
+                { description: 'Deine Intel-Meldung wurde erfolgreich gesendet.' }
             );
             onClose();
         } catch (err) {
             console.error(err);
-            addToast("Fehler", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Bulletin konnte nicht erstellt werden. Bitte versuche es erneut." });
+            addToast("Fehler", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Meldung konnte nicht erstellt werden. Bitte versuche es erneut." });
         } finally {
             setIsLoading(false);
         }
@@ -110,8 +111,8 @@ const CreateBulletinModal: React.FC<CreateBulletinModalProps> = ({ isOpen, onClo
         <WindowFrame
             isOpen={isOpen}
             onClose={onClose}
-            title="Issue Intel Bulletin"
-            subtitle="Zeitkritische Intelligence"
+            title="Intel-Meldung senden"
+            subtitle="Zeitkritische Intel-Meldung"
             icon="fa-solid fa-satellite-dish"
             color="amber"
             width="max-w-xl"
@@ -124,7 +125,7 @@ const CreateBulletinModal: React.FC<CreateBulletinModalProps> = ({ isOpen, onClo
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value.slice(0, 120))}
-                            placeholder="Hostile patrol spotted near Nyx gateway"
+                            placeholder="Feindliche Patrouille nahe Nyx-Gateway gesichtet"
                             className={inputClass}
                             required
                             disabled={isLoading}
@@ -138,7 +139,7 @@ const CreateBulletinModal: React.FC<CreateBulletinModalProps> = ({ isOpen, onClo
                             value={body}
                             onChange={(e) => setBody(e.target.value.slice(0, 500))}
                             rows={3}
-                            placeholder="Provide actionable intelligence details..."
+                            placeholder="Umsetzbare Intel-Details eingeben…"
                             className={`${inputClass} resize-none`}
                             required
                             disabled={isLoading}
@@ -160,7 +161,7 @@ const CreateBulletinModal: React.FC<CreateBulletinModalProps> = ({ isOpen, onClo
                                             : 'bg-slate-900 text-slate-500 border-slate-800 hover:border-slate-600'
                                     }`}
                                 >
-                                    {level}
+                                    {threatLabel(level)}
                                 </button>
                             ))}
                         </div>
@@ -244,7 +245,7 @@ const CreateBulletinModal: React.FC<CreateBulletinModalProps> = ({ isOpen, onClo
                                 </span>
                             </button>
                             <p className="mt-1.5 text-[10px] text-slate-500">
-                                Allied orgs you've enabled the bulletin channel for can pull this bulletin (subject to clearance).
+                                Verbündete Orgs mit aktivem Meldungs-Kanal können diese Meldung abrufen (Freigabe vorausgesetzt).
                             </p>
                         </div>
                     </div>
@@ -254,7 +255,7 @@ const CreateBulletinModal: React.FC<CreateBulletinModalProps> = ({ isOpen, onClo
                 <div className="p-4 border-t border-white/5 bg-slate-900/50 flex justify-end gap-3 rounded-b-xl">
                     <button type="button" onClick={onClose} className="px-4 py-2 text-xs font-bold uppercase text-slate-400 hover:text-white transition-colors" disabled={isLoading}>Abbrechen</button>
                     <button type="submit" disabled={isLoading || !title.trim() || !body.trim()} className="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-amber-900/20 disabled:opacity-50">
-                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Broadcast Bulletin'}
+                        {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Meldung senden'}
                     </button>
                 </div>
             </form>

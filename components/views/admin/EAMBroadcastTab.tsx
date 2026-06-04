@@ -33,7 +33,7 @@ const EAMBroadcastTab: React.FC = () => {
 
     const handleInitiate = () => {
         if (!message.trim()) {
-            addToast("Leere Nachricht", <i className="fa-solid fa-triangle-exclamation"></i>, "bg-amber-500/10 text-amber-400 border-amber-500/50", { description: "EAM-Nachrichtentext darf nicht leer sein." });
+            addToast("Leere Nachricht", <i className="fa-solid fa-triangle-exclamation"></i>, "bg-amber-500/10 text-amber-400 border-amber-500/50", { description: "Notfall-Nachrichtentext darf nicht leer sein." });
             return;
         }
         setShowConfirmModal(true);
@@ -71,14 +71,14 @@ const EAMBroadcastTab: React.FC = () => {
             await broadcastEAM(message.toUpperCase());
             setEamMessage(message.toUpperCase());
             setActiveEam({ message: message.toUpperCase(), timestamp: new Date().toISOString() });
-            addToast("EAM Übermittelt", <i className="fa-solid fa-tower-broadcast"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Emergency Action Message an alle aktiven Sitzungen gesendet." });
+            addToast("Notfall übermittelt", <i className="fa-solid fa-tower-broadcast"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Notfallmeldung an alle aktiven Sitzungen gesendet." });
             setTimeout(() => {
                 handleCloseModal();
                 setMessage('');
             }, 800);
         } catch (error) {
             console.error('Failed to broadcast EAM:', error);
-            addToast("Übertragung fehlgeschlagen", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Der EAM-Rundfunk konnte nicht gesendet werden." });
+            addToast("Übertragung fehlgeschlagen", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: "Der Notfall-Rundfunk konnte nicht gesendet werden." });
         } finally {
             setIsBroadcasting(false);
         }
@@ -109,7 +109,7 @@ const EAMBroadcastTab: React.FC = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Aktiv EAM</span>
+                            <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Aktiver Notfall</span>
                             {activeEam.timestamp && (
                                 <span className="text-[10px] text-slate-500 font-mono">{formatTimestamp(activeEam.timestamp)}</span>
                             )}
@@ -161,7 +161,7 @@ const EAMBroadcastTab: React.FC = () => {
                             </div>
                             <div className="flex items-start gap-3">
                                 <i className="fa-solid fa-volume-high text-amber-500/70 text-xs mt-0.5"></i>
-                                <p className="text-xs text-slate-400 leading-relaxed">Löst den EAM-Alarmton auf allen verbundenen Geräten aus.</p>
+                                <p className="text-xs text-slate-400 leading-relaxed">Löst den Notfall-Alarmton auf allen verbundenen Geräten aus.</p>
                             </div>
                             <div className="flex items-start gap-3">
                                 <i className="fa-solid fa-bell text-amber-500/70 text-xs mt-0.5"></i>

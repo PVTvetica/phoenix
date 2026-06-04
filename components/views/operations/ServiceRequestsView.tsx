@@ -123,7 +123,7 @@ const ServiceRequestsView: React.FC<ServiceRequestsViewProps> = ({
                 syncing={isFetching['service_requests']}
                 actions={<>
                     {hasPermission('request:create_adhoc') && (
-                        <HeroActionButton onClick={openAdHocModal} accent="amber" icon="fa-user-pen">Ad-hoc protokollieren</HeroActionButton>
+                        <HeroActionButton onClick={openAdHocModal} accent="amber" icon="fa-user-pen">Eilmeldung</HeroActionButton>
                     )}
                     {hasPermission('request:create') && (
                         <HeroActionButton onClick={openCreateModal} accent="sky" icon="fa-plus">Neue Anfrage</HeroActionButton>
