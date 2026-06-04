@@ -580,10 +580,10 @@ const RadioControlView: React.FC = () => {
                 subtitle="Spectrum monitoring and dispatch. Tune into channels, transfer operators, and broadcast alerts."
                 actions={<>
                     <HeroActionButton onClick={() => setIsBroadcastModalOpen(true)} accent="amber" icon="fa-bullhorn">
-                        Broadcast Alert
+                        Broadcast-Alarm
                     </HeroActionButton>
                     <HeroActionButton onClick={openIssueEamModal} accent="red" icon="fa-radiation">
-                        Issue EAM
+                        Notfall senden
                     </HeroActionButton>
                     {canManage && (
                         <>

@@ -101,7 +101,7 @@ const LocationInput: React.FC<LocationInputProps> = ({ value, onChange, disabled
                 value={inputValue}
                 onChange={handleInputChange}
                 onFocus={() => setShowSuggestions(inputValue.trim().length >= MIN_QUERY_LEN)}
-                placeholder="e.g., Stanton > Crusader > Yela > Grim HEX"
+                placeholder="z. B. Stanton > Crusader > Yela > Grim HEX"
                 className="w-full bg-slate-700/50 border border-slate-600 rounded-md p-2.5 text-white focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-hidden"
                 required
                 disabled={disabled}

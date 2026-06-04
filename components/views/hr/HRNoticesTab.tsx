@@ -26,9 +26,9 @@ const HRNoticesTab: React.FC = () => {
                 <div>
                     <h2 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tight">
                         <i className="fa-solid fa-bullhorn text-emerald-300"></i>
-                        Notices &amp; Bulletins
+                        Hinweise &amp; Meldungen
                     </h2>
-                    <p className="text-slate-400 text-sm mt-1">Official communications and department updates.</p>
+                    <p className="text-slate-400 text-sm mt-1">Offizielle Mitteilungen und Abteilungsaktualisierungen.</p>
                 </div>
             </div>
 

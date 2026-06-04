@@ -434,11 +434,11 @@ const StaffDashboard: React.FC<{
     const openPositions = useMemo(() => hrJobs.filter(j => j.status === JobPostingStatus.Open).length, [hrJobs]);
 
     const quickActions = useMemo<QuickAction[]>(() => ([
-        hasPermission('request:create') && { label: 'New Request', icon: 'fa-plus', accent: 'sky' as const, onClick: () => setIsCreateModalOpen(true) },
-        hasPermission('request:create_adhoc') && { label: 'Ad Hoc', icon: 'fa-bolt', accent: 'amber' as const, onClick: () => setIsAdHocModalOpen(true) },
-        hasPermission('intel:create') && { label: 'Intel Report', icon: 'fa-file-shield', accent: 'amber' as const, onClick: () => openCreateIntelWindow() },
-        hasPermission('intel:view') && { label: 'Bulletin', icon: 'fa-satellite-dish', accent: 'rose' as const, onClick: () => setShowCreateBulletinModal(true) },
-        hasPermission('warrant:create') && { label: 'Caution', icon: 'fa-triangle-exclamation', accent: 'rose' as const, onClick: () => openCreateWarrantModal() },
+        hasPermission('request:create') && { label: 'Neue Anfrage', icon: 'fa-plus', accent: 'sky' as const, onClick: () => setIsCreateModalOpen(true) },
+        hasPermission('request:create_adhoc') && { label: 'Eilmeldung', icon: 'fa-bolt', accent: 'amber' as const, onClick: () => setIsAdHocModalOpen(true) },
+        hasPermission('intel:create') && { label: 'Intel Bericht', icon: 'fa-file-shield', accent: 'amber' as const, onClick: () => openCreateIntelWindow() },
+        hasPermission('intel:view') && { label: 'Intel-Meldung', icon: 'fa-satellite-dish', accent: 'rose' as const, onClick: () => setShowCreateBulletinModal(true) },
+        hasPermission('warrant:create') && { label: 'Kopfgeld', icon: 'fa-triangle-exclamation', accent: 'rose' as const, onClick: () => openCreateWarrantModal() },
     ].filter(Boolean) as QuickAction[]), [hasPermission, setIsCreateModalOpen, setIsAdHocModalOpen, openCreateIntelWindow, setShowCreateBulletinModal, openCreateWarrantModal]);
 
     const SectionHeader: React.FC<{ title: string; icon: string; count?: number; viewAllTarget?: string }> = ({ title, icon, count, viewAllTarget }) => (
@@ -525,7 +525,7 @@ const DashboardView: React.FC<{ openRateRequestModal: (req: HydratedServiceReque
 
     const [deletingBulletinId, setDeletingBulletinId] = useState<string | null>(null);
     const handleDeleteBulletin = useCallback(async (id: string) => {
-        if (!confirm('Delete this bulletin?')) return;
+        if (!confirm('Diese Meldung löschen?')) return;
         setDeletingBulletinId(id);
         try { await deleteBulletin(id); } finally { setDeletingBulletinId(null); }
     }, [deleteBulletin]);

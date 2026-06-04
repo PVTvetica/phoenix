@@ -102,7 +102,7 @@ const HelpView: React.FC = () => {
                 <HelpCard title="App Installation & Alerts" icon="fa-solid fa-mobile-screen" iconBgClass="bg-emerald-500/10" iconColorClass="text-emerald-400">
                     <Section title="Why Install?">
                         <p>
-                            To receive <strong>EAM Broadcasts</strong>, <strong>service request alerts</strong>, and <strong>operation updates</strong> while the app is closed, install the terminal as a PWA on your device. Browser tabs alone don't deliver background push.
+                            Um <strong>EAM-Sendungen</strong>, <strong>Service-Anfrage-Benachrichtigungen</strong> und <strong>Einsatzaktualisierungen</strong> zu erhalten, während die App geschlossen ist, installiere das Terminal als PWA auf deinem Gerät. Browser-Tabs allein liefern keine Hintergrund-Push-Benachrichtigungen.
                         </p>
                     </Section>
 
@@ -523,11 +523,11 @@ const HelpView: React.FC = () => {
                     </Section>
                     <Section title="Alert Types">
                         <ul className="list-disc pl-5 space-y-1">
-                            <li><strong>New Request:</strong> Plays for staff when a client submits a request.</li>
-                            <li><strong>Assignment:</strong> Plays when you're added to a request, when responders join your request (clients), or when a status changes.</li>
-                            <li><strong>EAM:</strong> Full-screen emergency alert with mandatory acknowledgment countdown.</li>
-                            <li><strong>Radio Cues:</strong> Mic-click and squelch for PTT feedback.</li>
-                            <li><strong>Operation alerts:</strong> Op transitions to Active, broadcast alerts, etc.</li>
+                            <li><strong>Neue Anfrage:</strong> Wird für Mitarbeiter abgespielt, wenn ein Client eine Anfrage einreicht.</li>
+                            <li><strong>Zuweisung:</strong> Wird abgespielt, wenn du einer Anfrage hinzugefügt wirst, wenn Einsatzkräfte deiner Anfrage beitreten (Clients) oder wenn sich ein Status ändert.</li>
+                            <li><strong>EAM:</strong> Vollbild-Notfallalarm mit obligatorischem Bestätigungs-Countdown.</li>
+                            <li><strong>Funkhinweise:</strong> Mikrofonklick und Squelch für PTT-Feedback.</li>
+                            <li><strong>Einsatzwarnungen:</strong> Übergänge zu „Aktiv“, Broadcast-Benachrichtigungen usw.</li>
                         </ul>
                     </Section>
                     <Section title="Push Notifications">
@@ -554,13 +554,13 @@ const HelpView: React.FC = () => {
                                 Members log in via Discord OAuth (Client ID / Secret are configured in Admin → Settings, or your server's .env). The bot (using Bot Token) posts notifications and reads server roles.
                             </p>
                             <ul className="list-disc pl-5 space-y-1">
-                                <li><strong>Channel Settings:</strong> New Request, Intel, EAM, and the new <strong>Operation Announcement</strong> default channel. <strong>Test Send</strong> verifies bot access.</li>
-                                <li><strong>Role Mapping:</strong> Click <strong>Fetch Roles</strong> to pull server roles. Map each Discord role to a Rank + (optionally) a platform Role. Click <strong>Update All Users</strong> to apply — Discord is the source of truth, the sync is one-way.</li>
+                                <li><strong>Kanaleinstellungen:</strong> Neue Anfrage, Intel, EAM und der neue Standardkanal für <strong>Einsatzankündigungen</strong>. <strong>Testversand</strong> prüft den Bot-Zugriff.</li>
+                                <li><strong>Rollenzuordnung:</strong> Klicke auf <strong>Rollen abrufen</strong>, um Server-Rollen zu laden. Ordne jede Discord-Rolle einem Rang + (optional) einer Plattform-Rolle zu. Klicke auf <strong>Alle Benutzer aktualisieren</strong>, um die Änderungen anzuwenden — Discord ist die maßgebliche Quelle, die Synchronisation ist einseitig.</li>
                             </ul>
                         </Section>
-                        <Section title="EAM Broadcasts">
+                        <Section title="EAM-Sendungen">
                             <p>
-                                Emergency Action Messages override every active session with a full-screen siren and mandatory ack. Friction by design: type the message → <strong>Initiate</strong> → confirm → <strong>Arm</strong> (3-sec countdown) → <strong>Transmit</strong>. Posts to the Discord EAM channel and pushes to PWA devices. Reserve for genuine emergencies.
+                                Emergency Action Messages überschreiben jede aktive Sitzung mit einer Vollbild-Sirene und obligatorischer Bestätigung. Bewusste Reibung im Design: Nachricht eingeben → <strong>Einleiten</strong> → bestätigen → <strong>Scharfschalten</strong> (3-Sekunden-Countdown) → <strong>Senden</strong>. Veröffentlicht im Discord-EAM-Kanal und pusht an PWA-Geräte. Nur für echte Notfälle reservieren.
                             </p>
                         </Section>
                         <Section title="AI Configuration">

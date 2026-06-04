@@ -265,10 +265,10 @@ const IntelligenceManagementTab: React.FC = () => {
     const anyOperationActive = isSyncingWarrants || isSyncingFeeds || isCleaning || isCleaningIntel;
 
     const actionButtons = [
-        { label: 'Sync Cautions', icon: 'fa-solid fa-sync', onClick: handleSyncWarrants, loading: isSyncingWarrants, color: 'sky', description: 'Generate reports from caution notes' },
-        { label: 'Feed Ingest', icon: 'fa-solid fa-cloud-arrow-down', onClick: handleSyncFeeds, loading: isSyncingFeeds, color: 'emerald', description: 'Pull from allied feeds' },
-        { label: 'Dedup Cautions', icon: 'fa-solid fa-triangle-exclamation', onClick: handleCleanup, loading: isCleaning, color: 'amber', description: 'Remove duplicate caution notes' },
-        { label: 'Dedup Intel', icon: 'fa-solid fa-file-shield', onClick: handleCleanupIntel, loading: isCleaningIntel, color: 'amber', description: 'Remove duplicate reports' },
+        { label: 'Sync Cautions', icon: 'fa-solid fa-sync', onClick: handleSyncWarrants, loading: isSyncingWarrants, color: 'sky', description: 'Berichte aus Kopfgeldern erzeugen' },
+        { label: 'Feed Ingest', icon: 'fa-solid fa-cloud-arrow-down', onClick: handleSyncFeeds, loading: isSyncingFeeds, color: 'emerald', description: 'Aus verbündeten Feeds ziehen' },
+        { label: 'Dedup Cautions', icon: 'fa-solid fa-triangle-exclamation', onClick: handleCleanup, loading: isCleaning, color: 'amber', description: 'Doppelte Kopfgelder entfernen' },
+        { label: 'Dedup Intel', icon: 'fa-solid fa-file-shield', onClick: handleCleanupIntel, loading: isCleaningIntel, color: 'amber', description: 'Doppelte Berichte entfernen' },
     ];
 
     const colorMap: Record<string, string> = {

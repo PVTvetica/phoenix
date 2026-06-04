@@ -104,7 +104,7 @@ export const RequestsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     const createAdHocRequest = useCallback((data: any) =>
         rpcAction('request:create_adhoc', { newRequest: data }).then(async (res) => {
-            addToast("Ad-Hoc Logged", <i className="fa-solid fa-pen-to-square"></i>, "bg-amber-500/10 text-amber-400 border-amber-500/50", { description: "An ad-hoc service request has been logged.", silent: true });
+            addToast("Eilmeldung protokolliert", <i className="fa-solid fa-pen-to-square"></i>, "bg-amber-500/10 text-amber-400 border-amber-500/50", { description: "Die Eilmeldung wurde erfolgreich protokolliert.", silent: true });
             playSound(brandingConfig.newRequestSoundUrl);
             await refreshRequestsFn();
             return res.id;

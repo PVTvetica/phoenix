@@ -105,10 +105,10 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
     const handleBulkDeleteWarrants = async () => {
         if (selectedIds.size === 0) return;
         const confirmed = await confirm({
-            title: 'Bulk Delete Caution Notes',
-            message: `Permanently delete ${selectedIds.size} selected caution note${selectedIds.size > 1 ? 's' : ''}? This cannot be undone.`,
+            title: 'Kopfgelder löschen',
+            message: `${selectedIds.size} ${selectedIds.size === 1 ? 'ausgewähltes Kopfgeld' : 'ausgewählte Kopfgelder'} dauerhaft löschen? Das kann nicht rückgängig gemacht werden.`,
             variant: 'danger',
-            confirmText: `Delete ${selectedIds.size} Caution Notes`
+            confirmText: `${selectedIds.size} ${selectedIds.size === 1 ? 'Kopfgeld' : 'Kopfgelder'} löschen`
         });
         if (!confirmed) return;
         try {
@@ -139,16 +139,16 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             <HeroShell
-                chipLabel="MODULE · CAUTION NOTES"
+                chipLabel="MODUL · KOPFGELDER"
                 chipIcon="fa-crosshairs"
                 chipAccent="red"
-                title="Caution Notes"
-                subtitle="Flagged handles, advisories, and field-caution tracking."
+                title="Kopfgelder"
+                subtitle="Markierte Handles, Belohnungen und Feldverfolgung."
                 syncing={isFetching['warrants']}
                 actions={<>
                     {hasPermission('warrant:create') && (
                         <HeroActionButton onClick={openCreateModal} accent="red" icon="fa-plus">
-                            File Caution
+                            Neues Kopfgeld
                         </HeroActionButton>
                     )}
                     <div className="flex bg-slate-900/60 rounded-lg border border-slate-700 p-0.5">
@@ -243,8 +243,8 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
                         <EmptyState
                             icon="fa-folder-open"
                             accent="red"
-                            heading="No caution notes match"
-                            description={searchTerm ? 'Try a different search term.' : 'New caution notes will appear here when filed.'}
+                            heading="Keine passenden Kopfgelder"
+                            description={searchTerm ? 'Probiere einen anderen Suchbegriff.' : 'Neue Kopfgelder erscheinen hier nach Einreichung.'}
                         />
                     </div>
                 )}

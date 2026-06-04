@@ -61,7 +61,7 @@ const WikiTopBar: React.FC<Props> = ({
                         aria-label="New page"
                     >
                         <i className="fa-solid fa-plus" />
-                        <span className="hidden md:inline">New</span>
+                        <span className="hidden md:inline">Neu</span>
                     </button>
                 )}
             </div>

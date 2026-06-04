@@ -105,7 +105,7 @@ export const ALL_SEARCH_TYPES: SearchType[] = [
 export const SEARCH_TYPE_LABELS: Record<SearchType, string> = {
     personnel: 'Personnel',
     mission: 'Missions',
-    warrant: 'Caution Notes',
+    warrant: 'Kopfgelder',
     operation: 'Operations',
     intel: 'Intel',
     hr: 'HR',

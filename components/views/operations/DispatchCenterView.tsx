@@ -300,7 +300,7 @@ const DispatchCenterView: React.FC = () => {
                             />
                         </form>
                         <HeroActionButton onClick={() => setIsAdHocModalOpen(true)} accent="sky" icon="fa-user-pen">
-                            Log Ad-hoc
+                            Eilmeldung
                         </HeroActionButton>
                     </div>
                 }

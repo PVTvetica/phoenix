@@ -430,10 +430,10 @@ const IntelligenceView: React.FC = () => {
         if (deletingId) return;
 
         const confirmed = await confirm({
-            title: 'Delete Bulletin',
-            message: 'Are you sure you want to delete this bulletin? This action cannot be undone.',
+            title: 'Meldung löschen',
+            message: 'Diese Meldung wirklich löschen? Das kann nicht rückgängig gemacht werden.',
             variant: 'danger',
-            confirmText: 'Delete Bulletin'
+            confirmText: 'Meldung löschen'
         });
         if (!confirmed) return;
 
@@ -574,8 +574,8 @@ const IntelligenceView: React.FC = () => {
                 chipLabel="MODULE · INTEL HUB"
                 chipIcon="fa-satellite-dish"
                 chipAccent="rose"
-                title="Intelligence Hub"
-                subtitle="Field reports, target dossiers, and bulletins. Threat analysis and collection."
+                title="Intel-Zentrale"
+                subtitle="Feldmeldungen, Zieldossiers und Meldungen. Bedrohungsanalyse und Sammlung."
                 actions={<>
                     {hasPermission('intel:create') && (
                         <>
@@ -585,7 +585,7 @@ const IntelligenceView: React.FC = () => {
                             </button>
                             <button onClick={() => setShowCreateBulletinModal(true)}
                                 className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-lg hover:bg-amber-500/20 transition-colors">
-                                <i className="fa-solid fa-tower-broadcast"></i> Bulletin
+                                <i className="fa-solid fa-tower-broadcast"></i> Intel-Meldung
                             </button>
                         </>
                     )}
@@ -601,10 +601,10 @@ const IntelligenceView: React.FC = () => {
                     </div>
                 </>}
                 stats={<>
-                    <HeroStat icon="fa-folder-open" label="Records" value={totalReports} accent="rose" />
-                    <HeroStat icon="fa-triangle-exclamation" label="Critical" value={criticalCount} accent="red" emphasize={criticalCount > 0} />
-                    <HeroStat icon="fa-tower-broadcast" label="Bulletins" value={filteredBulletins.length} accent="amber" emphasize={filteredBulletins.length > 0} />
-                    <HeroStat icon="fa-clock-rotate-left" label="Reports (7d)" value={reports7d} accent="slate" />
+                    <HeroStat icon="fa-folder-open" label="Einträge" value={totalReports} accent="rose" />
+                    <HeroStat icon="fa-triangle-exclamation" label="Kritisch" value={criticalCount} accent="red" emphasize={criticalCount > 0} />
+                    <HeroStat icon="fa-tower-broadcast" label="Meldungen" value={filteredBulletins.length} accent="amber" emphasize={filteredBulletins.length > 0} />
+                    <HeroStat icon="fa-clock-rotate-left" label="Berichte (7T)" value={reports7d} accent="slate" />
                 </>}
             />
 
@@ -678,7 +678,7 @@ const IntelligenceView: React.FC = () => {
                         }`}
                         title="Show only targets with active cautions"
                     >
-                        <i className="fa-solid fa-bullseye" aria-hidden /> Cautions
+                        <i className="fa-solid fa-bullseye" aria-hidden /> Kopfgelder
                     </button>
 
                     {/* Active tag filter (single tag in v1 — clicking another tag swaps it). */}
@@ -701,7 +701,7 @@ const IntelligenceView: React.FC = () => {
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                            <h2 className="text-xs font-black text-white uppercase tracking-[0.2em]">{'Live Bulletin Board'}</h2>
+                            <h2 className="text-xs font-black text-white uppercase tracking-[0.2em]">Live-Meldungs-Board</h2>
                         </div>
                         <span className="h-px bg-slate-800 grow"></span>
                         {filteredBulletins.length > 0 && (
@@ -727,7 +727,7 @@ const IntelligenceView: React.FC = () => {
                         <div className="flex items-center justify-center py-8 rounded-lg border border-dashed border-slate-800 bg-black/20">
                             <div className="flex items-center gap-3 text-slate-700">
                                 <i className="fa-solid fa-satellite-dish text-sm"></i>
-                                <p className="text-[10px] font-mono uppercase tracking-[0.2em]">{'No active bulletins \u2014 all channels clear'}</p>
+                                <p className="text-[10px] font-mono uppercase tracking-[0.2em]">Keine aktiven Meldungen — alle Kanäle frei</p>
                             </div>
                         </div>
                     )}

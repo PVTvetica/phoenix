@@ -124,7 +124,7 @@ const ServiceRequestsView: React.FC<ServiceRequestsViewProps> = ({
                 actions={<>
                     {hasPermission('request:create_adhoc') && (
                         <HeroActionButton onClick={openAdHocModal} accent="amber" icon="fa-user-pen">
-                            Log Ad-hoc
+                            Eilmeldung
                         </HeroActionButton>
                     )}
                     {hasPermission('request:create') && (

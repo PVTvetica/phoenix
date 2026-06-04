@@ -179,7 +179,7 @@ const DiscordSettingsTab: React.FC = () => {
                             <p className="text-xs text-slate-500 mt-1">Notifications for new Service Requests will be posted here.</p>
                         </div>
                         <div>
-                            <label htmlFor="intelChannelId" className="block text-sm font-medium text-slate-300 mb-2">Intel Bulletin Channel ID</label>
+                            <label htmlFor="intelChannelId" className="block text-sm font-medium text-slate-300 mb-2">Intel-Meldungs-Kanal-ID</label>
                             <input
                                 type="text"
                                 id="intelChannelId"
@@ -193,7 +193,7 @@ const DiscordSettingsTab: React.FC = () => {
                             <p className="text-xs text-slate-500 mt-1">New Intel Bulletins will be posted here as formatted embeds.</p>
                         </div>
                         <div>
-                            <label htmlFor="eamChannelId" className="block text-sm font-medium text-slate-300 mb-2">EAM Broadcast Channel ID</label>
+                            <label htmlFor="eamChannelId" className="block text-sm font-medium text-slate-300 mb-2">Notfall-Sendekanal-ID</label>
                             <input
                                 type="text"
                                 id="eamChannelId"

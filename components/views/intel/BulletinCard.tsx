@@ -190,7 +190,7 @@ const BulletinCard: React.FC<BulletinCardProps> = ({ bulletin, onDelete, isDelet
                         <button
                             onClick={(e) => { e.stopPropagation(); onDelete(bulletin.id); }}
                             disabled={isDeleting}
-                            title="Delete Bulletin"
+                            title="Meldung löschen"
                             className="p-1.5 rounded-sm text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                         >
                             {isDeleting

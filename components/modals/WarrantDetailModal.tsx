@@ -145,7 +145,7 @@ const WarrantDetailModal: React.FC<WarrantDetailModalProps> = ({ isOpen, onClose
         <WindowFrame
             isOpen={isOpen}
             onClose={onClose}
-            title="Caution Note Detail"
+            title="Kopfgeld-Details"
             subtitle={`CN-${warrant.id.substring(0, 6)}`}
             icon="fa-solid fa-triangle-exclamation"
             color="red"

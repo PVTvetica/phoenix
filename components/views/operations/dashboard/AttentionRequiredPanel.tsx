@@ -106,7 +106,7 @@ export default function AttentionRequiredPanel({ showWhenEmpty = false }: Props)
         headerIcon = 'fa-satellite-dish';
         headerTitle = (
             <>
-                {advisoryCount} active {advisoryCount === 1 ? 'bulletin' : 'bulletins'}
+                {advisoryCount} aktive {advisoryCount === 1 ? 'Meldung' : 'Meldungen'}
                 {criticalCount > 0 && <span className="ml-2 text-rose-300">· {criticalCount} critical</span>}
             </>
         );

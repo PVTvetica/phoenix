@@ -134,7 +134,7 @@ const OrganizationIdentityTab: React.FC = () => {
                         <input type="url" name="assignmentSoundUrl" value={config.assignmentSoundUrl || ''} onChange={handleSoundChange} placeholder="https://example.com/assign.mp3" className={inputMonoCls} />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">EAM Alert Sound URL</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-2">Notfall-Alarmton URL</label>
                         <input type="url" name="eamSoundUrl" value={config.eamSoundUrl || ''} onChange={handleSoundChange} placeholder="https://example.com/eam.mp3" className={inputMonoCls} />
                     </div>
                     <div>

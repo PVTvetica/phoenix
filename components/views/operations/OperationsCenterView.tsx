@@ -197,7 +197,7 @@ const OperationsCenterView: React.FC = () => {
                 actions={<>
                     {hasPermission('operations:create') && (
                         <HeroActionButton onClick={openCreateOperationModal} accent="purple" icon="fa-plus">
-                            New Operation
+                            Einsatz planen
                         </HeroActionButton>
                     )}
                     <button
@@ -219,10 +219,10 @@ const OperationsCenterView: React.FC = () => {
                     </div>
                 </>}
                 stats={<>
-                    <HeroStat icon="fa-bolt" label="Active" value={stats.active} accent="emerald" emphasize={stats.active > 0} onClick={() => setFilter(OperationStatus.Active)} />
-                    <HeroStat icon="fa-clock" label="Scheduled" value={stats.scheduled} accent="amber" emphasize={stats.scheduled > 0} onClick={() => setFilter('Scheduled')} />
-                    <HeroStat icon="fa-drafting-compass" label="Planning" value={stats.planning} accent="purple" emphasize={stats.planning > 0} onClick={() => setFilter(OperationStatus.Planning)} />
-                    <HeroStat icon="fa-person-military-rifle" label="Deployed" value={stats.deployed} accent="cyan" emphasize={stats.deployed > 0} />
+                    <HeroStat icon="fa-bolt" label="Aktiv" value={stats.active} accent="emerald" emphasize={stats.active > 0} onClick={() => setFilter(OperationStatus.Active)} />
+                    <HeroStat icon="fa-clock" label="Geplant" value={stats.scheduled} accent="amber" emphasize={stats.scheduled > 0} onClick={() => setFilter('Scheduled')} />
+                    <HeroStat icon="fa-drafting-compass" label="Planung" value={stats.planning} accent="purple" emphasize={stats.planning > 0} onClick={() => setFilter(OperationStatus.Planning)} />
+                    <HeroStat icon="fa-person-military-rifle" label="Eingesetzt" value={stats.deployed} accent="cyan" emphasize={stats.deployed > 0} />
                 </>}
                 tabs={viewMode === 'list' ? filterTabs.map(tab => (
                     <button
@@ -257,7 +257,7 @@ const OperationsCenterView: React.FC = () => {
                     <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
                     <input
                         type="search"
-                        placeholder="Search operations, commanders, or briefings…"
+                        placeholder="Einsätze, Kommandanten oder Briefings suchen…"
                         value={searchTerm}
                         onChange={(e) => { setSearchTerm(e.target.value); if (e.target.value) setFilter('All'); }}
                         className="w-full bg-slate-900/60 text-white pl-12 pr-4 py-2.5 rounded-lg border border-slate-700 outline-hidden placeholder:text-slate-600 font-mono text-sm focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/40 transition-all"
@@ -366,8 +366,8 @@ const OperationsCenterView: React.FC = () => {
                             <EmptyState
                                 icon="fa-satellite-dish"
                                 accent="purple"
-                                heading="No operations found"
-                                description={searchTerm ? 'Try a different search term or clear filters.' : 'Adjust filters or spin up a new operation.'}
+                                heading="Keine Einsätze gefunden"
+                                description={searchTerm ? 'Probiere einen anderen Suchbegriff oder setze Filter zurück.' : 'Filter anpassen oder einen neuen Einsatz starten.'}
                             />
                         </div>
                     )}

@@ -218,7 +218,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                             const warrants = hasPermission('warrant:view') ? (
                                 <NavItem
                                     icon={<i className="fa-solid fa-bullseye fa-fw"></i>}
-                                    label="Caution Notes"
+                                    label="Kopfgelder"
                                     isActive={activeView === 'warrants'}
                                     onClick={() => handleNavClick('warrants')}
                                     isCollapsed={isSidebarCollapsed}
@@ -281,7 +281,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                             const hr = hasPermission('hr:view') ? (
                                 <NavItem
                                     icon={<i className="fa-solid fa-people-group fa-fw"></i>}
-                                    label="HR Hub"
+                                    label="HR-Zentrale"
                                     isActive={activeView === 'hr' || activeView === 'applicant-detail' || activeView === 'security-vetting' || activeView === 'case-file-detail'}
                                     onClick={() => handleNavClick('hr')}
                                     isCollapsed={isSidebarCollapsed}
@@ -490,11 +490,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                             bg-red-900/20 text-red-500 border border-red-500/30 hover:bg-red-900/40 hover:border-red-500
                             ${isSidebarCollapsed && !isMobileOpen ? 'h-10 w-10 rounded-xl flex items-center justify-center mx-auto' : 'py-3 px-4 rounded-lg text-[10px]'}
                         `}
-                                title="ISSUE EAM"
+                                title="Notfall senden"
                             >
                                 <span className="relative z-10 flex items-center justify-center gap-2">
                                     <i className="fa-solid fa-radiation"></i>
-                                    {(!isSidebarCollapsed || isMobileOpen) && 'ISSUE EAM'}
+                                    {(!isSidebarCollapsed || isMobileOpen) && 'NOTFALL SENDEN'}
                                 </span>
                             </button>
                         )}

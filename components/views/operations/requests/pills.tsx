@@ -132,6 +132,6 @@ export const WarrantPill: React.FC<{ size?: Size; className?: string }> = ({ siz
         pulse
         className={`shadow-[0_0_10px_rgba(220,38,38,0.3)] ${className}`}
     >
-        Active Caution
+        Aktives Kopfgeld
     </Pill>
 );
