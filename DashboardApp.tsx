@@ -150,7 +150,7 @@ const LoadingFallback = () => (
                 <i className="fa-solid fa-circle-notch animate-spin text-sky-500 text-3xl relative z-10"></i>
             </div>
             <div>
-                <p className="text-slate-400 text-sm font-mono uppercase tracking-widest">Loading Module</p>
+                <p className="text-slate-400 text-sm font-mono uppercase tracking-widest">Modul wird geladen…</p>
                 <div className="w-24 h-0.5 bg-slate-800 rounded-full mx-auto mt-3 overflow-hidden">
                     <div className="h-full bg-sky-500/50 rounded-full animate-pulse" style={{ width: '60%' }}></div>
                 </div>

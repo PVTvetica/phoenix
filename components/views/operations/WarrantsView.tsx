@@ -139,15 +139,15 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             <HeroShell
-                chipLabel="MODULE · CAUTION NOTES"
+                chipLabel="MODUL · VERWARNUNGEN"
                 chipIcon="fa-crosshairs"
                 chipAccent="red"
-                title="Caution Notes"
+                title="Verwarnungen"
                 subtitle="Markierte Handles, Hinweise und Feld-Vorsichtsverfolgung."
                 syncing={isFetching['warrants']}
                 actions={<>
                     {hasPermission('warrant:create') && (
-                        <HeroActionButton onClick={openCreateModal} accent="red" icon="fa-plus">Achtung Datei</HeroActionButton>
+                        <HeroActionButton onClick={openCreateModal} accent="red" icon="fa-plus">Neue Verwarnung</HeroActionButton>
                     )}
                     <div className="flex bg-slate-900/60 rounded-lg border border-slate-700 p-0.5">
                         <button onClick={() => { setViewMode('cards'); setSelectedIds(new Set()); }}
@@ -162,9 +162,9 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
                 </>}
                 stats={<>
                     <HeroStat icon="fa-bolt" label="Aktiv" value={heroCounts.active} accent="red" emphasize={heroCounts.active > 0} />
-                    <HeroStat icon="fa-coins" label="Total Reward" value={heroCounts.totalBounty.toLocaleString()} sub="aUEC outstanding" accent="amber" />
-                    <HeroStat icon="fa-handcuffs" label="Claimed (30d)" value={heroCounts.claimed30d} accent="sky" />
-                    <HeroStat icon="fa-flag-checkered" label="Closed (30d)" value={heroCounts.closed30d} accent="slate" />
+                    <HeroStat icon="fa-coins" label="Gesamtbelohnung" value={heroCounts.totalBounty.toLocaleString()} sub="aUEC ausstehend" accent="amber" />
+                    <HeroStat icon="fa-handcuffs" label="Beansprucht (30T)" value={heroCounts.claimed30d} accent="sky" />
+                    <HeroStat icon="fa-flag-checkered" label="Geschlossen (30T)" value={heroCounts.closed30d} accent="slate" />
                 </>}
                 tabs={tabs.map(tab => (
                     <button
@@ -192,7 +192,7 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
                     <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
                     <input
                         type="search"
-                        placeholder="Search target, reason, or ID…"
+                        placeholder="Ziel, Grund oder ID suchen…"
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.target.value);
@@ -205,7 +205,7 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
                 {/* Bulk Action Bar */}
                 {viewMode === 'table' && selectedIds.size > 0 && hasPermission('warrant:manage') && (
                     <div className="flex items-center gap-3 p-3 mb-4 bg-red-500/10 border border-red-500/20 rounded-lg animate-fade-in">
-                        <span className="text-xs font-bold text-red-400">{selectedIds.size} selected</span>
+                        <span className="text-xs font-bold text-red-400">{selectedIds.size} ausgewählt</span>
                         <span className="h-4 w-px bg-red-500/30"></span>
                         <button onClick={handleBulkDeleteWarrants} className="text-[10px] font-bold uppercase tracking-wider text-red-400 hover:text-red-300 px-3 py-1.5 rounded-sm bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors">
                             <i className="fa-solid fa-trash mr-1.5"></i>Ausgewählte löschen</button>
@@ -242,7 +242,7 @@ const WarrantsView: React.FC<WarrantsViewProps> = ({ openCreateModal, openUpdate
                             icon="fa-folder-open"
                             accent="red"
                             heading="Keine passenden Vorsichtshinweise"
-                            description={searchTerm ? 'Try a different search term.' : 'New caution notes will appear here when filed.'}
+                            description={searchTerm ? 'Probiere einen anderen Suchbegriff.' : 'Neue Verwarnungen erscheinen hier nach Einreichung.'}
                         />
                     </div>
                 )}

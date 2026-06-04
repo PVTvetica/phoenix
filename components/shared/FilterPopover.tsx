@@ -36,9 +36,10 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({ label, icon, options, sel
     }, [open]);
 
     const count = selected.size;
-    const summary = count === 0 ? `All ${label}s` : count === 1
+    const allSummary = label === 'Einheit' ? 'Alle Einheiten' : label === 'Rang' ? 'Alle Ränge' : `Alle ${label}`;
+    const summary = count === 0 ? allSummary : count === 1
         ? options.find(o => selected.has(o.id))?.name || `1 ${label}`
-        : `${count} ${label}s`;
+        : `${count} ${label === 'Einheit' ? 'Einheiten' : label === 'Rang' ? 'Ränge' : label}`;
 
     return (
         <div ref={ref} className="relative">
@@ -66,7 +67,9 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({ label, icon, options, sel
                             <i className="fa-solid fa-xmark mr-1"></i>Alles löschen</button>
                     )}
                     {options.length === 0 ? (
-                        <p className="text-[11px] text-slate-600 italic p-2">No {label.toLowerCase()}s defined.</p>
+                        <p className="text-[11px] text-slate-600 italic p-2">
+                            {label === 'Einheit' ? 'Keine Einheiten definiert.' : label === 'Rang' ? 'Keine Ränge definiert.' : `Keine ${label} definiert.`}
+                        </p>
                     ) : options.map(opt => (
                         <label key={opt.id} className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:text-white p-1.5 rounded-sm hover:bg-slate-800/50 transition-colors">
                             <input

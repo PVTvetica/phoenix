@@ -246,16 +246,16 @@ const DutyRosterView: React.FC = () => {
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             <HeroShell
-                chipLabel="MODULE · DUTY ROSTER"
+                chipLabel="MODUL · DIENSTPLAN"
                 chipIcon="fa-users"
                 chipAccent="emerald"
-                title="Duty Roster"
+                title="Dienstplan"
                 subtitle="Einsatzstatus und Einheitshierarchie. Dienst umschalten, Profile prüfen und Personalstruktur einsehen."
                 statsCols={3}
                 stats={<>
                     <HeroStat icon="fa-bolt" label="Im Dienst" value={onDutyCount} accent="emerald" emphasize={onDutyCount > 0} />
                     <HeroStat icon="fa-moon" label="Außer Dienst" value={members.length - onDutyCount} accent="slate" />
-                    <HeroStat icon="fa-users" label="Total Personnel" value={members.length} accent="cyan" />
+                    <HeroStat icon="fa-users" label="Gesamtpersonal" value={members.length} accent="cyan" />
                 </>}
                 tabs={viewModeTabs.map(tab => (
                     <button
@@ -292,7 +292,7 @@ const DutyRosterView: React.FC = () => {
                                 }`}
                             >
                                 <i className={`fa-solid ${m === 'hierarchy' ? 'fa-sitemap' : 'fa-list'} mr-1.5`}></i>
-                                {m === 'hierarchy' ? 'Hierarchy' : 'Flat'}
+                                {m === 'hierarchy' ? 'Hierarchie' : 'Flach'}
                             </button>
                         ))}
                     </div>
@@ -314,7 +314,7 @@ const DutyRosterView: React.FC = () => {
                     />
                     {(unitFilter.size > 0 || rankFilter.size > 0) && (
                         <span className="text-[10px] text-slate-500 ml-auto font-mono">
-                            {filteredCount} match{filteredCount === 1 ? '' : 'es'}
+                            {filteredCount} {filteredCount === 1 ? 'Treffer' : 'Treffer'}
                         </span>
                     )}
                 </div>
@@ -324,7 +324,7 @@ const DutyRosterView: React.FC = () => {
                     <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
                     <input
                         type="search"
-                        placeholder="Search personnel by name, handle, or rank…"
+                        placeholder="Personal nach Name, Handle oder Rang suchen…"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full bg-slate-900/60 text-white pl-12 pr-4 py-2.5 rounded-lg border border-slate-700 outline-hidden placeholder:text-slate-600 font-mono text-sm focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/40 transition-all"

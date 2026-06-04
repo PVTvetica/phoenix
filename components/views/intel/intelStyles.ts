@@ -23,8 +23,20 @@ export const threatIcon = (level: IntelThreatLevel | string | null | undefined):
 };
 
 export const threatLabel = (level: IntelThreatLevel | string | null | undefined): string => {
-    const v = typeof level === 'string' ? level : IntelThreatLevel.None;
-    return v.toUpperCase();
+    switch (level) {
+        case IntelThreatLevel.Critical:
+        case 'Critical': return 'KRITISCH';
+        case IntelThreatLevel.High:
+        case 'High': return 'HOCH';
+        case IntelThreatLevel.Medium:
+        case 'Medium': return 'MITTEL';
+        case IntelThreatLevel.Low:
+        case 'Low': return 'NIEDRIG';
+        case IntelThreatLevel.None:
+        case 'None': return 'KEINE';
+        default:
+            return typeof level === 'string' ? level.toUpperCase() : 'UNBEKANNT';
+    }
 };
 
 /** True when the threat level should pulse as a live alert. */
@@ -35,7 +47,7 @@ export const subjectIcon = (t: IntelSubjectType | string | null | undefined): st
     t === IntelSubjectType.Organization ? 'fa-building' : 'fa-user';
 
 export const subjectLabel = (t: IntelSubjectType | string | null | undefined): string =>
-    t === IntelSubjectType.Organization ? 'Organization' : 'Individual';
+    t === IntelSubjectType.Organization ? 'Organisation' : 'Person';
 
 /* ── Time helpers ─────────────────────────────────────────────────────────── */
 

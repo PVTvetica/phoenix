@@ -175,19 +175,19 @@ const OperationsCenterView: React.FC = () => {
     const filterTabs: Array<{ key: OperationStatus | 'All' | 'My Concluded' | 'Current' | 'Scheduled'; label: string; icon: string; count: number }> = [
         { key: 'Current', label: 'Aktuell', icon: 'fa-bolt', count: filterCounts.Current },
         { key: OperationStatus.Active, label: 'Aktiv', icon: 'fa-satellite-dish', count: filterCounts.Active },
-        { key: OperationStatus.Planning, label: 'Planning', icon: 'fa-drafting-compass', count: filterCounts.Planning },
+        { key: OperationStatus.Planning, label: 'Planung', icon: 'fa-drafting-compass', count: filterCounts.Planning },
         { key: 'Scheduled', label: 'Geplant', icon: 'fa-clock', count: filterCounts.Scheduled },
-        { key: 'My Concluded', label: 'History', icon: 'fa-flag-checkered', count: filterCounts.MyConcluded },
+        { key: 'My Concluded', label: 'Verlauf', icon: 'fa-flag-checkered', count: filterCounts.MyConcluded },
         { key: 'All', label: 'Alle', icon: 'fa-list-ul', count: filterCounts.All },
     ];
 
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             <HeroShell
-                chipLabel="MODULE · OPERATIONS CENTRE"
+                chipLabel="MODUL · OPERATIONS-ZENTRALE"
                 chipIcon="fa-person-military-rifle"
                 chipAccent="purple"
-                title="Operations Centre"
+                title="Operations-Zentrale"
                 subtitle="Missionsplanung und Koordination. Plane, briefe und führe gemeinsame Einsätze durch."
                 syncing={isFetching['operations']}
                 actions={<>

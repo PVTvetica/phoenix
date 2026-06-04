@@ -564,7 +564,7 @@ const IntelligenceView: React.FC = () => {
                 <div className="flex items-center gap-4">
                     {isFetching['intel'] && (
                         <span className="text-[9px] text-rose-400 animate-pulse font-mono uppercase tracking-widest flex items-center gap-1.5">
-                            <i className="fa-solid fa-arrows-rotate fa-spin text-[8px]"></i> SYNCING
+                            <i className="fa-solid fa-arrows-rotate fa-spin text-[8px]"></i> SYNCHRONISIERUNG
                         </span>
                     )}
                     <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">
@@ -574,10 +574,10 @@ const IntelligenceView: React.FC = () => {
             </div>
 
             <HeroShell
-                chipLabel="MODULE · INTEL HUB"
+                chipLabel="MODUL · INTEL-ZENTRALE"
                 chipIcon="fa-satellite-dish"
                 chipAccent="rose"
-                title="Intelligence Hub"
+                title="Intel-Zentrale"
                 subtitle="Feldmeldungen, Zieldossiers und Bulletins. Bedrohungsanalyse und Sammlung."
                 actions={<>
                     {hasPermission('intel:create') && (
@@ -587,7 +587,7 @@ const IntelligenceView: React.FC = () => {
                                 <i className="fa-solid fa-file-shield"></i>Dateibericht</button>
                             <button onClick={() => setShowCreateBulletinModal(true)}
                                 className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-lg hover:bg-amber-500/20 transition-colors">
-                                <i className="fa-solid fa-tower-broadcast"></i> Bulletin
+                                <i className="fa-solid fa-tower-broadcast"></i> Intel-Bulletin
                             </button>
                         </>
                     )}
@@ -603,10 +603,10 @@ const IntelligenceView: React.FC = () => {
                     </div>
                 </>}
                 stats={<>
-                    <HeroStat icon="fa-folder-open" label="Records" value={totalReports} accent="rose" />
-                    <HeroStat icon="fa-triangle-exclamation" label="Critical" value={criticalCount} accent="red" emphasize={criticalCount > 0} />
+                    <HeroStat icon="fa-folder-open" label="Einträge" value={totalReports} accent="rose" />
+                    <HeroStat icon="fa-triangle-exclamation" label="Kritisch" value={criticalCount} accent="red" emphasize={criticalCount > 0} />
                     <HeroStat icon="fa-tower-broadcast" label="Bulletins" value={filteredBulletins.length} accent="amber" emphasize={filteredBulletins.length > 0} />
-                    <HeroStat icon="fa-clock-rotate-left" label="Reports (7d)" value={reports7d} accent="slate" />
+                    <HeroStat icon="fa-clock-rotate-left" label="Berichte (7T)" value={reports7d} accent="slate" />
                 </>}
             />
 
@@ -618,7 +618,7 @@ const IntelligenceView: React.FC = () => {
                         <i className={`fa-solid ${isLoadingPage && searchTerm.trim() ? 'fa-spinner animate-spin text-rose-400' : 'fa-search text-slate-600'} absolute left-4 top-1/2 -translate-y-1/2 transition-colors text-sm`}></i>
                         <input
                             type="text"
-                            placeholder="Search targets, organizations, or content…"
+                            placeholder="Ziele, Organisationen oder Inhalte suchen…"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full bg-slate-900/60 text-white pl-11 pr-4 py-2.5 rounded-lg border border-slate-700 outline-hidden placeholder:text-slate-600 font-mono text-sm focus:ring-1 focus:ring-rose-500/40 focus:border-rose-500/40 transition-all"
@@ -649,7 +649,7 @@ const IntelligenceView: React.FC = () => {
                                     }`}
                                 >
                                     {level !== 'all' && <i className={`fa-solid ${threatIcon(level)}`} aria-hidden />}
-                                    {level === 'all' ? 'All' : threatLabel(level)}
+                                    {level === 'all' ? 'Alle' : threatLabel(level)}
                                 </button>
                             );
                         })}
@@ -668,7 +668,7 @@ const IntelligenceView: React.FC = () => {
                                     }`}
                                 >
                                     <i className={`fa-solid ${subj === 'all' ? 'fa-list-ul' : subj === IntelSubjectType.Organization ? 'fa-building' : 'fa-user'}`} aria-hidden />
-                                    {subj === 'all' ? 'All' : subj === IntelSubjectType.Organization ? 'Org' : 'Person'}
+                                    {subj === 'all' ? 'Alle' : subj === IntelSubjectType.Organization ? 'Org' : 'Person'}
                                 </button>
                             );
                         })}
@@ -707,12 +707,12 @@ const IntelligenceView: React.FC = () => {
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                            <h2 className="text-xs font-black text-white uppercase tracking-[0.2em]">{'Live Bulletin Board'}</h2>
+                            <h2 className="text-xs font-black text-white uppercase tracking-[0.2em]">Live-Bulletin-Board</h2>
                         </div>
                         <span className="h-px bg-slate-800 grow"></span>
                         {filteredBulletins.length > 0 && (
                             <span className="px-2.5 py-0.5 rounded-sm text-[9px] font-black font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                {String(filteredBulletins.length) + ' ACTIVE'}
+                                {String(filteredBulletins.length) + ' AKTIV'}
                             </span>
                         )}
                     </div>
@@ -733,7 +733,7 @@ const IntelligenceView: React.FC = () => {
                         <div className="flex items-center justify-center py-8 rounded-lg border border-dashed border-slate-800 bg-black/20">
                             <div className="flex items-center gap-3 text-slate-700">
                                 <i className="fa-solid fa-satellite-dish text-sm"></i>
-                                <p className="text-[10px] font-mono uppercase tracking-[0.2em]">{'No active bulletins \u2014 all channels clear'}</p>
+                                <p className="text-[10px] font-mono uppercase tracking-[0.2em]">Keine aktiven Bulletins — alle Kanäle frei</p>
                             </div>
                         </div>
                     )}
@@ -744,13 +744,13 @@ const IntelligenceView: React.FC = () => {
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
                             <i className="fa-solid fa-folder-tree text-sky-500/60 text-xs"></i>
-                            <h2 className="text-xs font-black text-white uppercase tracking-[0.2em]">{'Intelligence Archive'}</h2>
+                            <h2 className="text-xs font-black text-white uppercase tracking-[0.2em]">Intel-Archiv</h2>
                         </div>
                         <span className="h-px bg-slate-800 grow"></span>
                         <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">
                             {hasMore || displayItems.length < totalReports
-                                ? `Loaded ${displayItems.length} of ${totalReports} Records`
-                                : `${displayItems.length} Records`}
+                                ? `${displayItems.length} von ${totalReports} Einträgen geladen`
+                                : `${displayItems.length} Einträge`}
                         </span>
                     </div>
 
