@@ -24,7 +24,6 @@ This build serves the org dashboard from a single domain. There is **no** billin
    npm run gen:types
    ```
    The app builds and runs without this (queries use explicit column lists), but regenerating keeps the type layer honest.
-4. Add the redirect URL `https://yourdomain.com/**` (and `http://localhost:3000/**` for local dev).
 
 > Structural defaults (roles, ranks, units, permissions, locations, settings) are seeded automatically on first boot — see the first-boot section below.
 
