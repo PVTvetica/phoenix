@@ -1,4 +1,5 @@
 
+import type { NextcloudFileList, NextcloudStatus, NextcloudUploadResult } from './nextcloudTypes';
 
 const API_URL = '/api';
 
@@ -16,6 +17,14 @@ class ApiService {
         const headers: HeadersInit = {
             'Content-Type': 'application/json',
         };
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+        return headers;
+    }
+
+    private getAuthHeaders(): HeadersInit {
+        const headers: HeadersInit = {};
         if (this.token) {
             headers['Authorization'] = `Bearer ${this.token}`;
         }
@@ -311,6 +320,68 @@ class ApiService {
         }
         const tail = buffer.trim();
         if (tail) emit(tail);
+    }
+
+    async getNextcloudStatus(): Promise<NextcloudStatus> {
+        const response = await fetch(`${API_URL}/nextcloud/status`, {
+            headers: this.getHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            throw new Error('Failed to fetch Nextcloud status');
+        }
+        return this.parseJsonResponse(response, 'getNextcloudStatus') as Promise<NextcloudStatus>;
+    }
+
+    async getNextcloudFiles(path: string = '/'): Promise<NextcloudFileList> {
+        const qs = new URLSearchParams({ path });
+        const response = await fetch(`${API_URL}/nextcloud/files?${qs}`, {
+            headers: this.getHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Failed to fetch Nextcloud files');
+        }
+        return this.parseJsonResponse(response, 'getNextcloudFiles') as Promise<NextcloudFileList>;
+    }
+
+    private async fetchNextcloudBlob(path: string, endpoint: 'preview' | 'download'): Promise<Blob> {
+        const qs = new URLSearchParams({ path });
+        const response = await fetch(`${API_URL}/nextcloud/${endpoint}?${qs}`, {
+            headers: this.getAuthHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || `Nextcloud ${endpoint} fehlgeschlagen`);
+        }
+        return response.blob();
+    }
+
+    async getNextcloudPreviewBlob(path: string): Promise<Blob> {
+        return this.fetchNextcloudBlob(path, 'preview');
+    }
+
+    async downloadNextcloudFile(path: string): Promise<Blob> {
+        return this.fetchNextcloudBlob(path, 'download');
+    }
+
+    async uploadNextcloudFile(file: File, targetPath: string): Promise<NextcloudUploadResult> {
+        const form = new FormData();
+        form.append('file', file);
+        form.append('targetPath', targetPath);
+        const response = await fetch(`${API_URL}/nextcloud/upload`, {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: form,
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Upload fehlgeschlagen');
+        }
+        return this.parseJsonResponse(response, 'uploadNextcloudFile') as Promise<NextcloudUploadResult>;
     }
 }
 

@@ -38,6 +38,7 @@ const FeaturesSettingsTab: React.FC = () => {
     const finances = (features.finances || {}) as { enabled?: boolean };
     const quartermaster = (features.quartermaster || {}) as { enabled?: boolean };
     const warehouse = (features.warehouse || {}) as { enabled?: boolean };
+    const nextcloud = (features.nextcloud || {}) as { enabled?: boolean };
     // Leaderboard and External Tools default ON — absent/undefined means enabled.
     const leaderboard = (features.leaderboard || {}) as { enabled?: boolean };
     const externalTools = (features.externalTools || {}) as { enabled?: boolean };
@@ -244,6 +245,40 @@ const FeaturesSettingsTab: React.FC = () => {
                         </div>
                     </div>
 
+                    {/* NEXTCLOUD */}
+                    <div className="bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden">
+                        <div className="flex items-start gap-4 p-5">
+                            <div className="w-10 h-10 shrink-0 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                                <i className="fa-solid fa-cloud text-purple-400"></i>
+                            </div>
+                            <div className="flex-1">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div>
+                                        <h3 className="font-semibold text-white">Nextcloud</h3>
+                                        <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                                            Dateien per WebDAV und später Deck-Boards aus eurer Nextcloud-Instanz. Zugangsdaten bleiben ausschließlich serverseitig (ENV in Coolify). Mitglieder mit <span className="text-purple-300 font-semibold">nextcloud:view</span> sehen das Modul in der Sidebar.
+                                        </p>
+                                    </div>
+                                    <Toggle
+                                        enabled={!!nextcloud.enabled}
+                                        disabled={savingKey === 'nextcloud.enabled'}
+                                        onToggle={() => {
+                                            const next = !nextcloud.enabled;
+                                            applyPatch(
+                                                'nextcloud.enabled',
+                                                { nextcloud: { enabled: next } },
+                                                next
+                                                    ? undefined
+                                                    : 'Deaktivieren blendet Nextcloud für alle Mitglieder aus. Server-ENV und Daten bleiben erhalten.',
+                                            );
+                                        }}
+                                        activeColor="bg-purple-500"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* LEADERBOARD */}
                     <div className="bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden">
                         <div className="flex items-start gap-4 p-5">
@@ -312,10 +347,6 @@ const FeaturesSettingsTab: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Placeholder for future features */}
-                    <div className="bg-slate-800/20 rounded-lg border border-dashed border-slate-700/50 p-5 text-center">
-                        <p className="text-xs text-slate-500 uppercase tracking-widest">Weitere Funktionen folgen in Kürze</p>
-                    </div>
                 </div>
 
                 <div className="mt-6 p-3 bg-black/40 rounded-sm border border-slate-800 text-[10px] text-slate-500 leading-relaxed uppercase tracking-widest">

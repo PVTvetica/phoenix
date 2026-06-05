@@ -116,6 +116,13 @@ import { respondToPair as allianceRespondToPair, getAllianceSelfProfile as allia
     getAllyRosterProjection, getAllyFleetProjection, getUserById, importOrgData } from './lib/db.js';
 import { runFirstBootCheck } from './lib/firstBoot.js';
 import { verifyToken, signToken } from './lib/auth.js';
+import {
+    handleNextcloudStatus,
+    handleNextcloudFiles,
+    handleNextcloudDownload,
+    handleNextcloudPreview,
+    handleNextcloudUpload,
+} from './api/nextcloud.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -196,7 +203,7 @@ app.use((req, res, next) => {
     const cspNonce = randomBytes(16).toString('base64');
     res.locals.cspNonce = cspNonce;
 
-    res.setHeader('Content-Security-Policy', `default-src 'self'; script-src 'self' 'nonce-${cspNonce}' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https: wss://*.supabase.co wss://*.livekit.cloud; font-src 'self' data: https://cdnjs.cloudflare.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://docs.google.com https://drive.google.com https://calendar.google.com https://www.google.com https://open.spotify.com https://codepen.io https://stackblitz.com; media-src 'self' blob: https:; manifest-src 'self';`);
+    res.setHeader('Content-Security-Policy', `default-src 'self'; script-src 'self' 'nonce-${cspNonce}' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss://*.supabase.co wss://*.livekit.cloud; font-src 'self' data: https://cdnjs.cloudflare.com; frame-src 'self' blob: https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://docs.google.com https://drive.google.com https://calendar.google.com https://www.google.com https://open.spotify.com https://codepen.io https://stackblitz.com; media-src 'self' blob: https:; manifest-src 'self';`);
     // Only set HSTS if using HTTPS in production
     if (process.env.NODE_ENV === 'production') {
         res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
@@ -580,6 +587,28 @@ app.get('/api/alliance/fleet', allianceLimiter, async (req, res) => {
         if (!data) return res.status(403).json({ error: 'forbidden' });
         res.json(data);
     } catch (e) { handleOpFedError(res, e, 'alliance fleet'); }
+});
+
+// --- Nextcloud integration (browser → our API only; credentials server-side) ---
+app.get('/api/nextcloud/status', async (req, res) => {
+    noStore(res);
+    await handleNextcloudStatus(req, res);
+});
+app.get('/api/nextcloud/files', async (req, res) => {
+    noStore(res);
+    await handleNextcloudFiles(req, res);
+});
+app.get('/api/nextcloud/download', async (req, res) => {
+    noStore(res);
+    await handleNextcloudDownload(req, res);
+});
+app.get('/api/nextcloud/preview', async (req, res) => {
+    noStore(res);
+    await handleNextcloudPreview(req, res);
+});
+app.post('/api/nextcloud/upload', async (req, res) => {
+    noStore(res);
+    await handleNextcloudUpload(req, res);
 });
 
 // PWA Service Worker — must never be cached by Cloudflare/browser

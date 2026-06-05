@@ -729,6 +729,8 @@ const GLOBAL_PERMISSIONS = [
     { name: 'warehouse:request', description: "Request Withdrawal of Bulk Stock", category: 'Warehouse' },
     { name: 'warehouse:manage', description: "Manage Stock, Transfers & Withdrawals", category: 'Warehouse' },
     { name: 'warehouse:admin', description: "Configure Commodity Catalog", category: 'Warehouse' },
+    { name: 'nextcloud:view', description: "View Nextcloud integration (files & decks)", category: 'Nextcloud' },
+    { name: 'nextcloud:manage', description: "Manage Nextcloud links and future write operations", category: 'Nextcloud' },
 ];
 
 export async function repairDatabase() {
@@ -815,6 +817,28 @@ export async function repairDatabase() {
                 }
             }
         }
+
+        // Sync newly-added default permissions onto Member / Dispatcher roles
+        // (Admin is fully synced above; Client is intentionally minimal.)
+        const repairedRolesForPerms = await getSystemRoles();
+        const ensureRolePerms = async (roleId: number | undefined, names: string[]) => {
+            if (!roleId || names.length === 0) return;
+            const { data: perms } = await supabase.from('permissions').select('id, name').in('name', names);
+            if (!perms?.length) return;
+            const { data: existing } = await supabase.from('role_permissions')
+                .select('permission_id').eq('role_id', roleId);
+            const existingIds = new Set((existing || []).map((r: { permission_id: number }) => r.permission_id));
+            const rows = perms
+                .filter((p: { id: number }) => !existingIds.has(p.id))
+                .map((p: { id: number }) => ({ role_id: roleId, permission_id: p.id }));
+            if (rows.length > 0) {
+                const { error } = await supabase.from('role_permissions').upsert(rows, { ignoreDuplicates: true });
+                if (error) log.error('repair failed to sync role permissions', { err: error, roleId });
+                else log.info('repair added permissions to role', { roleId, count: rows.length, names });
+            }
+        };
+        await ensureRolePerms(repairedRolesForPerms.member?.id, ['nextcloud:view']);
+        await ensureRolePerms(repairedRolesForPerms.dispatcher?.id, ['nextcloud:view', 'nextcloud:manage']);
 
         // Ensure is_system flag is set on all 4 system roles
         // Try by name first (handles both original and not-yet-migrated orgs), then mark any found

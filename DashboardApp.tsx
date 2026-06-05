@@ -141,6 +141,7 @@ const GovernmentView = lazyWithRetry(() => import('./components/views/government
 const FinancesView = lazyWithRetry(() => import('./components/views/finances/FinancesView'));
 const QuartermasterView = lazyWithRetry(() => import('./components/views/quartermaster/QuartermasterView'));
 const WarehouseView = lazyWithRetry(() => import('./components/views/warehouse/WarehouseView'));
+const NextcloudView = lazyWithRetry(() => import('./components/views/nextcloud/NextcloudView'));
 
 const LoadingFallback = () => (
     <div className="flex items-center justify-center h-64">
@@ -453,6 +454,7 @@ const AppContent: React.FC = () => {
             case 'dispatch': return <DispatchCenterView />;
             case 'leaderboard': return <LeaderboardView />;
             case 'external-tools': return <ExternalToolsView />;
+            case 'nextcloud': return <NextcloudView />;
             case 'search': return <SearchCenterView />;
             case 'operation-detail': return <OperationDetailViewWrapper />;
             case 'request-detail': return <RequestDetailViewWrapper />;
