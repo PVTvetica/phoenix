@@ -305,7 +305,7 @@ const ProfileView: React.FC = () => {
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             {/* Hero */}
-            <div className="shrink-0 relative overflow-hidden border-b border-white/5 bg-linear-to-b from-sky-950/30 via-slate-950/80 to-slate-950">
+            <div className="shrink-0 relative overflow-hidden border-b border-white/5 bg-linear-to-b from-red-950/35 via-slate-950/90 to-slate-950">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-sky-500/10 rounded-full blur-[120px] pointer-events-none" aria-hidden />
 
                 <div className="relative px-4 sm:px-8 pt-10 pb-8">
@@ -331,7 +331,7 @@ const ProfileView: React.FC = () => {
 
                     <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
                         <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-linear-to-br from-sky-500 to-indigo-500 rounded-full blur-sm opacity-50 group-hover:opacity-100 transition duration-500"></div>
+                            <div className="absolute -inset-0.5 bg-linear-to-br from-red-600 to-red-900 rounded-full blur-sm opacity-50 group-hover:opacity-100 transition duration-500"></div>
                             <img src={currentUser.avatarUrl} alt={currentUser.name} className="relative w-28 h-28 md:w-32 md:h-32 rounded-full border-4 border-slate-900 object-cover shadow-xl" />
                             {currentUser.rank?.iconUrl && (
                                 <div className="absolute bottom-0 right-0 bg-slate-900 rounded-full p-1.5 border border-slate-700 shadow-lg" title={currentUser.rank.name}>

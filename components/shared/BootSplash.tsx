@@ -72,7 +72,7 @@ const BootSplash: React.FC<BootSplashProps> = ({ branding, showExtendedWait, gen
                                     src={iconUrl}
                                     alt=""
                                     onLoad={() => { if (iconUrl) loadedIcons.add(iconUrl); setIconLoaded(true); }}
-                                    className={`w-20 h-20 transition-opacity duration-500 drop-shadow-[0_0_15px_rgba(14,165,233,0.8)] ${iconLoaded ? 'opacity-100' : 'opacity-0 absolute'}`}
+                                    className={`w-20 h-20 transition-opacity duration-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)] ${iconLoaded ? 'opacity-100' : 'opacity-0 absolute'}`}
                                 />
                                 {!iconLoaded && <i className="fa-solid fa-circle-notch text-white text-5xl animate-spin"></i>}
                             </>

@@ -101,7 +101,7 @@ const CreateBulletinModal: React.FC<CreateBulletinModalProps> = ({ isOpen, onClo
         'Critical': 'bg-red-600 text-white border-red-400 shadow-[0_0_10px_rgba(239,68,68,0.3)]',
         'High': 'bg-orange-600 text-white border-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.3)]',
         'Medium': 'bg-amber-600 text-white border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.3)]',
-        'Low': 'bg-sky-600 text-white border-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.3)]',
+        'Low': 'bg-sky-600 text-white border-sky-400 shadow-[0_0_10px_rgba(239,68,68,0.3)]',
     };
 
     const inputClass = "w-full bg-slate-950/50 border border-slate-700 rounded-lg p-2.5 text-white text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500/50 outline-hidden transition-all";

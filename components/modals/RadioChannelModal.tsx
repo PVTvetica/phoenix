@@ -18,7 +18,7 @@ const RadioChannelModal: React.FC<RadioChannelModalProps> = ({ isOpen, onClose, 
     const { addToast } = useNotification();
     const [id, setId] = useState('');
     const [name, setName] = useState('');
-    const [color, setColor] = useState('#38bdf8');
+    const [color, setColor] = useState('#ef4444');
     const [isLoading, setIsLoading] = useState(false);
 
     const isEditing = !!channel;
@@ -32,7 +32,7 @@ const RadioChannelModal: React.FC<RadioChannelModalProps> = ({ isOpen, onClose, 
             } else {
                 setId('');
                 setName('');
-                setColor('#38bdf8');
+                setColor('#ef4444');
             }
             setIsLoading(false);
         }

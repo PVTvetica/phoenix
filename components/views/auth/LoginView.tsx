@@ -64,8 +64,8 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginClick, brandingConfig, ann
                     {/* Logo with pulsing glow */}
                     <div className="relative mb-6">
                         <div className="absolute inset-0 bg-sky-500 blur-3xl opacity-25 rounded-full" style={{ animation: 'loginGlow 3s ease-in-out infinite' }} aria-hidden />
-                        <div className="relative z-10 w-20 h-20 rounded-2xl bg-slate-900/60 border border-white/10 backdrop-blur-md flex items-center justify-center shadow-[0_0_40px_rgba(14,165,233,0.25)]">
-                            <img src={brandingConfig.iconUrl} alt="" className="w-12 h-12 drop-shadow-[0_0_15px_rgba(14,165,233,0.8)]" />
+                        <div className="relative z-10 w-20 h-20 rounded-2xl bg-slate-900/60 border border-white/10 backdrop-blur-md flex items-center justify-center shadow-[0_0_40px_rgba(239,68,68,0.25)]">
+                            <img src={brandingConfig.iconUrl} alt="" className="w-12 h-12 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]" />
                         </div>
                     </div>
 

@@ -14,7 +14,7 @@ import { HeroStat, SectionPanel } from '../../shared/ui';
 const CHART_COLORS = {
     success: '#10b981', active: '#3b82f6',
     pending: '#f59e0b', failed: '#ef4444',
-    aborted: '#f97316', sky: '#38bdf8', purple: '#a855f7'
+    aborted: '#f97316', sky: '#ef4444', purple: '#a855f7'
 };
 
 const AXIS_STYLE = { fontSize: 11, fill: '#64748b', fontFamily: 'monospace' };

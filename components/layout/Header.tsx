@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ setActiveView, toggleMobileSidebar, isM
     };
 
     return (
-        <header className="relative z-50 shrink-0 bg-slate-950/80 backdrop-blur-xl border-b border-white/10 h-16 flex items-center justify-between shadow-lg">
+        <header className="relative z-50 shrink-0 bg-slate-950/90 backdrop-blur-xl border-b border-red-950/30 h-16 flex items-center justify-between shadow-lg shadow-red-950/20">
             <div className="flex items-center lg:hidden pl-4 pr-2">
                 <button
                     onClick={toggleMobileSidebar}

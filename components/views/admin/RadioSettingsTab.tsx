@@ -20,7 +20,7 @@ const RadioSettingsTab: React.FC = () => {
     // New Channel Form State
     const [newId, setNewId] = useState('');
     const [newName, setNewName] = useState('');
-    const [newColor, setNewColor] = useState('#38bdf8');
+    const [newColor, setNewColor] = useState('#ef4444');
 
     // Drag State
     const [localChannels, setLocalChannels] = useState<RadioChannel[]>([]);
@@ -97,7 +97,7 @@ const RadioSettingsTab: React.FC = () => {
 
             setNewId('');
             setNewName('');
-            setNewColor('#38bdf8');
+            setNewColor('#ef4444');
         } catch (err: any) {
             console.error(err);
             addToast("Kanal hinzufügen fehlgeschlagen", <i className="fa-solid fa-xmark"></i>, "bg-red-500/10 text-red-400 border-red-500/50", { description: `Could not create the radio channel: ${err.message}` });
@@ -211,7 +211,9 @@ const RadioSettingsTab: React.FC = () => {
                     <i className="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
                     <div>
                         <p className="text-sm font-bold text-amber-400">LiveKit Nicht konfiguriert</p>
-                        <p className="text-xs text-slate-400 mt-1">Sprachfunk erfordert LiveKit-API-Zugangsdaten. Setze<strong className="text-slate-300">LIVEKIT_API_KEY</strong>, <strong className="text-slate-300">LIVEKIT_API_SECRET</strong>, and <strong className="text-slate-300">LIVEKIT_URL</strong> in your server's <strong className="text-slate-300">.env</strong> file. Until configured, radio frequencies below will not be functional.
+                        <p className="text-xs text-slate-400 mt-1">
+                            Sprachfunk erfordert LiveKit-Zugangsdaten (<strong className="text-slate-300">LIVEKIT_API_KEY</strong>, <strong className="text-slate-300">LIVEKIT_API_SECRET</strong>, <strong className="text-slate-300">LIVEKIT_URL</strong> mit Präfix <strong className="text-slate-300">wss://</strong>) in der Server-<strong className="text-slate-300">.env</strong>.
+                            Nach Änderungen den API-Server neu starten (<strong className="text-slate-300">npm run dev:all</strong> oder <strong className="text-slate-300">npm start</strong>), dann die Seite neu laden.
                         </p>
                     </div>
                 </div>

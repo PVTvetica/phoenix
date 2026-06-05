@@ -81,7 +81,7 @@ const getColorStyles = (color: WindowColor) => {
             headerBg: 'bg-sky-950/30',
             iconBg: 'bg-sky-500/20',
             text: 'text-sky-400',
-            glow: 'shadow-[0_0_30px_rgba(14,165,233,0.15)]'
+            glow: 'shadow-[0_0_30px_rgba(239,68,68,0.15)]'
         };
     }
 };

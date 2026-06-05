@@ -28,7 +28,7 @@ import { useModalRegistry } from '../../../contexts/ModalRegistryContext';
 // --- SHARED COMPONENTS ---
 
 const DashboardCard: React.FC<{ children: React.ReactNode, className?: string, title?: React.ReactNode, icon?: string, action?: React.ReactNode }> = ({ children, className = "", title, icon, action }) => (
-    <div className={`bg-slate-900/60 backdrop-blur-md border border-slate-700/50 rounded-xl overflow-hidden shadow-xl flex flex-col ${className}`}>
+    <div className={`bg-slate-900/70 backdrop-blur-md border border-red-950/30 rounded-xl overflow-hidden shadow-xl shadow-red-950/5 flex flex-col ${className}`}>
         {(title || icon) && (
             <div className="px-5 py-4 border-b border-white/5 flex justify-between items-center bg-white/5 shrink-0">
                 <div className="flex items-center gap-3">
@@ -199,7 +199,7 @@ const ClientMissionTracker: React.FC<{ request: HydratedServiceRequest }> = ({ r
 
                             return (
                                 <div key={step.label} className="flex flex-col items-center gap-2">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center border-4 transition-all duration-500 ${isActive ? 'bg-sky-900 border-sky-500 text-sky-400' : 'bg-slate-900 border-slate-700 text-slate-600'} ${isCurrent ? 'animate-pulse shadow-[0_0_15px_rgba(14,165,233,0.5)]' : ''}`}>
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center border-4 transition-all duration-500 ${isActive ? 'bg-sky-900 border-sky-500 text-sky-400' : 'bg-slate-900 border-slate-700 text-slate-600'} ${isCurrent ? 'animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' : ''}`}>
                                         <i className={`fa-solid ${step.icon}`}></i>
                                     </div>
                                     <span className={`text-[10px] font-bold uppercase tracking-wider ${isActive ? 'text-white' : 'text-slate-600'}`}>{step.label}</span>

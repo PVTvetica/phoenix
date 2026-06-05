@@ -10,7 +10,7 @@ interface PieChartProps {
 
 const PieChart: React.FC<PieChartProps> = ({ data, title, icon, unit = '' }) => {
     const total = data.reduce((acc, item) => acc + item.value, 0);
-    const colors = ['#38bdf8', '#34d399', '#facc15', '#fb923c', '#f87171', '#c084fc', '#818cf8', '#a3e635', '#22d3ee', '#f472b6'];
+    const colors = ['#ef4444', '#34d399', '#facc15', '#fb923c', '#f87171', '#c084fc', '#818cf8', '#a3e635', '#22d3ee', '#f472b6'];
     
     let cumulativePercent = 0;
     const segments = data.map((item, index) => {

@@ -52,8 +52,8 @@ export default function DashboardHero({ variant }: Props) {
     };
 
     return (
-        <div className="relative rounded-xl border border-white/10 bg-slate-900 overflow-hidden">
-            <div className="relative p-5 lg:p-6 bg-linear-to-br from-sky-500/10 via-slate-900 to-slate-900">
+        <div className="relative rounded-xl border border-red-950/40 bg-slate-900 overflow-hidden shadow-lg shadow-red-950/10">
+            <div className="relative p-5 lg:p-6 bg-linear-to-br from-red-950/40 via-slate-900 to-slate-950">
                 <div
                     className="absolute inset-0 opacity-[0.05] pointer-events-none"
                     aria-hidden

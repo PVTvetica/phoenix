@@ -113,7 +113,7 @@ const SyncUsersModal: React.FC<SyncUsersModalProps> = ({ isOpen, onClose }) => {
 
                     <div className="w-full bg-slate-950 rounded-full h-4 overflow-hidden border border-slate-700">
                         <div
-                            className="bg-sky-500 h-full transition-all duration-300 ease-out shadow-[0_0_10px_rgba(14,165,233,0.5)]"
+                            className="bg-sky-500 h-full transition-all duration-300 ease-out shadow-[0_0_10px_rgba(239,68,68,0.5)]"
                             style={{ width: `${progress}%` }}
                         ></div>
                     </div>

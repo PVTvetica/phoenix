@@ -6,6 +6,35 @@ import { log as baseLog } from './log.js';
 
 const log = baseLog.child({ module: 'lib.radio' });
 
+/** Non-empty trim helper for secret/env strings. */
+function nonEmpty(value: string | undefined | null): string | null {
+    const v = typeof value === 'string' ? value.trim() : '';
+    return v.length > 0 ? v : null;
+}
+
+/** LiveKit credentials from server .env (self-hosted default). */
+export function isLiveKitConfiguredFromEnv(): boolean {
+    return !!(
+        nonEmpty(process.env.LIVEKIT_API_KEY)
+        && nonEmpty(process.env.LIVEKIT_API_SECRET)
+        && nonEmpty(process.env.LIVEKIT_URL)
+    );
+}
+
+/** DB radioConfig and/or .env — matches getOrgSecret resolution order. */
+export function isLiveKitConfigured(radio?: {
+    apiKey?: string | null;
+    apiSecret?: string | null;
+    url?: string | null;
+} | null): boolean {
+    const hasDb = !!(
+        nonEmpty(radio?.apiKey ?? undefined)
+        && nonEmpty(radio?.apiSecret ?? undefined)
+        && nonEmpty(radio?.url ?? undefined)
+    );
+    return hasDb || isLiveKitConfiguredFromEnv();
+}
+
 // Authenticated actor passed in by the dispatcher. SECURITY (H5): the radio
 // actions are reachable by any authenticated user (user:manage:self), so the
 // LiveKit grant MUST be authorized here against the actor's identity — the
@@ -16,6 +45,84 @@ export interface RadioUser {
     role?: string;
     permissions?: string[];
     clearanceLevel?: { level?: number } | null;
+    unitId?: number | null;
+}
+
+export type RadioChannelRef =
+    | { kind: 'matrix'; channelId: string }
+    | { kind: 'unit'; unitId: number }
+    | { kind: 'request'; requestId: string };
+
+/** Parses the channel id segment from a `radio-<id>` room name. */
+export function parseRadioChannelId(channelId: string): RadioChannelRef | null {
+    const id = String(channelId || '').trim();
+    if (!id) return null;
+    const unitMatch = /^unit-(\d+)$/.exec(id);
+    if (unitMatch) return { kind: 'unit', unitId: Number(unitMatch[1]) };
+    if (id.startsWith('req-')) {
+        const requestId = id.slice(4);
+        return requestId ? { kind: 'request', requestId } : null;
+    }
+    return { kind: 'matrix', channelId: id };
+}
+
+function userIdNum(user: RadioUser): number {
+    return typeof user.id === 'number' ? user.id : Number(user.id);
+}
+
+function hasPerm(user: RadioUser, perm: string): boolean {
+    return user.role === 'Admin' || (user.permissions || []).includes(perm);
+}
+
+/**
+ * Authorize join for matrix frequencies, unit tactical channels (`unit-<id>`),
+ * and mission ops channels (`req-<requestId>`). Matches client-side channel lists.
+ */
+export async function assertRadioChannelAllowed(channelId: string, user: RadioUser): Promise<void> {
+    const ref = parseRadioChannelId(channelId);
+    if (!ref) throw new Error('Invalid radio channel');
+
+    if (ref.kind === 'matrix') {
+        const { data: channel } = await supabase.from('radio_channels').select('id').eq('id', ref.channelId).maybeSingle();
+        if (!channel) throw new Error('Unknown radio channel');
+        return;
+    }
+
+    if (ref.kind === 'unit') {
+        const { data: unit } = await supabase
+            .from('units')
+            .select('id, has_radio_channel')
+            .eq('id', ref.unitId)
+            .maybeSingle();
+        if (!unit || unit.has_radio_channel === false) throw new Error('Unknown radio channel');
+        return;
+    }
+
+    const { data: req } = await supabase
+        .from('service_requests')
+        .select('id, client_id, lead_responder_id, status')
+        .eq('id', ref.requestId)
+        .maybeSingle();
+    if (!req) throw new Error('Unknown radio channel');
+
+    const active = req.status === 'Accepted' || req.status === 'In-Progress';
+    if (!active) throw new Error('Unknown radio channel');
+
+    const uid = userIdNum(user);
+    if (Number.isNaN(uid)) throw new Error('Unauthorized');
+
+    if (req.client_id === uid || req.lead_responder_id === uid) return;
+    if (hasPerm(user, 'radio:manage') || hasPerm(user, 'request:dispatch')) return;
+
+    const { data: responder } = await supabase
+        .from('request_responders')
+        .select('user_id')
+        .eq('request_id', ref.requestId)
+        .eq('user_id', uid)
+        .maybeSingle();
+    if (responder) return;
+
+    throw new Error('Insufficient clearance to join this mission channel.');
 }
 
 export async function generateRadioToken(user: RadioUser, room: string) {
@@ -25,8 +132,7 @@ export async function generateRadioToken(user: RadioUser, room: string) {
     const match = /^radio-(.+)$/.exec(String(room || ''));
     if (!match) throw new Error('Invalid radio channel');
     const channelId = match[1];
-    const { data: channel } = await supabase.from('radio_channels').select('id').eq('id', channelId).maybeSingle();
-    if (!channel) throw new Error('Unknown radio channel');
+    await assertRadioChannelAllowed(channelId, user);
 
     const apiKey = await getOrgSecret('LIVEKIT_API_KEY');
     const apiSecret = await getOrgSecret('LIVEKIT_API_SECRET');

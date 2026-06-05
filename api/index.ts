@@ -247,16 +247,16 @@ export default async function handler(req: Request, res: Response) {
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(30,41,59,0.2),#020617 60%,#020617)"></div>
   <div style="position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;padding:2rem;max-width:28rem;width:100%">
     <div style="position:relative;margin-bottom:2.5rem;width:5rem;height:5rem;display:flex;align-items:center;justify-content:center">
-      <div style="position:absolute;inset:0;background:#0ea5e9;filter:blur(48px);opacity:0.2;border-radius:9999px;animation:__bsPulse 2s ease-in-out infinite"></div>
-      <img id="__bs_icon__" src="${safeSplashIconUrl}" alt="" style="position:relative;z-index:1;width:5rem;height:5rem;filter:drop-shadow(0 0 15px rgba(14,165,233,0.8))"/>
+      <div style="position:absolute;inset:0;background:#ef4444;filter:blur(48px);opacity:0.2;border-radius:9999px;animation:__bsPulse 2s ease-in-out infinite"></div>
+      <img id="__bs_icon__" src="${safeSplashIconUrl}" alt="" style="position:relative;z-index:1;width:5rem;height:5rem;filter:drop-shadow(0 0 15px rgba(239,68,68,0.8))"/>
     </div>
-    <h1 style="font-size:1.875rem;font-weight:900;color:#fff;letter-spacing:0.2em;text-transform:uppercase;text-align:center;margin:0 0 0.5rem">${safeName}<br/><span style="color:#0ea5e9;font-size:1rem;letter-spacing:0.5em">TERMINAL</span></h1>
-    <div style="height:1px;width:8rem;background:linear-gradient(to right,transparent,#0ea5e9,transparent);opacity:0.5;margin-bottom:2rem"></div>
-    <div style="display:flex;align-items:center;gap:0.75rem;font-family:ui-monospace,monospace;font-size:0.75rem;color:#38bdf8;text-transform:uppercase;letter-spacing:0.3em;margin-bottom:1.5rem">
+    <h1 style="font-size:1.875rem;font-weight:900;color:#fff;letter-spacing:0.2em;text-transform:uppercase;text-align:center;margin:0 0 0.5rem">${safeName}<br/><span style="color:#ef4444;font-size:1rem;letter-spacing:0.5em">TERMINAL</span></h1>
+    <div style="height:1px;width:8rem;background:linear-gradient(to right,transparent,#ef4444,transparent);opacity:0.5;margin-bottom:2rem"></div>
+    <div style="display:flex;align-items:center;gap:0.75rem;font-family:ui-monospace,monospace;font-size:0.75rem;color:#ef4444;text-transform:uppercase;letter-spacing:0.3em;margin-bottom:1.5rem">
       <span style="animation:__bsPulse 2s ease-in-out infinite">Establishing Uplink...</span>
     </div>
     <div style="width:12rem;background:rgba(15,23,42,0.8);border-radius:9999px;height:0.375rem;overflow:hidden;border:1px solid rgba(51,65,85,0.5)">
-      <div style="height:100%;width:40%;background:linear-gradient(to right,transparent,rgba(14,165,233,0.8),transparent);border-radius:9999px;animation:__bsSweep 1.5s ease-in-out infinite"></div>
+      <div style="height:100%;width:40%;background:linear-gradient(to right,transparent,rgba(239,68,68,0.8),transparent);border-radius:9999px;animation:__bsSweep 1.5s ease-in-out infinite"></div>
     </div>
     <p style="margin-top:1.5rem;font-size:0.625rem;color:#475569;font-family:ui-monospace,monospace;text-align:center">First time visits may take a moment.</p>
   </div>

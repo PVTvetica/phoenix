@@ -1599,7 +1599,7 @@ const TacticalBoard: React.FC<{ operation: HydratedOperation; canManage: boolean
                         {/* Grid Layer — brighter when snap is active so the user sees what they'll snap to */}
                         <Layer listening={false}>
                             {gridLines.map(l => (
-                                <Line key={l.key} points={l.points} stroke="#38bdf8" strokeWidth={0.5 / zoom} opacity={snapEnabled ? 0.18 : 0.05} />
+                                <Line key={l.key} points={l.points} stroke="#ef4444" strokeWidth={0.5 / zoom} opacity={snapEnabled ? 0.18 : 0.05} />
                             ))}
                         </Layer>
 
@@ -1633,7 +1633,7 @@ const TacticalBoard: React.FC<{ operation: HydratedOperation; canManage: boolean
                                             )}
                                             {isSelected && (
                                                 <Rect width={el.width} height={el.height}
-                                                    stroke="#38bdf8" strokeWidth={2} opacity={0.5}
+                                                    stroke="#ef4444" strokeWidth={2} opacity={0.5}
                                                     cornerRadius={8} listening={false} />
                                             )}
                                         </Group>
@@ -1668,7 +1668,7 @@ const TacticalBoard: React.FC<{ operation: HydratedOperation; canManage: boolean
                                             )}
                                             {isSelected && (
                                                 <Line points={linePoints}
-                                                    stroke="#38bdf8" strokeWidth={isFreehand ? 5 : 4}
+                                                    stroke="#ef4444" strokeWidth={isFreehand ? 5 : 4}
                                                     opacity={0.3} lineCap="round" lineJoin="round"
                                                     tension={isFreehand ? 0.5 : 0} listening={false} />
                                             )}
@@ -1692,7 +1692,7 @@ const TacticalBoard: React.FC<{ operation: HydratedOperation; canManage: boolean
                                                 <Rect x={-3} y={-3}
                                                     width={((el.label || 'Text').length * 8) + 6}
                                                     height={20}
-                                                    stroke="#38bdf8" strokeWidth={1.5} opacity={0.5}
+                                                    stroke="#ef4444" strokeWidth={1.5} opacity={0.5}
                                                     cornerRadius={3} listening={false} />
                                             )}
                                         </Group>
@@ -1726,7 +1726,7 @@ const TacticalBoard: React.FC<{ operation: HydratedOperation; canManage: boolean
                                                     height={14}
                                                     fill={isSelected ? '#0c4a6e' : 'rgba(0,0,0,0.6)'}
                                                     cornerRadius={3}
-                                                    stroke={isSelected ? '#38bdf8' : undefined}
+                                                    stroke={isSelected ? '#ef4444' : undefined}
                                                     strokeWidth={isSelected ? 1 : 0} />
                                                 <KonvaText text={el.label}
                                                     fontSize={9} fontStyle="bold" fill="white"
@@ -1737,7 +1737,7 @@ const TacticalBoard: React.FC<{ operation: HydratedOperation; canManage: boolean
                                         )}
                                         {isSelected && (
                                             <Circle radius={26}
-                                                stroke="#38bdf8" strokeWidth={2} opacity={0.6}
+                                                stroke="#ef4444" strokeWidth={2} opacity={0.6}
                                                 listening={false} />
                                         )}
                                     </Group>
@@ -1783,10 +1783,10 @@ const TacticalBoard: React.FC<{ operation: HydratedOperation; canManage: boolean
                                     y={rubberRect.y}
                                     width={rubberRect.w}
                                     height={rubberRect.h}
-                                    stroke="#38bdf8"
+                                    stroke="#ef4444"
                                     strokeWidth={1.5 / zoom}
                                     dash={[4, 4]}
-                                    fill="#38bdf820"
+                                    fill="#ef444420"
                                 />
                             )}
                         </Layer>
@@ -1796,7 +1796,7 @@ const TacticalBoard: React.FC<{ operation: HydratedOperation; canManage: boolean
                             <Transformer ref={transformerRef}
                                 rotateEnabled={false}
                                 enabledAnchors={[]}
-                                borderStroke="#38bdf8"
+                                borderStroke="#ef4444"
                                 borderStrokeWidth={2}
                                 borderDash={[4, 4]} />
                         </Layer>

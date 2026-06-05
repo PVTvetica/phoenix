@@ -373,7 +373,7 @@ const CreateRequestModal: React.FC<CreateRequestModalProps> = ({ isOpen, onClose
                     <button
                         type="submit"
                         disabled={isLoading || (isClient && !tosAgreed)}
-                        className="px-6 py-2 bg-sky-500/10 text-sky-400 border border-sky-500/50 hover:bg-sky-500/20 hover:shadow-[0_0_15px_rgba(14,165,233,0.3)] rounded-lg text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-6 py-2 bg-sky-500/10 text-sky-400 border border-sky-500/50 hover:bg-sky-500/20 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] rounded-lg text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : 'Anfrage senden'}
                     </button>

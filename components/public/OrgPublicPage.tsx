@@ -105,7 +105,7 @@ const ProfileHeaderCard: React.FC<{ payload: PublicPagePayload }> = ({ payload }
     return (
         <CardPanel as="section" aria-labelledby="profile-heading" className="overflow-hidden">
             {/* Banner */}
-            <div className="relative w-full h-40 sm:h-56 bg-linear-to-br from-sky-900/40 via-slate-900 to-slate-950">
+            <div className="relative w-full h-40 sm:h-56 bg-linear-to-br from-red-950/50 via-slate-900 to-slate-950">
                 {payload.heroImageUrl && (
                     <img
                         src={payload.heroImageUrl}
@@ -125,7 +125,7 @@ const ProfileHeaderCard: React.FC<{ payload: PublicPagePayload }> = ({ payload }
                             <img
                                 src={avatar}
                                 alt={payload.org.name}
-                                className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-slate-900 bg-slate-900 object-cover shadow-[0_0_30px_rgba(14,165,233,0.25)]"
+                                className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-slate-900 bg-slate-900 object-cover shadow-[0_0_30px_rgba(239,68,68,0.25)]"
                                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                         </div>
@@ -305,7 +305,7 @@ const ServicesCard: React.FC<{ slug: string; onLogin: () => void }> = ({ slug, o
                 {items.map((svc) => (
                     <li key={svc.name} className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:border-sky-500/40 transition-colors">
                         <div className="flex items-center gap-3 mb-1.5">
-                            {svc.icon && <i className={`${svc.icon} text-lg`} style={{ color: svc.color || '#38bdf8' }} aria-hidden />}
+                            {svc.icon && <i className={`${svc.icon} text-lg`} style={{ color: svc.color || '#ef4444' }} aria-hidden />}
                             <h3 className="text-sm font-bold text-white uppercase tracking-wider">{svc.name}</h3>
                         </div>
                         {svc.description && <p className="text-slate-400 text-xs leading-relaxed">{svc.description}</p>}

@@ -65,7 +65,7 @@ const HelpView: React.FC = () => {
     return (
         <div className="h-full flex flex-col overflow-hidden animate-fade-in">
             {/* Hero */}
-            <div className="shrink-0 relative overflow-hidden border-b border-white/5 bg-linear-to-b from-sky-950/30 via-slate-950/80 to-slate-950">
+            <div className="shrink-0 relative overflow-hidden border-b border-white/5 bg-linear-to-b from-red-950/35 via-slate-950/90 to-slate-950">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-sky-500/10 rounded-full blur-[120px] pointer-events-none" aria-hidden />
 
                 <div className="relative px-4 sm:px-8 pt-10 pb-8">

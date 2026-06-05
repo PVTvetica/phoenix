@@ -11,7 +11,7 @@ export async function seedInstall() {
 
     // 1. Seed Service Types
     const serviceTypes = [
-        { name: 'Security', icon: 'fa-solid fa-shield-halved', color: '#38bdf8', description: 'Armed escort and protection services.', is_active: true},
+        { name: 'Security', icon: 'fa-solid fa-shield-halved', color: '#ef4444', description: 'Armed escort and protection services.', is_active: true},
         { name: 'Rescue', icon: 'fa-solid fa-truck-medical', color: '#f87171', description: 'Medical extraction and personnel recovery.', is_active: true},
         { name: 'Logistics', icon: 'fa-solid fa-box-open', color: '#fb923c', description: 'Cargo transport and salvage operations.', is_active: true}
     ];
@@ -168,18 +168,18 @@ export async function seedInstall() {
     const { error: commError } = await supabase.from('commendations').upsert(commendationsData, { onConflict: 'name', ignoreDuplicates: true });
     if (commError) log.error('commendations seed failed', { err: commError });
 
-    // 9. Seed Default Radio Channel
-    const { data: existingChannel } = await supabase.from('radio_channels')
-        .select('id').eq('id', 'dispatch').maybeSingle();
-    if (!existingChannel) {
-        const { error: rcError } = await supabase.from('radio_channels').insert({
-            id: 'dispatch',
-            name: 'Dispatch',
-            color: '#38bdf8',
-            type: 'voice',
-            sort_order: 0
-        });
-        if (rcError) log.error('default radio channel seed failed', { err: rcError });
+    // 9. Seed default radio frequencies (UI default is dispatch-global)
+    const defaultRadioChannels = [
+        { id: 'dispatch-global', name: 'Global Dispatch', color: '#ef4444', type: 'voice', sort_order: 0 },
+        { id: 'dispatch', name: 'Dispatch', color: '#ef4444', type: 'voice', sort_order: 10 },
+    ];
+    for (const ch of defaultRadioChannels) {
+        const { data: existingChannel } = await supabase.from('radio_channels')
+            .select('id').eq('id', ch.id).maybeSingle();
+        if (!existingChannel) {
+            const { error: rcError } = await supabase.from('radio_channels').insert(ch);
+            if (rcError) log.error('default radio channel seed failed', { id: ch.id, err: rcError });
+        }
     }
 
     // 10. Seed Locations

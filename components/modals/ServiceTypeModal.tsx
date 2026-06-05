@@ -18,7 +18,7 @@ const ServiceTypeModal: React.FC<ServiceTypeModalProps> = ({ isOpen, onClose, co
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [icon, setIcon] = useState('');
-    const [color, setColor] = useState('#38bdf8');
+    const [color, setColor] = useState('#ef4444');
     const [isActive, setIsActive] = useState(true);
     const [discordChannelId, setDiscordChannelId] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +38,7 @@ const ServiceTypeModal: React.FC<ServiceTypeModalProps> = ({ isOpen, onClose, co
                 setName('');
                 setDescription('');
                 setIcon('');
-                setColor('#38bdf8');
+                setColor('#ef4444');
                 setIsActive(true);
                 setDiscordChannelId('');
             }

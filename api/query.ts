@@ -6,6 +6,7 @@ import { stripSensitiveUserFields, stripSensitiveUserFieldsBulk, RequesterContex
 import { filterByClearance } from '../lib/clearance.js';
 import type { DiscordConfig } from '../types.js';
 import { log as baseLog } from '../lib/log.js';
+import { isLiveKitConfigured } from '../lib/radio.js';
 
 const log = baseLog.child({ module: 'api.query' });
 
@@ -147,13 +148,15 @@ export function stripSecrets(state: any): any {
         cleaned.aiConfig = safeAiConfig;
     }
 
-    // Radio config: strip LiveKit API key and secret, expose configured flag
+    // Radio config: strip LiveKit credentials; configured reflects DB or .env
     if (cleaned.radioConfig) {
         const { apiKey, apiSecret, url, ...safeRadioConfig } = cleaned.radioConfig;
         cleaned.radioConfig = {
             ...safeRadioConfig,
-            configured: !!(apiKey && apiSecret && url),
+            configured: isLiveKitConfigured({ apiKey, apiSecret, url }),
         };
+    } else {
+        cleaned.radioConfig = { channelName: '', configured: isLiveKitConfigured(null) };
     }
 
     // Remove raw geminiKey if present (from getAllSettings)

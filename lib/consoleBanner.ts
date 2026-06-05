@@ -8,7 +8,7 @@ export function printConsoleBanner(): void {
     try {
         if (typeof console === 'undefined' || typeof console.log !== 'function') return;
 
-        const heading = 'font-size:16px;font-weight:700;color:#38bdf8';
+        const heading = 'font-size:16px;font-weight:700;color:#ef4444';
         const body = 'font-size:13px;line-height:1.6;color:#93c5fd';
         const sign = 'font-size:12px;font-style:italic;color:#9ca3af';
 

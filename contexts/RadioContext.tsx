@@ -352,7 +352,7 @@ export const RadioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 if (isConnecting) return;
                 if (currentChannel?.id === channelId && error) return;
 
-                const channel = radioChannels.find(c => c.id === channelId) || { id: channelId, name: channelId, color: '#38bdf8' };
+                const channel = radioChannels.find(c => c.id === channelId) || { id: channelId, name: channelId, color: '#ef4444' };
                 if (channel) {
                     debugLog(`[Radio] Syncing to remote channel: ${channel.name}`);
                     connectToChannel(channel as RadioChannel);

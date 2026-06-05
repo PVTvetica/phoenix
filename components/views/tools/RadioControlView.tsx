@@ -363,7 +363,7 @@ const RadioControlView: React.FC = () => {
         return [
             { key: 'ops', title: 'Active Operations', icon: 'fa-solid fa-crosshairs', color: '#ef4444', channels: opsChannels, participants: getParticipantCount(opsChannels), defaultOpen: true },
             { key: 'unit', title: 'Unit Channels', icon: 'fa-solid fa-users', color: '#a3e635', channels: unitChs, participants: getParticipantCount(unitChs), defaultOpen: true },
-            { key: 'static', title: 'Frequencies', icon: 'fa-solid fa-tower-broadcast', color: '#38bdf8', channels: staticChannels, participants: getParticipantCount(staticChannels), defaultOpen: true },
+            { key: 'static', title: 'Frequencies', icon: 'fa-solid fa-tower-broadcast', color: '#ef4444', channels: staticChannels, participants: getParticipantCount(staticChannels), defaultOpen: true },
         ];
     }, [allChannels, activeRooms]);
 

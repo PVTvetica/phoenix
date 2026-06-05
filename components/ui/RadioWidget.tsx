@@ -122,8 +122,12 @@ const RadioWidget: React.FC = () => {
 
             // Only tune to default if no mission active, and default exists in visible list
             if (!currentChannel) {
-                const defaultChannelId = radioConfig?.channelName || 'dispatch-global';
-                const defaultChannel = channels.find(c => c.id === defaultChannelId) || channels[0];
+                const preferredId = radioConfig?.channelName;
+                const defaultChannel =
+                    (preferredId && channels.find(c => c.id === preferredId))
+                    || channels.find(c => c.id === 'dispatch-global')
+                    || channels.find(c => c.id === 'dispatch')
+                    || channels[0];
                 if (defaultChannel) {
                     setChannel(defaultChannel);
                 }
@@ -228,7 +232,7 @@ const RadioWidget: React.FC = () => {
 
                 <div className="p-4 space-y-4">
                     {/* LCD Display Panel */}
-                    <div className={`relative rounded-lg p-4 border-2 transition-all duration-500 overflow-hidden min-h-[140px] flex flex-col justify-start ${isEnabled ? 'bg-sky-950/30 border-sky-500/30 shadow-[inset_0_0_30px_rgba(14,165,233,0.15)]' : 'bg-slate-900/50 border-slate-800 justify-center'}`}>
+                    <div className={`relative rounded-lg p-4 border-2 transition-all duration-500 overflow-hidden min-h-[140px] flex flex-col justify-start ${isEnabled ? 'bg-sky-950/30 border-sky-500/30 shadow-[inset_0_0_30px_rgba(239,68,68,0.15)]' : 'bg-slate-900/50 border-slate-800 justify-center'}`}>
                         {isEnabled && (
                             <div className="absolute inset-0 pointer-events-none opacity-[0.05] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-size-[100%_4px,3px_100%]"></div>
                         )}
@@ -330,13 +334,13 @@ const RadioWidget: React.FC = () => {
                                         key={ch.id}
                                         onClick={() => setChannel(ch)}
                                         className={`relative group overflow-hidden text-[10px] font-black uppercase py-2.5 px-1 rounded-md border transition-all 
-                                            ${isCurrent ? 'bg-slate-800 border-sky-500 text-white shadow-[0_0_10px_rgba(14,165,233,0.1)]' : 'bg-slate-900 border-slate-800 text-slate-600 hover:border-slate-600 hover:text-slate-300'}
+                                            ${isCurrent ? 'bg-slate-800 border-sky-500 text-white shadow-[0_0_10px_rgba(239,68,68,0.1)]' : 'bg-slate-900 border-slate-800 text-slate-600 hover:border-slate-600 hover:text-slate-300'}
                                             ${ch.id.startsWith('req-') ? 'col-span-2 border-l-4 border-l-red-500' : ''}
                                         `}
                                     >
                                         <span className="relative z-10">{ch.name}</span>
                                         {isCurrent && (
-                                            <span className="absolute bottom-0 left-0 h-0.5 bg-sky-500 w-full animate-pulse shadow-[0_0_5px_rgba(14,165,233,0.8)]"></span>
+                                            <span className="absolute bottom-0 left-0 h-0.5 bg-sky-500 w-full animate-pulse shadow-[0_0_5px_rgba(239,68,68,0.8)]"></span>
                                         )}
                                         <div className="absolute top-0 left-0 w-full h-full bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                     </button>

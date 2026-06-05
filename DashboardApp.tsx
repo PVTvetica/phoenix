@@ -571,12 +571,16 @@ const AppContent: React.FC = () => {
             />
 
             <div className="flex-1 flex flex-col min-w-0 relative">
+                <div
+                    className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_100%_70%_at_50%_-20%,rgba(127,29,29,0.14),transparent_55%)]"
+                    aria-hidden
+                />
                 <Header
                     setActiveView={setActiveView}
                     toggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
                     isMobileSidebarOpen={isMobileSidebarOpen}
                 />
-                <main className={`flex-1 flex flex-col relative ${fullScreenViews.includes(activeView) ? 'overflow-hidden h-full' : 'overflow-y-auto p-4 md:p-6 lg:p-8'}`}>
+                <main className={`relative flex-1 flex flex-col ${fullScreenViews.includes(activeView) ? 'overflow-hidden h-full' : 'overflow-y-auto p-4 md:p-6 lg:p-8'}`}>
                     <div key={activeView} className={`view-container flex-1 ${fullScreenViews.includes(activeView) ? 'h-full' : 'min-h-full'}`}>
                         <Suspense fallback={<LoadingFallback />}>
                             <ErrorBoundary>

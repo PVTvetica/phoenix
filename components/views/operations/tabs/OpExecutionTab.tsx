@@ -889,7 +889,7 @@ const OpExecutionTab: React.FC<OpExecutionTabProps> = ({ operation, canManage, o
 
                                                     {/* Checkbox-style icon */}
                                                     <div className="w-6 h-6 rounded-sm flex items-center justify-center shrink-0 border mt-0.5" style={{
-                                                        borderColor: task.status === 'Completed' ? 'rgba(34,197,94,0.4)' : task.status === 'Active' ? 'rgba(56,189,248,0.4)' : task.status === 'Failed' ? 'rgba(239,68,68,0.4)' : 'rgba(100,116,139,0.3)',
+                                                        borderColor: task.status === 'Completed' ? 'rgba(34,197,94,0.4)' : task.status === 'Active' ? 'rgba(239,68,68,0.4)' : task.status === 'Failed' ? 'rgba(239,68,68,0.4)' : 'rgba(100,116,139,0.3)',
                                                         backgroundColor: task.status === 'Completed' ? 'rgba(34,197,94,0.08)' : 'transparent',
                                                     }}>
                                                         <i className={`fa-solid ${task.status === 'Completed' ? 'fa-check text-green-400' : task.status === 'Active' ? 'fa-play text-purple-300' : task.status === 'Failed' ? 'fa-xmark text-red-400' : 'fa-minus text-slate-500'} text-[7px]`}></i>

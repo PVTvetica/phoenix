@@ -21,9 +21,9 @@ export default function MetricCard({ label, value, sub, icon, accent = 'sky', on
             type="button"
             onClick={onClick}
             disabled={!clickable}
-            className={`text-left relative overflow-hidden bg-slate-900 border rounded-xl p-5 transition ${
-                emphasize ? `border-amber-500/40 ring-1 ${a.ring}` : 'border-white/10'
-            } ${clickable ? 'hover:border-white/20 cursor-pointer' : 'cursor-default'}`}
+            className={`text-left relative overflow-hidden bg-slate-900/90 border rounded-xl p-5 transition ${
+                emphasize ? `border-amber-500/40 ring-1 ${a.ring}` : 'border-red-950/35'
+            } ${clickable ? 'hover:border-red-900/50 cursor-pointer' : 'cursor-default'}`}
         >
             <div className={`absolute inset-0 bg-linear-to-br ${a.grad} pointer-events-none`} />
             <div className="relative">
