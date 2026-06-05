@@ -112,7 +112,6 @@ interface IntelBulkDeletePayload {
     reportIds: string[];
 }
 interface IntelSyncFeedsPayload {
-    adminId?: number;
     force?: boolean;
 }
 interface IntelGenerateSummaryPayload {
@@ -281,7 +280,7 @@ export const intelActions = {
     'intel:bulk_add_tags': ({ reportIds, tags }: IntelBulkAddTagsPayload) => db.bulkAddIntelTags(reportIds, tags),
     'intel:bulk_delete_reports': ({ reportIds }: IntelBulkDeletePayload) => db.bulkDeleteIntelReports(reportIds),
     'intel:get_stats': () => db.getIntelStats(),
-    'intel:sync_feeds': (payload: IntelSyncFeedsPayload) => db.syncTrustedFeeds(payload?.adminId, payload?.force),
+    'intel:sync_feeds': (payload: IntelSyncFeedsPayload) => db.syncTrustedFeeds(payload?.force),
     'intel:generate_summary': async ({ dossier }: IntelGenerateSummaryPayload) => {
         return ai.generateDossierSummary(dossier);
     },

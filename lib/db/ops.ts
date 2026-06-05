@@ -6,7 +6,7 @@ import { passesClearance } from '../clearance.js';
 import { sendPushToUsers } from '../push.js';
 import { toHydratedOperation } from './mappers.js';
 import { getUserById } from './users.js';
-import { bumpOperationVersion, pushOperationToAllies } from './operations-federation.js';
+import { bumpOperationVersion, pushOperationToAllies, scheduleAlliedPush } from './operations-federation.js';
 import { stripHtml } from '../textSanitize.js';
 import { cache, TTL } from '../cache.js';
 import { log as baseLog } from '../log.js';
@@ -21,6 +21,9 @@ function broadcastOperationUpdate(operationId: string) {
     // Alliance P3: bump the joint-op version so allied mirrors pick up the change
     // on their next poll. No-ops for non-joint ops (self-gated on is_joint).
     void bumpOperationVersion(operationId).catch(() => undefined);
+    // Alliance live-sync: debounced full-snapshot push to accepted allies — N
+    // rapid edits coalesce into ONE push. No-op for ops without allies.
+    scheduleAlliedPush(operationId);
 }
 
 /** Broadcast an operation alert with push notifications. The caller (the
@@ -1442,7 +1445,6 @@ export async function updateLogisticsItem(itemId: number, data: Record<string, u
     if (data.itemName !== undefined) updates.item_name = data.itemName;
     if (data.quantityNeeded !== undefined) updates.quantity_needed = data.quantityNeeded;
     if (data.quantityFulfilled !== undefined) updates.quantity_fulfilled = data.quantityFulfilled;
-    if (data.fulfilledByOrgId !== undefined) updates.fulfilled_by_org_id = data.fulfilledByOrgId || null;
     if (data.fulfilledByUserId !== undefined) updates.fulfilled_by_user_id = data.fulfilledByUserId || null;
     if (data.category !== undefined) updates.category = data.category;
     if (data.status !== undefined) updates.status = data.status;

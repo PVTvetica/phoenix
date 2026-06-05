@@ -10,10 +10,102 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
+      alliance_peers: {
+        Row: {
+          base_url: string
+          channels: Json
+          created_at: string
+          entered_peer_code_enc: string | null
+          entered_peer_code_expires: string | null
+          handshake_expires: string | null
+          handshake_nonce: string | null
+          id: string
+          inbound_key_id: string | null
+          inbound_max_clearance: number
+          is_local_initiator: boolean | null
+          label: string
+          last_contact_at: string | null
+          outbound_key_enc: string | null
+          outbound_max_clearance: number
+          pairing_state: string
+          peer_blurb: string | null
+          peer_icon_url: string | null
+          peer_org_name: string | null
+          peer_org_tag: string | null
+          profile_fetched_at: string | null
+          revoked_at: string | null
+          status: Database["public"]["Enums"]["alliance_status"]
+          type: Database["public"]["Enums"]["alliance_type"]
+          updated_at: string
+        }
+        Insert: {
+          base_url: string
+          channels?: Json
+          created_at?: string
+          entered_peer_code_enc?: string | null
+          entered_peer_code_expires?: string | null
+          handshake_expires?: string | null
+          handshake_nonce?: string | null
+          id?: string
+          inbound_key_id?: string | null
+          inbound_max_clearance?: number
+          is_local_initiator?: boolean | null
+          label: string
+          last_contact_at?: string | null
+          outbound_key_enc?: string | null
+          outbound_max_clearance?: number
+          pairing_state?: string
+          peer_blurb?: string | null
+          peer_icon_url?: string | null
+          peer_org_name?: string | null
+          peer_org_tag?: string | null
+          profile_fetched_at?: string | null
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["alliance_status"]
+          type?: Database["public"]["Enums"]["alliance_type"]
+          updated_at?: string
+        }
+        Update: {
+          base_url?: string
+          channels?: Json
+          created_at?: string
+          entered_peer_code_enc?: string | null
+          entered_peer_code_expires?: string | null
+          handshake_expires?: string | null
+          handshake_nonce?: string | null
+          id?: string
+          inbound_key_id?: string | null
+          inbound_max_clearance?: number
+          is_local_initiator?: boolean | null
+          label?: string
+          last_contact_at?: string | null
+          outbound_key_enc?: string | null
+          outbound_max_clearance?: number
+          pairing_state?: string
+          peer_blurb?: string | null
+          peer_icon_url?: string | null
+          peer_org_name?: string | null
+          peer_org_tag?: string | null
+          profile_fetched_at?: string | null
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["alliance_status"]
+          type?: Database["public"]["Enums"]["alliance_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alliance_peers_inbound_key_id_fkey"
+            columns: ["inbound_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           audience: string[]
@@ -45,8 +137,7 @@ export type Database = {
           title?: string
           type?: Database["public"]["Enums"]["announcement_type"]
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       api_keys: {
         Row: {
@@ -70,8 +161,7 @@ export type Database = {
           label?: string
           last_used_at?: string | null
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       certifications: {
         Row: {
@@ -95,8 +185,7 @@ export type Database = {
           image_url?: string | null
           name?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       clearance_history: {
         Row: {
@@ -179,8 +268,7 @@ export type Database = {
           image_url?: string | null
           name?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       conduct_records: {
         Row: {
@@ -224,6 +312,30 @@ export type Database = {
           },
         ]
       }
+      cron_locks: {
+        Row: {
+          job_name: string
+          locked_at: string
+          locked_until: string
+          updated_at: string
+          worker_id: string
+        }
+        Insert: {
+          job_name: string
+          locked_at?: string
+          locked_until?: string
+          updated_at?: string
+          worker_id?: string
+        }
+        Update: {
+          job_name?: string
+          locked_at?: string
+          locked_until?: string
+          updated_at?: string
+          worker_id?: string
+        }
+        Relationships: []
+      }
       dossier_summaries: {
         Row: {
           generated_at: string
@@ -240,8 +352,7 @@ export type Database = {
           summary?: string
           target_id?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       external_tools: {
         Row: {
@@ -277,8 +388,7 @@ export type Database = {
           title?: string
           url?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       fleet_group_ships: {
         Row: {
@@ -385,7 +495,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           icon?: string | null
-          id?: never
+          id?: number
           name: string
           sort_order?: number
         }
@@ -394,12 +504,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           icon?: string | null
-          id?: never
+          id?: number
           name?: string
           sort_order?: number
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       government_configs: {
         Row: {
@@ -429,8 +538,7 @@ export type Database = {
           name?: string
           updated_at?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       government_election_candidates: {
         Row: {
@@ -447,7 +555,7 @@ export type Database = {
         Insert: {
           declared_at?: string
           election_id: number
-          id?: never
+          id?: number
           is_winner?: boolean
           platform_statement?: string | null
           user_id: number
@@ -458,7 +566,7 @@ export type Database = {
         Update: {
           declared_at?: string
           election_id?: number
-          id?: never
+          id?: number
           is_winner?: boolean
           platform_statement?: string | null
           user_id?: number
@@ -492,13 +600,13 @@ export type Database = {
         }
         Insert: {
           election_id: number
-          id?: never
+          id?: number
           user_id: number
           voted_at?: string
         }
         Update: {
           election_id?: number
-          id?: never
+          id?: number
           user_id?: number
           voted_at?: string
         }
@@ -605,7 +713,7 @@ export type Database = {
           description?: string | null
           election_type?: string
           eligible_voter_count?: number | null
-          id?: never
+          id?: number
           is_by_election?: boolean
           max_winners?: number
           min_candidates?: number
@@ -635,7 +743,7 @@ export type Database = {
           description?: string | null
           election_type?: string
           eligible_voter_count?: number | null
-          id?: never
+          id?: number
           is_by_election?: boolean
           max_winners?: number
           min_candidates?: number
@@ -712,7 +820,7 @@ export type Database = {
           author_id: number
           body?: Json
           created_at?: string
-          id?: never
+          id?: number
           is_constitutional_amendment?: boolean
           parent_legislation_id?: number | null
           passed_at?: string | null
@@ -736,7 +844,7 @@ export type Database = {
           author_id?: number
           body?: Json
           created_at?: string
-          id?: never
+          id?: number
           is_constitutional_amendment?: boolean
           parent_legislation_id?: number | null
           passed_at?: string | null
@@ -805,14 +913,14 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
-          id?: never
+          id?: number
           legislation_id: number
           user_id: number
         }
         Update: {
           content?: string
           created_at?: string
-          id?: never
+          id?: number
           legislation_id?: number
           user_id?: number
         }
@@ -844,7 +952,7 @@ export type Database = {
         }
         Insert: {
           cast_at?: string
-          id?: never
+          id?: number
           legislation_id: number
           position_id: number
           user_id: number
@@ -852,7 +960,7 @@ export type Database = {
         }
         Update: {
           cast_at?: string
-          id?: never
+          id?: number
           legislation_id?: number
           position_id?: number
           user_id?: number
@@ -893,7 +1001,7 @@ export type Database = {
         }
         Insert: {
           cast_at?: string
-          id?: never
+          id?: number
           motion_id: number
           user_id?: number | null
           vote: string
@@ -901,7 +1009,7 @@ export type Database = {
         }
         Update: {
           cast_at?: string
-          id?: never
+          id?: number
           motion_id?: number
           user_id?: number | null
           vote?: string
@@ -947,7 +1055,7 @@ export type Database = {
           created_at?: string
           created_by_id: number
           description?: string | null
-          id?: never
+          id?: number
           is_secret_ballot?: boolean
           restricted_to_position_ids?: number[] | null
           status?: string
@@ -964,7 +1072,7 @@ export type Database = {
           created_at?: string
           created_by_id?: number
           description?: string | null
-          id?: never
+          id?: number
           is_secret_ballot?: boolean
           restricted_to_position_ids?: number[] | null
           status?: string
@@ -999,7 +1107,6 @@ export type Database = {
           number: string | null
           preamble: string | null
           rationale: string | null
-          related_legislation_id: string | null
           revoked_at: string | null
           revoked_by_position_id: number | null
           revoked_by_user_id: number | null
@@ -1020,7 +1127,6 @@ export type Database = {
           number?: string | null
           preamble?: string | null
           rationale?: string | null
-          related_legislation_id?: string | null
           revoked_at?: string | null
           revoked_by_position_id?: number | null
           revoked_by_user_id?: number | null
@@ -1041,7 +1147,6 @@ export type Database = {
           number?: string | null
           preamble?: string | null
           rationale?: string | null
-          related_legislation_id?: string | null
           revoked_at?: string | null
           revoked_by_position_id?: number | null
           revoked_by_user_id?: number | null
@@ -1099,7 +1204,7 @@ export type Database = {
           election_id?: number | null
           end_reason?: string | null
           ended_at?: string | null
-          id?: never
+          id?: number
           position_id: number
           started_at?: string
           user_id: number
@@ -1110,7 +1215,7 @@ export type Database = {
           election_id?: number | null
           end_reason?: string | null
           ended_at?: string | null
-          id?: never
+          id?: number
           position_id?: number
           started_at?: string
           user_id?: number
@@ -1176,7 +1281,7 @@ export type Database = {
           description?: string | null
           fill_method?: string
           icon?: string | null
-          id?: never
+          id?: number
           max_holders?: number
           name: string
           permissions_granted?: string[]
@@ -1194,7 +1299,7 @@ export type Database = {
           description?: string | null
           fill_method?: string
           icon?: string | null
-          id?: never
+          id?: number
           max_holders?: number
           name?: string
           permissions_granted?: string[]
@@ -1433,8 +1538,7 @@ export type Database = {
           id?: number
           name?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       hr_interviews: {
         Row: {
@@ -1555,7 +1659,7 @@ export type Database = {
           created_at?: string
           created_by_id?: number | null
           department: string
-          description: string
+          description?: string
           id?: string
           position_id?: number | null
           requirements?: string[]
@@ -1742,6 +1846,13 @@ export type Database = {
             referencedRelation: "intel_bulletins"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "intel_bulletins_source_organization_id_fkey"
+            columns: ["source_organization_id"]
+            isOneToOne: false
+            referencedRelation: "alliance_peers"
+            referencedColumns: ["id"]
+          },
         ]
       }
       intel_report_limiting_markers: {
@@ -1831,6 +1942,13 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "intel_reports_source_feed_id_fkey"
+            columns: ["source_feed_id"]
+            isOneToOne: false
+            referencedRelation: "alliance_peers"
+            referencedColumns: ["id"]
+          },
         ]
       }
       locations: {
@@ -1862,6 +1980,95 @@ export type Database = {
           },
         ]
       }
+      mirrored_operation_participation: {
+        Row: {
+          is_ready: boolean
+          mirror_op_id: string
+          rsvp_status: string
+          ship_text: string | null
+          updated_at: string
+          user_id: number
+        }
+        Insert: {
+          is_ready?: boolean
+          mirror_op_id: string
+          rsvp_status?: string
+          ship_text?: string | null
+          updated_at?: string
+          user_id: number
+        }
+        Update: {
+          is_ready?: boolean
+          mirror_op_id?: string
+          rsvp_status?: string
+          ship_text?: string | null
+          updated_at?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mirrored_operation_participation_mirror_op_id_fkey"
+            columns: ["mirror_op_id"]
+            isOneToOne: false
+            referencedRelation: "mirrored_operations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mirrored_operation_participation_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mirrored_operations: {
+        Row: {
+          accepted: boolean
+          accepted_at: string | null
+          host_peer_id: string
+          id: string
+          invited_at: string
+          last_polled_at: string | null
+          revoked_at: string | null
+          snapshot: Json | null
+          snapshot_updated_at: string | null
+          version: number
+        }
+        Insert: {
+          accepted?: boolean
+          accepted_at?: string | null
+          host_peer_id: string
+          id: string
+          invited_at?: string
+          last_polled_at?: string | null
+          revoked_at?: string | null
+          snapshot?: Json | null
+          snapshot_updated_at?: string | null
+          version?: number
+        }
+        Update: {
+          accepted?: boolean
+          accepted_at?: string | null
+          host_peer_id?: string
+          id?: string
+          invited_at?: string
+          last_polled_at?: string | null
+          revoked_at?: string | null
+          snapshot?: Json | null
+          snapshot_updated_at?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mirrored_operations_host_peer_id_fkey"
+            columns: ["host_peer_id"]
+            isOneToOne: false
+            referencedRelation: "alliance_peers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       operation_aar_entries: {
         Row: {
           author_id: number
@@ -1877,7 +2084,7 @@ export type Database = {
           category?: string
           content: string
           created_at?: string
-          id?: never
+          id?: number
           operation_id: string
           upvotes?: number
         }
@@ -1886,7 +2093,7 @@ export type Database = {
           category?: string
           content?: string
           created_at?: string
-          id?: never
+          id?: number
           operation_id?: string
           upvotes?: number
         }
@@ -1914,20 +2121,23 @@ export type Database = {
           id: number
           invited_at: string
           operation_id: string
+          peer_id: string
         }
         Insert: {
           accepted?: boolean
           accepted_at?: string | null
-          id?: never
+          id?: number
           invited_at?: string
           operation_id: string
+          peer_id: string
         }
         Update: {
           accepted?: boolean
           accepted_at?: string | null
-          id?: never
+          id?: number
           invited_at?: string
           operation_id?: string
+          peer_id?: string
         }
         Relationships: [
           {
@@ -1935,6 +2145,67 @@ export type Database = {
             columns: ["operation_id"]
             isOneToOne: false
             referencedRelation: "operations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operation_allied_orgs_peer_id_fkey"
+            columns: ["peer_id"]
+            isOneToOne: false
+            referencedRelation: "alliance_peers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      operation_allied_participants: {
+        Row: {
+          avatar_url: string | null
+          display_name: string | null
+          is_ready: boolean
+          operation_id: string
+          peer_id: string
+          remote_user_handle: string
+          role: string | null
+          rsvp_status: string
+          ship_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          display_name?: string | null
+          is_ready?: boolean
+          operation_id: string
+          peer_id: string
+          remote_user_handle: string
+          role?: string | null
+          rsvp_status?: string
+          ship_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          display_name?: string | null
+          is_ready?: boolean
+          operation_id?: string
+          peer_id?: string
+          remote_user_handle?: string
+          role?: string | null
+          rsvp_status?: string
+          ship_text?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "operation_allied_participants_operation_id_fkey"
+            columns: ["operation_id"]
+            isOneToOne: false
+            referencedRelation: "operations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operation_allied_participants_peer_id_fkey"
+            columns: ["peer_id"]
+            isOneToOne: false
+            referencedRelation: "alliance_peers"
             referencedColumns: ["id"]
           },
         ]
@@ -1962,7 +2233,7 @@ export type Database = {
           data?: Json
           element_type?: string
           height?: number | null
-          id?: never
+          id?: number
           label?: string | null
           layer?: number
           operation_id: string
@@ -1978,7 +2249,7 @@ export type Database = {
           data?: Json
           element_type?: string
           height?: number | null
-          id?: never
+          id?: number
           label?: string | null
           layer?: number
           operation_id?: string
@@ -2023,7 +2294,7 @@ export type Database = {
           created_at?: string
           fleet_group_id?: number | null
           icon?: string | null
-          id?: never
+          id?: number
           label: string
           live_status?: string | null
           node_type?: string
@@ -2040,7 +2311,7 @@ export type Database = {
           created_at?: string
           fleet_group_id?: number | null
           icon?: string | null
-          id?: never
+          id?: number
           label?: string
           live_status?: string | null
           node_type?: string
@@ -2209,7 +2480,6 @@ export type Database = {
         Row: {
           category: string
           created_at: string
-          fulfilled_by_org_id: string | null
           fulfilled_by_user_id: number | null
           id: number
           item_name: string
@@ -2222,9 +2492,8 @@ export type Database = {
         Insert: {
           category?: string
           created_at?: string
-          fulfilled_by_org_id?: string | null
           fulfilled_by_user_id?: number | null
-          id?: never
+          id?: number
           item_name: string
           notes?: string | null
           operation_id: string
@@ -2235,9 +2504,8 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
-          fulfilled_by_org_id?: string | null
           fulfilled_by_user_id?: number | null
-          id?: never
+          id?: number
           item_name?: string
           notes?: string | null
           operation_id?: string
@@ -2368,7 +2636,7 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           name: string
           operation_id: string
           phase_type?: string
@@ -2379,7 +2647,7 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           name?: string
           operation_id?: string
           phase_type?: string
@@ -2442,7 +2710,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          id?: never
+          id?: number
           label: string
           notes?: string | null
           operation_id: string
@@ -2453,7 +2721,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          id?: never
+          id?: number
           label?: string
           notes?: string | null
           operation_id?: string
@@ -2499,7 +2767,7 @@ export type Database = {
           assigned_user_id?: number | null
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           operation_id: string
           phase_id?: number | null
           priority?: string
@@ -2513,7 +2781,7 @@ export type Database = {
           assigned_user_id?: number | null
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           operation_id?: string
           phase_id?: number | null
           priority?: string
@@ -2567,7 +2835,7 @@ export type Database = {
           created_at?: string
           created_by?: number | null
           description?: string | null
-          id?: never
+          id?: number
           name: string
           payload: Json
           updated_at?: string
@@ -2576,7 +2844,7 @@ export type Database = {
           created_at?: string
           created_by?: number | null
           description?: string | null
-          id?: never
+          id?: number
           name?: string
           payload?: Json
           updated_at?: string
@@ -2608,11 +2876,13 @@ export type Database = {
           description: string | null
           discord_announcement_channel_id: string | null
           discord_announcement_message_id: string | null
+          discord_event_id: string | null
           id: string
           is_joint: boolean
           is_special: boolean | null
           is_training: boolean | null
           join_code: string | null
+          joint_version: number
           live_status: string | null
           location_id: number | null
           location_text: string | null
@@ -2624,6 +2894,7 @@ export type Database = {
           scheduled_end: string | null
           scheduled_start: string | null
           status: Database["public"]["Enums"]["operation_status"]
+          template_id: number | null
           total_costs: number
           total_uec: number | null
           tracks_uec: boolean | null
@@ -2647,11 +2918,13 @@ export type Database = {
           description?: string | null
           discord_announcement_channel_id?: string | null
           discord_announcement_message_id?: string | null
+          discord_event_id?: string | null
           id?: string
           is_joint?: boolean
           is_special?: boolean | null
           is_training?: boolean | null
           join_code?: string | null
+          joint_version?: number
           live_status?: string | null
           location_id?: number | null
           location_text?: string | null
@@ -2663,6 +2936,7 @@ export type Database = {
           scheduled_end?: string | null
           scheduled_start?: string | null
           status?: Database["public"]["Enums"]["operation_status"]
+          template_id?: number | null
           total_costs?: number
           total_uec?: number | null
           tracks_uec?: boolean | null
@@ -2686,11 +2960,13 @@ export type Database = {
           description?: string | null
           discord_announcement_channel_id?: string | null
           discord_announcement_message_id?: string | null
+          discord_event_id?: string | null
           id?: string
           is_joint?: boolean
           is_special?: boolean | null
           is_training?: boolean | null
           join_code?: string | null
+          joint_version?: number
           live_status?: string | null
           location_id?: number | null
           location_text?: string | null
@@ -2702,6 +2978,7 @@ export type Database = {
           scheduled_end?: string | null
           scheduled_start?: string | null
           status?: Database["public"]["Enums"]["operation_status"]
+          template_id?: number | null
           total_costs?: number
           total_uec?: number | null
           tracks_uec?: boolean | null
@@ -2729,6 +3006,13 @@ export type Database = {
             columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operations_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "operation_templates"
             referencedColumns: ["id"]
           },
           {
@@ -2786,8 +3070,7 @@ export type Database = {
           id?: number
           name?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       platform_locations: {
         Row: {
@@ -2824,7 +3107,7 @@ export type Database = {
           created_at?: string
           external_id: number
           faction_name?: string | null
-          id?: never
+          id?: number
           is_armistice?: boolean | null
           is_available_live?: boolean | null
           is_decommissioned?: boolean | null
@@ -2852,7 +3135,7 @@ export type Database = {
           created_at?: string
           external_id?: number
           faction_name?: string | null
-          id?: never
+          id?: number
           is_armistice?: boolean | null
           is_available_live?: boolean | null
           is_decommissioned?: boolean | null
@@ -2993,7 +3276,6 @@ export type Database = {
           last_used_at: string
           p256dh: string | null
           subscription: Json | null
-          user_agent: string | null
           user_id: number
         }
         Insert: {
@@ -3004,7 +3286,6 @@ export type Database = {
           last_used_at?: string
           p256dh?: string | null
           subscription?: Json | null
-          user_agent?: string | null
           user_id: number
         }
         Update: {
@@ -3015,7 +3296,6 @@ export type Database = {
           last_used_at?: string
           p256dh?: string | null
           subscription?: Json | null
-          user_agent?: string | null
           user_id?: number
         }
         Relationships: [
@@ -3068,7 +3348,7 @@ export type Database = {
           external_id?: number | null
           external_uuid?: string | null
           game_version?: string | null
-          id?: never
+          id?: number
           is_commodity?: boolean
           is_harvestable?: boolean
           is_vehicle_item?: boolean
@@ -3097,7 +3377,7 @@ export type Database = {
           external_id?: number | null
           external_uuid?: string | null
           game_version?: string | null
-          id?: never
+          id?: number
           is_commodity?: boolean
           is_harvestable?: boolean
           is_vehicle_item?: boolean
@@ -3145,7 +3425,7 @@ export type Database = {
           condition?: string
           created_at?: string
           custom_name?: string | null
-          id?: never
+          id?: number
           is_archived?: boolean
           location_id?: number | null
           notes?: string | null
@@ -3157,7 +3437,7 @@ export type Database = {
           condition?: string
           created_at?: string
           custom_name?: string | null
-          id?: never
+          id?: number
           is_archived?: boolean
           location_id?: number | null
           notes?: string | null
@@ -3213,13 +3493,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "qm_movements_related_issuance_fk"
-            columns: ["related_issuance_id"]
-            isOneToOne: false
-            referencedRelation: "quartermaster_issuances"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "quartermaster_inventory_movements_actor_user_id_fkey"
             columns: ["actor_user_id"]
             isOneToOne: false
@@ -3231,6 +3504,13 @@ export type Database = {
             columns: ["inventory_id"]
             isOneToOne: false
             referencedRelation: "quartermaster_inventory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quartermaster_inventory_movements_related_issuance_id_fkey"
+            columns: ["related_issuance_id"]
+            isOneToOne: false
+            referencedRelation: "quartermaster_issuances"
             referencedColumns: ["id"]
           },
         ]
@@ -3260,7 +3540,7 @@ export type Database = {
           closed_by_user_id?: number | null
           created_at?: string
           due_back_at?: string | null
-          id?: never
+          id?: number
           inventory_id: number
           issued_at?: string | null
           issued_by_user_id?: number | null
@@ -3280,7 +3560,7 @@ export type Database = {
           closed_by_user_id?: number | null
           created_at?: string
           due_back_at?: string | null
-          id?: never
+          id?: number
           inventory_id?: number
           issued_at?: string | null
           issued_by_user_id?: number | null
@@ -3348,7 +3628,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           name: string
           parent_id?: number | null
           sort_order?: number
@@ -3358,7 +3638,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           name?: string
           parent_id?: number | null
           sort_order?: number
@@ -3390,7 +3670,7 @@ export type Database = {
         Insert: {
           created_at?: string
           display_name: string
-          id?: never
+          id?: number
           is_hidden?: boolean
           sort_order?: number
           uex_category_id: number
@@ -3401,7 +3681,7 @@ export type Database = {
         Update: {
           created_at?: string
           display_name?: string
-          id?: never
+          id?: number
           is_hidden?: boolean
           sort_order?: number
           uex_category_id?: number
@@ -3433,8 +3713,7 @@ export type Database = {
           sort_order?: number | null
           type?: string | null
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       rank_mappings: {
         Row: {
@@ -3488,8 +3767,7 @@ export type Database = {
           name?: string
           sort_order?: number | null
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       reputation_history: {
         Row: {
@@ -3615,8 +3893,7 @@ export type Database = {
           is_system?: boolean | null
           name?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       security_clearances: {
         Row: {
@@ -3637,8 +3914,7 @@ export type Database = {
           level?: number
           name?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       security_limiting_markers: {
         Row: {
@@ -3662,8 +3938,7 @@ export type Database = {
           name?: string
           sync_restricted?: boolean | null
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       service_requests: {
         Row: {
@@ -3672,12 +3947,10 @@ export type Database = {
           client_rating: number | null
           created_at: string
           description: string
-          discord_message_id: string | null
           id: string
           lead_responder_id: number | null
           location: string
           medigel_consumed: number | null
-          notes: string | null
           party_info: string | null
           rated: boolean | null
           secondary_client_handles: string[] | null
@@ -3695,12 +3968,10 @@ export type Database = {
           client_rating?: number | null
           created_at?: string
           description: string
-          discord_message_id?: string | null
           id: string
           lead_responder_id?: number | null
           location: string
           medigel_consumed?: number | null
-          notes?: string | null
           party_info?: string | null
           rated?: boolean | null
           secondary_client_handles?: string[] | null
@@ -3718,12 +3989,10 @@ export type Database = {
           client_rating?: number | null
           created_at?: string
           description?: string
-          discord_message_id?: string | null
           id?: string
           lead_responder_id?: number | null
           location?: string
           medigel_consumed?: number | null
-          notes?: string | null
           party_info?: string | null
           rated?: boolean | null
           secondary_client_handles?: string[] | null
@@ -3783,8 +4052,7 @@ export type Database = {
           is_active?: boolean | null
           name?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       settings: {
         Row: {
@@ -3799,8 +4067,7 @@ export type Database = {
           key?: string
           value?: Json | null
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       specialization_tags: {
         Row: {
@@ -3824,8 +4091,7 @@ export type Database = {
           image_url?: string | null
           name?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       status_history: {
         Row: {
@@ -3885,8 +4151,7 @@ export type Database = {
           id?: string
           name?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       treasury_accounts: {
         Row: {
@@ -3903,7 +4168,7 @@ export type Database = {
           balance_cached?: number
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           is_active?: boolean
           name: string
           type?: string
@@ -3913,14 +4178,13 @@ export type Database = {
           balance_cached?: number
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           is_active?: boolean
           name?: string
           type?: string
           updated_at?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       treasury_ledger_entries: {
         Row: {
@@ -4108,6 +4372,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "units_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "units_parent_unit_id_fkey"
             columns: ["parent_unit_id"]
             isOneToOne: false
@@ -4222,7 +4493,7 @@ export type Database = {
           created_at?: string
           end_reason?: string | null
           ended_at?: string | null
-          id?: never
+          id?: number
           position_id: number
           started_at?: string
           user_id: number
@@ -4231,7 +4502,7 @@ export type Database = {
           created_at?: string
           end_reason?: string | null
           ended_at?: string | null
-          id?: never
+          id?: number
           position_id?: number
           started_at?: string
           user_id?: number
@@ -4391,7 +4662,6 @@ export type Database = {
         Row: {
           admin_notes: string | null
           auth_user_id: string | null
-          avatar_refreshed_at: string | null
           avatar_url: string | null
           clearance_level_id: number | null
           created_at: string
@@ -4405,7 +4675,6 @@ export type Database = {
           is_duty: boolean
           is_vip: boolean
           job_title: string | null
-          last_active_at: string | null
           name: string
           personnel_notes: string | null
           position_id: number | null
@@ -4417,6 +4686,7 @@ export type Database = {
           rsi_handle: string
           rsi_handle_pending: string | null
           rsi_verification_code: string | null
+          rsi_verified: boolean
           secondary_position_id: number | null
           tenure_start_date: string | null
           timezone: string | null
@@ -4426,7 +4696,6 @@ export type Database = {
         Insert: {
           admin_notes?: string | null
           auth_user_id?: string | null
-          avatar_refreshed_at?: string | null
           avatar_url?: string | null
           clearance_level_id?: number | null
           created_at?: string
@@ -4440,7 +4709,6 @@ export type Database = {
           is_duty?: boolean
           is_vip?: boolean
           job_title?: string | null
-          last_active_at?: string | null
           name: string
           personnel_notes?: string | null
           position_id?: number | null
@@ -4452,6 +4720,7 @@ export type Database = {
           rsi_handle: string
           rsi_handle_pending?: string | null
           rsi_verification_code?: string | null
+          rsi_verified?: boolean
           secondary_position_id?: number | null
           tenure_start_date?: string | null
           timezone?: string | null
@@ -4461,7 +4730,6 @@ export type Database = {
         Update: {
           admin_notes?: string | null
           auth_user_id?: string | null
-          avatar_refreshed_at?: string | null
           avatar_url?: string | null
           clearance_level_id?: number | null
           created_at?: string
@@ -4475,7 +4743,6 @@ export type Database = {
           is_duty?: boolean
           is_vip?: boolean
           job_title?: string | null
-          last_active_at?: string | null
           name?: string
           personnel_notes?: string | null
           position_id?: number | null
@@ -4487,6 +4754,7 @@ export type Database = {
           rsi_handle?: string
           rsi_handle_pending?: string | null
           rsi_verification_code?: string | null
+          rsi_verified?: boolean
           secondary_position_id?: number | null
           tenure_start_date?: string | null
           timezone?: string | null
@@ -4555,7 +4823,7 @@ export type Database = {
           category: string
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           name: string
           quality_label?: string | null
           unit?: string
@@ -4566,14 +4834,13 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
-          id?: never
+          id?: number
           name?: string
           quality_label?: string | null
           unit?: string
           updated_at?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       warehouse_movements: {
         Row: {
@@ -4583,7 +4850,6 @@ export type Database = {
           id: string
           notes: string | null
           reason: string
-          related_contract_id: string | null
           related_movement_id: string | null
           related_request_id: string | null
           stock_id: number
@@ -4595,7 +4861,6 @@ export type Database = {
           id?: string
           notes?: string | null
           reason: string
-          related_contract_id?: string | null
           related_movement_id?: string | null
           related_request_id?: string | null
           stock_id: number
@@ -4607,7 +4872,6 @@ export type Database = {
           id?: string
           notes?: string | null
           reason?: string
-          related_contract_id?: string | null
           related_movement_id?: string | null
           related_request_id?: string | null
           stock_id?: number
@@ -4628,7 +4892,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "warehouse_movements_related_request_fk"
+            foreignKeyName: "warehouse_movements_related_request_id_fkey"
             columns: ["related_request_id"]
             isOneToOne: false
             referencedRelation: "warehouse_requests"
@@ -4664,7 +4928,7 @@ export type Database = {
         Insert: {
           created_at?: string
           display_name: string
-          id?: never
+          id?: number
           is_hidden?: boolean
           slug: string
           sort_order?: number
@@ -4674,7 +4938,7 @@ export type Database = {
         Update: {
           created_at?: string
           display_name?: string
-          id?: never
+          id?: number
           is_hidden?: boolean
           slug?: string
           sort_order?: number
@@ -4728,7 +4992,7 @@ export type Database = {
           created_at?: string
           external_id: number
           external_uuid?: string | null
-          id?: never
+          id?: number
           is_available?: boolean | null
           is_available_live?: boolean | null
           is_buggy?: boolean | null
@@ -4767,7 +5031,7 @@ export type Database = {
           created_at?: string
           external_id?: number
           external_uuid?: string | null
-          id?: never
+          id?: number
           is_available?: boolean | null
           is_available_live?: boolean | null
           is_buggy?: boolean | null
@@ -4910,7 +5174,7 @@ export type Database = {
         Insert: {
           catalog_id: number
           created_at?: string
-          id?: never
+          id?: number
           location_id: number
           notes?: string | null
           updated_at?: string
@@ -4918,7 +5182,7 @@ export type Database = {
         Update: {
           catalog_id?: number
           created_at?: string
-          id?: never
+          id?: number
           location_id?: number
           notes?: string | null
           updated_at?: string
@@ -4952,14 +5216,14 @@ export type Database = {
           author_id?: number | null
           content: string
           created_at?: string
-          id?: never
+          id?: number
           warrant_id: string
         }
         Update: {
           author_id?: number | null
           content?: string
           created_at?: string
-          id?: never
+          id?: number
           warrant_id?: string
         }
         Relationships: [
@@ -5009,7 +5273,7 @@ export type Database = {
           source_feed_id?: string | null
           status?: Database["public"]["Enums"]["warrant_status"]
           target_rsi_handle: string
-          uec_reward: number
+          uec_reward?: number
           updated_at?: string
         }
         Update: {
@@ -5041,6 +5305,13 @@ export type Database = {
             columns: ["issued_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "warrants_source_feed_id_fkey"
+            columns: ["source_feed_id"]
+            isOneToOne: false
+            referencedRelation: "alliance_peers"
             referencedColumns: ["id"]
           },
         ]
@@ -5247,12 +5518,9 @@ export type Database = {
         Args: { p_actor_id: number; p_entry_id: string; p_reason: string }
         Returns: string
       }
-      get_org_secret: {
-        Args: { p_name: string; p_org_id: string }
-        Returns: string
-      }
+      import_reset_sequence: { Args: { p_table: string }; Returns: undefined }
       public_stats_for_org: {
-        Args: { org_id: string }
+        Args: never
         Returns: {
           avg_rating_times10: number
           avg_response_minutes: number
@@ -5298,7 +5566,7 @@ export type Database = {
         Returns: number
       }
       qm_overview_stats: {
-        Args: { p_org_id: string }
+        Args: never
         Returns: {
           distinct_skus: number
           items_on_issue: number
@@ -5330,6 +5598,18 @@ export type Database = {
         }
         Returns: number
       }
+      release_cron_lock: {
+        Args: { p_job_name: string; p_worker_id: string }
+        Returns: undefined
+      }
+      try_acquire_cron_lock: {
+        Args: {
+          p_hold_seconds: number
+          p_job_name: string
+          p_worker_id: string
+        }
+        Returns: boolean
+      }
       warehouse_adjust_stock: {
         Args: {
           p_actor_id: number
@@ -5344,20 +5624,8 @@ export type Database = {
         Args: { p_actor_id: number; p_request_id: string }
         Returns: string
       }
-      warehouse_marketplace_deliver: {
-        Args: { p_actor_id: number; p_contract_id: string }
-        Returns: string
-      }
-      warehouse_marketplace_reverse: {
-        Args: {
-          p_actor_id: number
-          p_contract_id: string
-          p_reason_text: string
-        }
-        Returns: string
-      }
       warehouse_overview_stats: {
-        Args: { p_org_id: string }
+        Args: never
         Returns: {
           low_stock_count: number
           open_request_count: number
@@ -5397,6 +5665,12 @@ export type Database = {
         | "Counseling"
         | "Warning"
         | "Infraction"
+      fleet_group_type:
+        | "Division"
+        | "Squadron"
+        | "Wing"
+        | "Taskforce"
+        | "Custom"
       intel_subject_type: "Person" | "Organization"
       intel_threat_level: "None" | "Low" | "Medium" | "High" | "Critical"
       job_posting_status: "Draft" | "Open" | "Closed" | "Filled"
@@ -5574,6 +5848,7 @@ export const Constants = {
         "Warning",
         "Infraction",
       ],
+      fleet_group_type: ["Division", "Squadron", "Wing", "Taskforce", "Custom"],
       intel_subject_type: ["Person", "Organization"],
       intel_threat_level: ["None", "Low", "Medium", "High", "Critical"],
       job_posting_status: ["Draft", "Open", "Closed", "Filled"],

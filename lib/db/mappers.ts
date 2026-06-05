@@ -707,7 +707,6 @@ export const toOperationLogisticsItem = (row: Tables<'operation_logistics'>) => 
     itemName: row.item_name,
     quantityNeeded: row.quantity_needed || 1,
     quantityFulfilled: row.quantity_fulfilled || 0,
-    fulfilledByOrgId: row.fulfilled_by_org_id || undefined,
     fulfilledByUserId: row.fulfilled_by_user_id || undefined,
     category: row.category || 'general',
     status: row.status || 'Needed',

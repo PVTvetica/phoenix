@@ -602,6 +602,10 @@ export const adminActions = {
     'admin:db:prune': ({ retentionDays, targets }: DbPrunePayload) => db.pruneDatabaseData(retentionDays, targets),
     'admin:db:reset_finances': () => db.resetFinancesData(),
     'admin:db:reset_quartermaster': () => db.resetQuartermasterData(),
+    // Danger Zone. userId is the dispatcher-injected acting admin (ACTOR_ID_FIELDS),
+    // never client-supplied — full_reset restores exactly that account.
+    'admin:db:full_reset': ({ userId }: { userId: number }) => db.fullResetOrg(userId),
+    'admin:db:full_wipe': () => db.fullWipeOrg(),
 
     // --- Maintenance mode + force-logout (org-wide operational settings) ---
     'admin:get_platform_settings': () => db.getPlatformSettings(),

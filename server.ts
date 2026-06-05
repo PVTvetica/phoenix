@@ -111,7 +111,7 @@ import queryFn from './api/query.js';
 import swFn from './api/sw.js';
 import publicFn from './api/public.js';
 import { respondToPair as allianceRespondToPair, getAllianceSelfProfile as allianceGetSelfProfile, verifyApiKey as allianceVerifyApiKey, getAlliancePeerByInboundKey as allianceGetPeerByInboundKey, getAllianceShareableData as allianceGetShareableData,
-    getOperationSnapshotForPeer, acceptInviteForPeer, declineInviteForPeer, upsertAlliedParticipant,
+    getOperationSnapshotForPeer, getOperationManifestForPeer, acceptInviteForPeer, declineInviteForPeer, upsertAlliedParticipant, removeAlliedParticipant,
     receiveMirrorInvite, receiveMirrorPush, receiveMirrorRevoke,
     getAllyRosterProjection, getAllyFleetProjection, getUserById, importOrgData } from './lib/db.js';
 import { runFirstBootCheck } from './lib/firstBoot.js';
@@ -487,6 +487,18 @@ function handleOpFedError(res: express.Response, e: unknown, label: string): voi
     log.error(`${label} error`, { err: e });
     if (!res.headersSent) res.status(500).json({ error: 'failed' });
 }
+// Host inbound — the live-sync reconcile manifest: every op the CALLING peer
+// was invited to, with current versions for accepted ones, in one call
+// (replaces N per-op polls; doubles as the peer's health probe). Built solely
+// from that peer's own operation_allied_orgs rows — SECURITY L6 holds.
+app.get('/api/alliance/op-manifest', allianceLimiter, async (req, res) => {
+    noStore(res);
+    try {
+        const peer = await allianceCaller(req);
+        if (!peer) return res.status(403).json({ error: 'forbidden' });
+        res.json(await getOperationManifestForPeer(peer.id));
+    } catch (e) { handleOpFedError(res, e, 'alliance op-manifest'); }
+});
 // Host inbound — guests poll / accept / decline / RSVP against the host op.
 app.get('/api/alliance/op/:opId', allianceLimiter, async (req, res) => {
     noStore(res);
@@ -519,12 +531,18 @@ app.post('/api/alliance/op/:opId/rsvp', allianceLimiter, async (req, res) => {
     try {
         const peer = await allianceCaller(req);
         if (!peer) return res.status(403).json({ error: 'forbidden' });
-        await upsertAlliedParticipant(req.params.opId, peer.id, {
-            remoteUserHandle: req.body?.remoteUserHandle,
-            displayName: req.body?.displayName, avatarUrl: req.body?.avatarUrl,
-            role: req.body?.role, shipText: req.body?.shipText,
-            rsvpStatus: req.body?.rsvpStatus, isReady: req.body?.isReady,
-        });
+        if (req.body?.removed === true) {
+            // RSVP withdrawal: deletes ONLY the calling peer's own participant
+            // row (scoped like the upsert key inside removeAlliedParticipant).
+            await removeAlliedParticipant(req.params.opId, peer.id, req.body?.remoteUserHandle);
+        } else {
+            await upsertAlliedParticipant(req.params.opId, peer.id, {
+                remoteUserHandle: req.body?.remoteUserHandle,
+                displayName: req.body?.displayName, avatarUrl: req.body?.avatarUrl,
+                role: req.body?.role, shipText: req.body?.shipText,
+                rsvpStatus: req.body?.rsvpStatus, isReady: req.body?.isReady,
+            });
+        }
         res.json({ ok: true });
     } catch (e) { handleOpFedError(res, e, 'alliance op rsvp'); }
 });
@@ -647,6 +665,7 @@ app.get(/(.*)/, async (req, res) => {
 import cron from 'node-cron';
 import { cleanupInactiveDutyUsers } from './lib/db/users.js';
 import { cleanupExpiredBulletins } from './lib/db/intel.js';
+import { allianceSyncTick } from './lib/db/allianceSync.js';
 import { withCronLease } from './lib/cronLock.js';
 
 const server = app.listen(Number(port), '0.0.0.0', () => {
@@ -699,6 +718,23 @@ const server = app.listen(Number(port), '0.0.0.0', () => {
             log.info('cron bulletin-cleanup done', { durationMs: Date.now() - t0 });
         } catch (e) {
             log.error('cron bulletin cleanup failed', { err: e });
+        }
+      });
+    });
+
+    // Alliance live-sync engine (every minute): per-peer due-time scheduling
+    // (ops manifest reconcile / intel delta pull / directory refresh), peer
+    // health + backoff, and rate budgeting all live inside the tick — see
+    // lib/db/allianceSync.ts. The tick caps its own wall-clock at 40s, under
+    // the 50s fail-open lease hold.
+    cron.schedule('* * * * *', async () => {
+      await withCronLease('alliance_sync', 50, async () => {
+        const t0 = Date.now();
+        try {
+            await allianceSyncTick();
+            log.info('cron alliance-sync done', { durationMs: Date.now() - t0 });
+        } catch (e) {
+            log.error('cron alliance sync failed', { err: e });
         }
       });
     });

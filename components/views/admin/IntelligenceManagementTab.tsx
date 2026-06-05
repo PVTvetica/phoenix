@@ -124,7 +124,7 @@ const IntelligenceManagementTab: React.FC = () => {
         addProgress('Querying receive-only feeds and active allied peers...', 'info');
 
         try {
-            const result = await rpcAction('intel:sync_feeds', { adminId: currentUser.id, force: true });
+            const result = await rpcAction('intel:sync_feeds', { force: true });
 
             // Display per-feed results
             if (result?.feedResults && Array.isArray(result.feedResults)) {

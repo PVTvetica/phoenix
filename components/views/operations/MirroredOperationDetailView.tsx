@@ -50,7 +50,8 @@ const MirroredOperationDetailView: React.FC<Props> = ({ mirror: initialMirror, o
     }, [rpcAction, initialMirror.id, refresh]);
 
     const op = mirror.snapshot;
-    const myRsvp = mirror.myParticipation?.find(p => p.userId === currentUser?.id)?.rsvpStatus || 'Pending';
+    const myParticipation = mirror.myParticipation?.find(p => p.userId === currentUser?.id);
+    const myRsvp = myParticipation?.rsvpStatus || 'Pending';
     const hostName = mirror.hostPeerName || 'an allied org';
 
     const handleRsvp = async (status: string) => {
@@ -61,6 +62,19 @@ const MirroredOperationDetailView: React.FC<Props> = ({ mirror: initialMirror, o
             await refresh();
         } catch {
             addToast('RSVP Failed', <i className="fa-solid fa-xmark"></i>, 'bg-red-500/10 text-red-400 border-red-500/50', { description: 'Could not reach the host instance.' });
+        } finally { setRsvping(false); }
+    };
+
+    const handleWithdraw = async () => {
+        setRsvping(true);
+        try {
+            // Deletes locally + pushes the removal to the host so its allied
+            // participant row doesn't linger as a ghost RSVP.
+            await rpcAction('mirror:rsvp_remove', { id: mirror.id });
+            addToast('RSVP Withdrawn', <i className="fa-solid fa-check"></i>, 'bg-green-500/10 text-green-400 border-green-500/50', { description: 'Your RSVP was removed from this operation.' });
+            await refresh();
+        } catch {
+            addToast('Withdraw Failed', <i className="fa-solid fa-xmark"></i>, 'bg-red-500/10 text-red-400 border-red-500/50', { description: 'Could not reach the host instance.' });
         } finally { setRsvping(false); }
     };
 
@@ -119,6 +133,12 @@ const MirroredOperationDetailView: React.FC<Props> = ({ mirror: initialMirror, o
                                 <i className={`fa-solid ${b.icon}`}></i> {b.label}
                             </button>
                         ))}
+                        {myParticipation && (
+                            <button onClick={handleWithdraw} disabled={rsvping}
+                                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all border disabled:opacity-50 bg-slate-800/50 text-red-400/80 border-red-500/20 hover:bg-red-500/10 hover:text-red-300">
+                                <i className="fa-solid fa-user-minus"></i> Withdraw
+                            </button>
+                        )}
                         {rsvping && <i className="fa-solid fa-spinner animate-spin text-slate-500"></i>}
                     </div>
                 </Section>

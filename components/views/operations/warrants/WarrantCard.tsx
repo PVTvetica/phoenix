@@ -111,7 +111,15 @@ const WarrantCard: React.FC<Props> = ({ warrant, canManage, onUpdate, onDelete, 
                         </div>
                     </div>
 
-                    {warrant.issuedByUser && (
+                    {warrant.issuedBy == null && warrant.sourceFeedLabel ? (
+                        // Federated warrant: no local issuer — honest "via <ally>"
+                        // provenance instead of fake admin attribution.
+                        <div className="flex items-center gap-2 text-[11px] text-sky-300 min-w-0">
+                            <i className="fa-solid fa-satellite-dish text-slate-500 shrink-0" aria-hidden />
+                            <span className="text-slate-500 uppercase font-black tracking-widest text-[9px]">Issued</span>
+                            <span className="truncate font-semibold">via {warrant.sourceFeedLabel}</span>
+                        </div>
+                    ) : warrant.issuedByUser && (
                         <div className="flex items-center gap-2 text-[11px] text-slate-300 min-w-0">
                             <i className="fa-solid fa-stamp text-slate-500 shrink-0" aria-hidden />
                             <span className="text-slate-500 uppercase font-black tracking-widest text-[9px]">Issued</span>

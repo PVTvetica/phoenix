@@ -387,6 +387,17 @@ export const DataCoreProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     window.dispatchEvent(new CustomEvent('app:warrant-notes-refresh'));
                 });
         }
+        if (hasPerm('alliance:manage') || hasPerm('alliance:view')) {
+            channel = channel
+                .on('broadcast', { event: 'alliance_update' }, (payload) => {
+                    debugLog('[Realtime] Alliance Update Broadcast Received', payload);
+                    // No query subset owns alliance peers (the admin tab and the
+                    // member directory load via RPCs), so relay a window event;
+                    // mounted alliance views re-pull through their gated RPCs.
+                    // Live-sync health/alert transitions ride this (ids only).
+                    window.dispatchEvent(new CustomEvent('app:realtime:alliance-update', { detail: payload.payload }));
+                });
+        }
         if (canSeeIntel) {
             channel = channel
                 .on('broadcast', { event: 'intel_update' }, (payload) => {

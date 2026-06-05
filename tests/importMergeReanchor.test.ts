@@ -13,6 +13,10 @@ const h = vi.hoisted(() => ({
     roleExists: true,
     noAdminRole: false,
     adminRow: {} as any,
+    // Post-import permission reconcile: the local `permissions` catalog vs the
+    // grants the imported Admin role currently holds.
+    allPermIds: [] as number[],
+    adminGrantIds: [] as number[],
 }));
 
 vi.mock('../lib/db/common', () => {
@@ -34,13 +38,22 @@ vi.mock('../lib/db/common', () => {
                 if (table === 'users' && state.op === 'select') return Promise.resolve({ data: [h.adminRow], error: null });
                 if (table === 'roles' && state.op === 'select') {
                     if (state.sel === 'id, name') return Promise.resolve({ data: h.noAdminRole ? [] : [{ id: 99, name: 'Admin' }], error: null });
-                    if (state.filters.some((f: any) => f[1] === 'name')) return Promise.resolve({ data: [{ id: 99 }], error: null });
+                    if (state.filters.some((f: any) => f[1] === 'name')) return Promise.resolve({ data: h.noAdminRole ? [] : [{ id: 99 }], error: null });
                     return Promise.resolve({ data: h.roleExists ? [{ id: v }] : [], error: null });
+                }
+                // Post-import permission reconcile: current Admin grants.
+                if (table === 'role_permissions' && state.op === 'select') {
+                    return Promise.resolve({ data: h.adminGrantIds.map((pid) => ({ permission_id: pid })), error: null });
                 }
                 return Promise.resolve({ data: [], error: null });
             },
             range() { h.calls.push(snap()); return Promise.resolve({ data: [], error: null }); },
-            then(resolve: any) { h.calls.push(snap()); return Promise.resolve({ count: 0, error: null, data: [] }).then(resolve); },
+            then(resolve: any) {
+                h.calls.push(snap());
+                let data: any[] = [];
+                if (state.table === 'permissions' && state.op === 'select') data = h.allPermIds.map((id) => ({ id }));
+                return Promise.resolve({ count: 0, error: null, data }).then(resolve);
+            },
         };
         return builder;
     };
@@ -64,6 +77,8 @@ beforeEach(() => {
     h.failInsertTable = null;
     h.roleExists = true;
     h.noAdminRole = false;
+    h.allPermIds = [];
+    h.adminGrantIds = [];
     h.adminRow = { id: 1, auth_user_id: 'auth-admin', discord_id: 'disc-admin', role_id: 4, name: 'Seed Admin', rsi_handle: 'SeedAdmin' };
 });
 
@@ -108,5 +123,39 @@ describe('importOrgData admin↔imported-user merge (id-reanchor)', () => {
         expect(result.reanchoredAdminUserId).toBeUndefined();
         expect(result.reanchoredAdminRoleId).toBeUndefined();
         expect(h.calls.some((c) => c.op === 'delete' && c.table === 'users')).toBe(false);
+    });
+
+    // The import replaces role_permissions with the source org's grants (remapped
+    // by NAME), but `permissions` is the fork's code-owned catalog and is never
+    // imported — so a fork-only permission the source org lacked (e.g.
+    // admin:config:catalog → the Ship/Item/Commodity/Location catalogs) ends up
+    // granted to NO role, 403-ing the Admin. The server gate is a pure
+    // permissions.includes with no super-admin bypass, so the Admin must hold the
+    // whole catalog. These pin the post-import reconcile that re-asserts that.
+    it('reconciles the Admin role to the FULL local permission catalog after a merge import', async () => {
+        h.allPermIds = [1, 2, 3];   // local catalog (3 = fork-only, e.g. admin:config:catalog)
+        h.adminGrantIds = [1, 2];   // imported Admin grant lacks perm 3
+        await importOrgData(NDJSON, undefined, { importedUserId: 10, adminUserId: 1 });
+        const grant = h.calls.find((c) => c.table === 'role_permissions' && c.op === 'insert');
+        expect(grant).toBeTruthy();
+        // ONLY the missing perm is inserted, bound to the imported Admin role.
+        expect(grant.rows).toEqual([{ role_id: 99, permission_id: 3 }]);
+    });
+
+    it('runs the permission reconcile on a non-merge import too', async () => {
+        h.allPermIds = [1, 2];
+        h.adminGrantIds = [1];
+        await importOrgData(NDJSON);
+        const grant = h.calls.find((c) => c.table === 'role_permissions' && c.op === 'insert');
+        expect(grant).toBeTruthy();
+        expect(grant.rows).toEqual([{ role_id: 99, permission_id: 2 }]);
+    });
+
+    it('inserts nothing when the Admin already holds every permission', async () => {
+        h.allPermIds = [1, 2];
+        h.adminGrantIds = [1, 2];
+        await importOrgData(NDJSON, undefined, { importedUserId: 10, adminUserId: 1 });
+        const grant = h.calls.find((c) => c.table === 'role_permissions' && c.op === 'insert');
+        expect(grant).toBeFalsy();
     });
 });

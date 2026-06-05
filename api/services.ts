@@ -296,6 +296,8 @@ export const fullPermissionMap: Record<string, string> = {
     'admin:db:prune': 'admin:access',
     'admin:db:reset_finances': 'admin:access',
     'admin:db:reset_quartermaster': 'admin:access',
+    'admin:db:full_reset': 'admin:access',
+    'admin:db:full_wipe': 'admin:access',
     'admin:import_org': 'admin:access',
     'system:complete_setup': 'admin:access',
     'admin:get_platform_settings': 'admin:access',
@@ -563,6 +565,7 @@ export const fullPermissionMap: Record<string, string> = {
     'alliance:get_self_profile': 'alliance:view',
     'alliance:fetch_peer_roster': 'alliance:view',
     'alliance:fetch_peer_fleet': 'alliance:view',
+    'alliance:force_sync': 'alliance:manage',
 
     // Joint-op federation (P3): host invite/revoke = manage operations; guest
     // accept/decline = diplomacy admin; list/get/rsvp/poll = view operations.
@@ -575,6 +578,7 @@ export const fullPermissionMap: Record<string, string> = {
     'mirror:decline': 'alliance:manage',
     'mirror:poll': 'operations:view',
     'mirror:rsvp': 'operations:view',
+    'mirror:rsvp_remove': 'operations:view',
 };
 
 export const actions: Record<string, ActionHandler> = {

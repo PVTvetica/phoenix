@@ -34,6 +34,7 @@ export * from './db/public.js';
 export * from './db/importer.js';
 export * from './db/alliances.js';
 export * from './db/operations-federation.js';
+export * from './db/allianceSync.js';
 
 // --- STATE AGGREGATION (single-org: no organization_id scoping) ---
 

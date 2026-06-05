@@ -13,6 +13,7 @@ import { sanitizePublicLinkUrl } from '../linkUrl.js';
 import { decryptSecret } from '../crypto.js';
 import { filterByClearance, canViewAllClassifications, passesClearance, type ClearanceUser } from '../clearance.js';
 import { assertResolvesToPublicHost } from '../ssrf.js';
+import { getCachedAllianceSyncConfig, recordPeerFailure, recordPeerSuccess, setSyncAlert } from './allianceSyncState.js';
 import type { Tables } from './rows.js';
 export { toHydratedWarrant, toHydratedIntelReport, toIntelBulletin };
 
@@ -833,6 +834,10 @@ interface FeedSyncMeta {
     reportsExcludedByMarker?: number;
     totalReportsBeforeFilter?: number;
     maxShareableLevel?: number;
+    // Peer-clock timestamp captured BEFORE the peer ran its queries — the next
+    // sync cursor. Same clock domain as the items' created_at, so cross-server
+    // clock skew can never skip intel (live-sync cursor fix).
+    fetchedAt?: string;
 }
 interface FeedReportItem {
     id?: string;
@@ -870,13 +875,31 @@ interface FeedSyncData {
     countReports?: number;
     countWarrants?: number;
     countBulletins?: number;
+    fetchedAt?: string;
     reports?: FeedReportItem[];
     warrants?: FeedWarrantItem[];
     bulletins?: FeedBulletinItem[];
     _meta?: FeedSyncMeta;
 }
 
-export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
+/**
+ * Pull intel/warrants/bulletins from trusted feeds + allied peers, ingesting
+ * deltas (INSERT-only, deduped). Called by the admin "Feed Ingest" button
+ * (intel:sync_feeds) AND per-peer by the live-sync cron (lib/db/allianceSync.ts
+ * passes `onlyPeerIds` so cadence/health gating stays in the engine).
+ *
+ * Cursor (live-sync fix): the delta cursor is the dedicated
+ * alliance_peers.intel_synced_at, written from the PEER's _meta.fetchedAt
+ * (peer-clock domain — immune to cross-server skew), minus a configurable
+ * overlap on use (replays are free: dedup absorbs them; under-fetching loses
+ * intel forever). NULL cursor (fresh pairing / upgraded row) falls back to the
+ * legacy last_contact_at once, then this column owns the cursor. last_contact_at
+ * itself reverts to pure contact/health semantics.
+ *
+ * Warrants ingest no longer needs an admin id: warrants.issued_by is nullable
+ * and federated warrants carry "via <ally>" provenance (source_feed_id).
+ */
+export async function syncTrustedFeeds(force?: boolean, onlyPeerIds?: string[]) {
     // Intel feeds are alliance_peers rows discriminated by pairing_state. Map them
     // back to the legacy feed shape this routine expects (api_key decrypted).
     // Feed sources are alliance_peers rows: 'legacy'/'manual' = one-directional
@@ -884,11 +907,15 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
     // allies whose enabled channels we pull via /api/alliance/data. Channels are an
     // explicit opt-in (=== true), so a freshly-paired ally shares nothing until the
     // admin enables a channel.
-    const feedQuery = supabase.from('alliance_peers').select('*').in('pairing_state', ['legacy', 'manual', 'active']);
+    let feedQuery = supabase.from('alliance_peers')
+        .select('id, label, base_url, outbound_key_enc, last_contact_at, intel_synced_at, inbound_max_clearance, pairing_state, channels')
+        .in('pairing_state', ['legacy', 'manual', 'active']);
+    if (onlyPeerIds && onlyPeerIds.length > 0) feedQuery = feedQuery.in('id', onlyPeerIds);
     const { data: feedRows, error: feedError } = await feedQuery;
     interface FeedPeerRow {
         id: string; label: string; base_url: string; outbound_key_enc: string | null;
-        last_contact_at: string | null; inbound_max_clearance: number | null;
+        last_contact_at: string | null; intel_synced_at: string | null;
+        inbound_max_clearance: number | null;
         pairing_state: string;
         channels: { reports?: boolean; warrants?: boolean; bulletins?: boolean } | null;
     }
@@ -897,7 +924,8 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
         label: r.label,
         url: r.base_url,
         api_key: r.outbound_key_enc ? decryptSecret(r.outbound_key_enc) : '',
-        last_synced_at: r.last_contact_at,
+        // Dedicated peer-clock cursor; legacy fallback for upgraded rows only.
+        cursor: r.intel_synced_at ?? r.last_contact_at,
         sync_reports: r.channels?.reports === true,
         sync_warrants: r.channels?.warrants === true,
         sync_bulletins: r.channels?.bulletins === true,
@@ -906,22 +934,23 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
     }));
 
     if (feedError) {
-        return { totalReports: 0, totalWarrants: 0, totalBulletins: 0, feedResults: [{
+        return { totalReports: 0, totalWarrants: 0, totalBulletins: 0, skippedItems: 0, feedResults: [{
             label: 'System', status: 'error' as const,
             message: `Failed to query feed list: ${feedError.message}`
         }]};
     }
 
     if (!feeds || feeds.length === 0) {
-        return { totalReports: 0, totalWarrants: 0, totalBulletins: 0, feedResults: [{
+        return { totalReports: 0, totalWarrants: 0, totalBulletins: 0, skippedItems: 0, feedResults: [{
             label: 'System', status: 'warning' as const,
-            message: 'No trusted feeds configured. Add feeds in the External Intelligence Sources section.'
+            message: onlyPeerIds ? 'Peer is not an intel feed source.' : 'No trusted feeds configured. Add feeds in the External Intelligence Sources section.'
         }]};
     }
 
     let totalReports = 0;
     let totalWarrants = 0;
     let totalBulletins = 0;
+    let skippedItems = 0;
     const feedResults: { label: string; status: 'success' | 'error' | 'warning' | 'info'; message: string }[] = [];
 
     for (const feed of feeds) {
@@ -937,8 +966,20 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
                 url += '/api/intel/feed';
             }
 
-            if (!force && feed.last_synced_at) {
-                url += `${isQueryFeed ? '&' : '?'}since=${encodeURIComponent(feed.last_synced_at)}`;
+            // Delta cursor with overlap: re-fetch a safety margin of history so
+            // commit-visibility windows / clock steps can never silently skip an
+            // item (replays are free — INSERT-only + dedup). Asymmetric cost:
+            // over-fetch = wasted bytes, under-fetch = intel lost forever.
+            let deltaSince: string | undefined;
+            if (!force && feed.cursor) {
+                const cursorMs = new Date(feed.cursor).getTime();
+                if (Number.isFinite(cursorMs)) {
+                    const overlapMs = getCachedAllianceSyncConfig().cursorOverlapMinutes * 60_000;
+                    deltaSince = new Date(cursorMs - overlapMs).toISOString();
+                }
+            }
+            if (deltaSince) {
+                url += `${isQueryFeed ? '&' : '?'}since=${encodeURIComponent(deltaSince)}`;
             }
 
             // 2. Determine if this is a local (same-platform) feed or external
@@ -964,8 +1005,7 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
                         continue;
                     }
 
-                    const since = (!force && feed.last_synced_at) ? feed.last_synced_at : undefined;
-                    const feedData = await getPublicFeedData(since);
+                    const feedData = await getPublicFeedData(deltaSince);
                     data = {
                         countReports: feedData.reports.length,
                         countWarrants: feedData.warrants.length,
@@ -1024,6 +1064,10 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
                         ? 'Connection timed out after 15s'
                         : `Network error: ${fetchErr instanceof Error ? fetchErr.message : String(fetchErr)}`;
                     feedResults.push({ label: feed.label, status: 'error', message: msg });
+                    // Transport-level failure → feed the health state machine
+                    // (live-sync backoff). HTTP-level errors below do NOT count:
+                    // a responding peer is up, even when it rejects us.
+                    await recordPeerFailure(feed.id).catch(() => undefined);
                     continue;
                 }
                 clearTimeout(timeout);
@@ -1036,6 +1080,9 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
                         label: feed.label, status: 'error',
                         message: `HTTP ${response.status} ${response.statusText}${detail}`
                     });
+                    // 5xx = the peer's server is broken → back off like a transport
+                    // failure. 4xx (403 revoked key etc.) = peer is up; no backoff.
+                    if (response.status >= 500) await recordPeerFailure(feed.id).catch(() => undefined);
                     continue;
                 }
 
@@ -1075,6 +1122,10 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
             let feedDuplicateWarrants = 0;
             let feedNewBulletins = 0;
             let feedReportErrors = 0;
+            let feedWarrantErrors = 0;
+            let feedBulletinErrors = 0;
+            const newWarrantIds: string[] = [];
+            const newBulletinIds: string[] = [];
 
             // 4. Process reports
             if (data.reports && Array.isArray(data.reports) && feed.sync_reports !== false) {
@@ -1167,21 +1218,38 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
                 }
             }
 
-            // 5. Process warrants (scoped to this org)
-            if (data.warrants && Array.isArray(data.warrants) && adminId && feed.sync_warrants !== false) {
+            // 5. Process warrants. issued_by is NULL for federated warrants —
+            //    provenance is source_feed_id ("via <ally>"), not fake admin
+            //    attribution — so the cron can ingest these with no admin actor.
+            if (data.warrants && Array.isArray(data.warrants) && feed.sync_warrants !== false) {
                 for (const w of data.warrants) {
                     try {
                         if (!w.target_rsi_handle || !w.reason) continue;
+
+                        // Dedup by (source_feed_id, external_id) when the feed
+                        // supplies an id (backed by uq_warrants_feed_external);
+                        // content match below stays as the legacy-feed fallback.
+                        if (w.id != null) {
+                            const { data: existingExternal } = await supabase.from('warrants')
+                                .select('id')
+                                .eq('external_id', String(w.id))
+                                .eq('source_feed_id', feed.id)
+                                .maybeSingle();
+                            if (existingExternal) {
+                                feedDuplicateWarrants++;
+                                continue;
+                            }
+                        }
 
                         const { data: existing } = await supabase.from('warrants')
                             .select('id')
                             .ilike('target_rsi_handle', w.target_rsi_handle)
                             .eq('reason', w.reason)
-                            
+
                             .maybeSingle();
 
                         if (!existing) {
-                            await supabase.from('warrants').insert({
+                            const { data: insertedWarrant, error: warrantInsertErr } = await supabase.from('warrants').insert({
                                 target_rsi_handle: w.target_rsi_handle,
                                 reason: w.reason,
                                 action: w.action,
@@ -1189,15 +1257,22 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
                                 status: w.status,
                                 created_at: w.created_at || w.issued_at || new Date().toISOString(),
                                 source_feed_id: feed.id,
-                                external_id: w.id,
-                                issued_by: adminId
-                            });
+                                external_id: w.id != null ? String(w.id) : null,
+                                issued_by: null
+                            }).select('id').single();
+                            if (warrantInsertErr) {
+                                feedWarrantErrors++;
+                                log.error('warrant insert failed', { feedLabel: feed.label, message: warrantInsertErr.message });
+                                continue;
+                            }
+                            if (insertedWarrant?.id) newWarrantIds.push(insertedWarrant.id);
                             feedNewWarrants++;
                             totalWarrants++;
                         } else {
                             feedDuplicateWarrants++;
                         }
                     } catch (warrantErr) {
+                        feedWarrantErrors++;
                         log.error('error processing warrant from feed', { feedLabel: feed.label, err: warrantErr });
                     }
                 }
@@ -1220,7 +1295,7 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
                             // Calculate expiry: use remote expires_at, or default to 24h from now
                             const expiresAt = b.expires_at || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
                             const durationMinutes = b.duration_minutes || 1440;
-                            await supabase.from('intel_bulletins').insert({
+                            const { data: insertedBulletin, error: bulletinInsertErr } = await supabase.from('intel_bulletins').insert({
                                 title: b.title,
                                 body: b.body,
                                 threat_level: b.threat_level || 'Medium',
@@ -1234,18 +1309,60 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
                                 source_organization_id: feed.id,
                                 source_organization_name: feed.label,
                                 shared_with_allies: false,
-                            });
+                            }).select('id').single();
+                            if (bulletinInsertErr) {
+                                feedBulletinErrors++;
+                                log.error('bulletin insert failed', { feedLabel: feed.label, message: bulletinInsertErr.message });
+                                continue;
+                            }
+                            if (insertedBulletin?.id) newBulletinIds.push(insertedBulletin.id);
                             feedNewBulletins++;
                             totalBulletins++;
                         }
                     } catch (bulletinErr) {
+                        feedBulletinErrors++;
                         log.error('error processing bulletin from feed', { feedLabel: feed.label, err: bulletinErr });
                     }
                 }
             }
 
-            // 7. Update last_synced_at
-            await supabase.from('alliance_peers').update({ last_contact_at: new Date().toISOString() }).eq('id', feed.id);
+            // 7. Advance the cursor — ONLY after the ingest loops completed.
+            //    Prefer the peer-clock _meta.fetchedAt (captured before the peer
+            //    ran its queries); legacy peers without it fall back to their
+            //    top-level fetchedAt, then to local time (the overlap on use
+            //    covers the residual skew either way). Poison items can't stall
+            //    the cursor (each item is individually try/caught + counted) —
+            //    they're surfaced via sync_alert below instead.
+            const nextCursor = data._meta?.fetchedAt || data.fetchedAt || new Date().toISOString();
+            await supabase.from('alliance_peers').update({
+                intel_synced_at: nextCursor,
+                last_contact_at: new Date().toISOString(),
+            }).eq('id', feed.id);
+            await recordPeerSuccess(feed.id).catch(() => undefined);
+
+            // 7b. Realtime nudges so members see cron-ingested intel without a
+            //     reload (ids/discriminators only — receivers fetch content
+            //     through the permission-gated read paths).
+            if (feedNewReports > 0 || feedLinkedReports > 0) broadcastIntelUpdate({ kind: 'report' });
+            if (newWarrantIds.length > 0) {
+                broadcastWarrantUpdate(newWarrantIds.length <= 20 ? { warrantIds: newWarrantIds } : undefined);
+            }
+            if (newBulletinIds.length > 0) {
+                if (newBulletinIds.length <= 20) {
+                    for (const bulletinId of newBulletinIds) broadcastToOrg('bulletin_update', { bulletinId });
+                } else {
+                    broadcastToOrg('bulletin_update', {});
+                }
+            }
+
+            // 7c. Operator-visible skip note (poison items): set, never silently
+            //     swallowed. The live-sync engine clears sync_alert on the next
+            //     fully-clean pass.
+            const feedSkipped = feedReportErrors + feedWarrantErrors + feedBulletinErrors;
+            skippedItems += feedSkipped;
+            if (feedSkipped > 0) {
+                await setSyncAlert(feed.id, `Intel sync skipped ${feedSkipped} item(s) — see server logs.`).catch(() => undefined);
+            }
 
             // 8. Build result summary for this feed
             // First, push diagnostic log entries
@@ -1275,13 +1392,15 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
                 if (feedLinkedReports > 0) parts.push(`${feedLinkedReports} existing report(s) linked`);
                 if (feedDuplicateWarrants > 0) parts.push(`${feedDuplicateWarrants} duplicate warrant(s) skipped`);
                 if (feedReportErrors > 0) parts.push(`${feedReportErrors} report(s) failed to import`);
+                if (feedWarrantErrors > 0) parts.push(`${feedWarrantErrors} warrant(s) failed to import`);
+                if (feedBulletinErrors > 0) parts.push(`${feedBulletinErrors} bulletin(s) failed to import`);
                 if (parts.length === 0) parts.push('All records already exist locally');
             }
 
             const hasNew = feedNewReports > 0 || feedNewWarrants > 0 || feedNewBulletins > 0;
             feedResults.push({
                 label: feed.label,
-                status: feedReportErrors > 0 ? 'warning' : hasNew ? 'success' : 'info',
+                status: feedSkipped > 0 ? 'warning' : hasNew ? 'success' : 'info',
                 message: parts.join(', ')
             });
 
@@ -1294,7 +1413,7 @@ export async function syncTrustedFeeds(adminId?: number, force?: boolean) {
         }
     }
 
-    return { totalReports, totalWarrants, totalBulletins, feedResults };
+    return { totalReports, totalWarrants, totalBulletins, skippedItems, feedResults };
 }
 
 export async function syncWarrantsToReports(adminId: number) {

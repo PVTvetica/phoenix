@@ -43,7 +43,12 @@ export const allianceActions = {
     'alliance:save_self_profile': ({ profile }: SaveSelfProfilePayload) => db.saveAllianceSelfProfile(profile),
 
     // P4: fetch an ally's shared roster / fleet summary (server-to-server pull,
-    // returned to the browser; outbound keys never reach the client).
+    // returned to the browser; outbound keys never reach the client). Served
+    // from the live-sync directory cache when fresh.
     'alliance:fetch_peer_roster': ({ peerId }: PeerIdPayload) => db.fetchPeerRoster(peerId),
     'alliance:fetch_peer_fleet': ({ peerId }: PeerIdPayload) => db.fetchPeerFleet(peerId),
+
+    // Live-sync: admin "Sync now" — run every applicable sync job for one peer
+    // immediately (budget-gated + cooldown inside forceSyncPeer).
+    'alliance:force_sync': ({ peerId }: PeerIdPayload) => db.forceSyncPeer(peerId),
 };

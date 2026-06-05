@@ -34,7 +34,7 @@ const BASELINE: Record<string, number> = {
     'lib/db/government/structure.ts': 8,
     'lib/db/government/templates.ts': 1,
     'lib/db/hr.ts': 14,
-    'lib/db/intel.ts': 13,
+    'lib/db/intel.ts': 12,
     'lib/db/locations.ts': 3,
     'lib/db/operations-federation.ts': 3,
     'lib/db/ops.ts': 24,

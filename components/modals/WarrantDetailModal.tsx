@@ -203,12 +203,20 @@ const WarrantDetailModal: React.FC<WarrantDetailModalProps> = ({ isOpen, onClose
                     <div className="grid grid-cols-2 gap-3">
                         <div className="bg-slate-950/20 p-3 rounded-lg border border-slate-800/30">
                             <p className="text-[10px] uppercase font-black text-slate-500 tracking-wider mb-1">Issued By</p>
-                            <div className="flex items-center gap-2">
-                                {warrant.issuedByUser?.avatarUrl && (
-                                    <img src={warrant.issuedByUser.avatarUrl} alt="" className="h-5 w-5 rounded-full" />
-                                )}
-                                <span className="text-sm text-white font-semibold">{warrant.issuedByUser?.name || 'Unknown'}</span>
-                            </div>
+                            {warrant.issuedBy == null && warrant.sourceFeedLabel ? (
+                                // Federated warrant — "via <ally>" provenance, no local issuer.
+                                <div className="flex items-center gap-2">
+                                    <i className="fa-solid fa-satellite-dish text-sky-400 text-xs" aria-hidden />
+                                    <span className="text-sm text-sky-300 font-semibold">via {warrant.sourceFeedLabel}</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    {warrant.issuedByUser?.avatarUrl && (
+                                        <img src={warrant.issuedByUser.avatarUrl} alt="" className="h-5 w-5 rounded-full" />
+                                    )}
+                                    <span className="text-sm text-white font-semibold">{warrant.issuedByUser?.name || 'Unknown'}</span>
+                                </div>
+                            )}
                         </div>
                         <div className="bg-slate-950/20 p-3 rounded-lg border border-slate-800/30">
                             <p className="text-[10px] uppercase font-black text-slate-500 tracking-wider mb-1">Issued At</p>

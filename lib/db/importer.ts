@@ -577,6 +577,38 @@ async function reanchorAdminOntoImportedUser(
     return { userId: importedUserId, roleId: adminRoleId };
 }
 
+/**
+ * Post-import permission reconciliation. role_permissions is precleared and
+ * replaced by the EXPORT's grants (remapped by permission NAME), but the
+ * `permissions` table is the fork's CODE-OWNED catalog and is deliberately NOT
+ * imported (see SEEDED_PRECLEAR note). So any permission this fork gates on that
+ * the source org never had — e.g. `admin:config:catalog` (the Ship/Item/
+ * Commodity/Location catalogs) — ends up granted to NO role, 403-ing the Admin.
+ * The server's permission gate is a pure `permissions.includes(perm)` with no
+ * super-admin bypass (api/services.ts) — the Admin "bypasses" only by holding
+ * EVERY permission, exactly as the first-boot seeder grants it
+ * (`adminPerms = permissions.map(p => p.name)`). Re-assert that invariant after
+ * every import: grant the full local catalog to the Admin role. Idempotent —
+ * only the missing grants are inserted, so no PK conflict on existing ones.
+ * Returns how many grants were added.
+ */
+async function ensureAdminRoleHasAllPermissions(): Promise<number> {
+    const { data: roleRows } = await sb.from('roles').select('id').eq('name', 'Admin') as unknown as SelectResult;
+    const adminRoleId = (roleRows || [])[0]?.id as number | undefined;
+    if (adminRoleId == null) return 0;
+    const { data: permRows } = await sb.from('permissions').select('id') as unknown as SelectResult;
+    const allPermIds = (permRows || []).map((r) => r.id as number);
+    if (allPermIds.length === 0) return 0;
+    const { data: existing } = await sb.from('role_permissions').select('permission_id').eq('role_id', adminRoleId) as unknown as SelectResult;
+    const have = new Set((existing || []).map((r) => r.permission_id as number));
+    const missing = allPermIds.filter((id) => !have.has(id));
+    if (missing.length === 0) return 0;
+    const { error } = await sb.from('role_permissions').insert(missing.map((pid) => ({ role_id: adminRoleId, permission_id: pid })));
+    if (error) { log.error('post-import admin permission reconcile failed', { error: error.message }); return 0; }
+    log.info('post-import admin permission reconcile', { added: missing.length });
+    return missing.length;
+}
+
 /** Best-effort restore of the admin row freed for a merge, used when the import
  *  fails partway. If PRE_CLEAR already removed the captured role, re-point to any
  *  Admin role so the NOT NULL FK row re-inserts and the admin is never locked out. */
@@ -603,7 +635,7 @@ async function restoreAdminRow(captured: Record<string, unknown>): Promise<void>
 /** Progress events emitted during a streamed import (id-less, log-safe). */
 export type ImportProgressEvent =
     | { type: 'start'; totalTables: number; totalRows: number }
-    | { type: 'phase'; phase: 'validate' | 'preclear' | 'sequences' }
+    | { type: 'phase'; phase: 'validate' | 'preclear' | 'sequences' | 'permissions' }
     | { type: 'table'; table: string; inserted: number; tablesDone: number; totalTables: number; rowsInserted: number; totalRows: number }
     | { type: 'warning'; message: string }
     | { type: 'done'; result: ImportResult };
@@ -790,6 +822,18 @@ export async function importOrgData(ndjson: string, onProgress?: ImportProgressF
             const anchor = await reanchorAdminOntoImportedUser(merge.importedUserId, captured);
             reanchoredAdminUserId = anchor.userId;
             reanchoredAdminRoleId = anchor.roleId;
+        }
+
+        // Re-assert "Admin holds every permission" — the import replaced the
+        // role_permissions grants with the source org's, which can't reference
+        // fork-only permissions (e.g. admin:config:catalog). Runs for every
+        // import, merge or not, so whichever Admin role survives is complete.
+        await emit({ type: 'phase', phase: 'permissions' });
+        const grantsAdded = await ensureAdminRoleHasAllPermissions();
+        if (grantsAdded > 0) {
+            const msg = `Granted ${grantsAdded} permission(s) to the Admin role that the imported org lacked (e.g. catalog management).`;
+            warnings.push(msg);
+            await emit({ type: 'warning', message: msg });
         }
 
         const result: ImportResult = {

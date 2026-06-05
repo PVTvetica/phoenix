@@ -269,6 +269,12 @@ export interface AlliancePeer {
     hasOutboundKey: boolean;
     lastContactAt?: string | null;
     createdAt?: string;
+    // Live-sync health (admin UI badge + diagnostics).
+    syncHealth?: 'unknown' | 'healthy' | 'degraded' | 'down';
+    syncFailures?: number;
+    syncLastOkAt?: string | null;
+    syncNextAttemptAt?: string | null;
+    syncAlert?: string | null;
 }
 
 // Member-facing directory card — the safe projection sent to the browser.
@@ -889,7 +895,6 @@ export interface OperationLogisticsItem {
     itemName: string;
     quantityNeeded: number;
     quantityFulfilled: number;
-    fulfilledByOrgId?: string;
     fulfilledByUserId?: number;
     category: LogisticsCategory;
     status: LogisticsStatus;
@@ -925,7 +930,9 @@ export interface HydratedWarrant {
     action: WarrantAction;
     uecReward: number;
     status: WarrantStatus;
-    issuedBy: number;
+    // null for federated warrants ingested from an allied feed — render
+    // "via {sourceFeedLabel}" provenance instead of a local issuer.
+    issuedBy: number | null;
     issuedByUser: User;
     claimedBy?: number;
     claimedByUser?: User;

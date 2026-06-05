@@ -1,5 +1,6 @@
 
 import { supabase, handleSupabaseError, safeFetch, broadcastToOrg, broadcastToChannel, getSystemRoles } from './common.js';
+import { cache } from '../cache.js';
 import { sendPushToAll } from '../push.js';
 import { toUnitPost, toServiceTypeConfig } from './mappers.js';
 import type { Tables } from './rows.js';
@@ -1723,6 +1724,11 @@ export interface ShareableIntelOpts {
 // this. Deny-by-default: sync_restricted markers excluded, clearance ceiling
 // applied, and only the enabled channels returned.
 export async function collectShareableIntel(opts: ShareableIntelOpts) {
+    // Captured BEFORE the queries run: items committed mid-query re-serve next
+    // pull (dedup absorbs the replay) instead of being silently skipped. The
+    // caller's next ?since= cursor — OUR clock domain, same as the items'
+    // created_at, so cross-server clock skew can never lose intel.
+    const fetchedAt = new Date().toISOString();
     const maxShareableLevel = opts.maxClearance ?? 0;
     const wantReports = !!opts.channels.reports;
     const wantWarrants = !!opts.channels.warrants;
@@ -1822,6 +1828,7 @@ export async function collectShareableIntel(opts: ShareableIntelOpts) {
         // their share ceiling. Expose only the ceiling itself.
         _meta: {
             maxShareableLevel,
+            fetchedAt,
         }
     };
 }
@@ -1957,4 +1964,76 @@ export async function resetQuartermasterData() {
     }
     broadcastToOrg('qm:reset', {});
     return results;
+}
+
+// =============================================================================
+// FULL RESET / FULL WIPE (Database Tools → Danger Zone)
+// =============================================================================
+// Both call the service-role-only RPC admin_truncate_all_data() (schema.sql §4.1b),
+// which truncates EVERY org-data table except the code-owned `permissions`
+// catalog + the `cron_locks` lease. Gated admin:access + typed confirmation in
+// api/services.ts / the client.
+
+/**
+ * Wipe all org data back to a fresh install while KEEPING the acting admin
+ * signed in. Capture → truncate → re-seed defaults → restore the admin with its
+ * ORIGINAL user id (TRUNCATE preserves sequences, so the session JWT stays
+ * valid) bound to the freshly-seeded Admin role. Structural FKs
+ * (rank/unit/position/clearance) are dropped — they pointed at rows the re-seed
+ * replaced. Fails closed: if the admin can't be captured first, nothing is
+ * wiped (no lock-out).
+ */
+export async function fullResetOrg(adminUserId: number) {
+    const { data: admin, error: capErr } = await supabase.from('users')
+        .select('id, auth_user_id, discord_id, name, rsi_handle, avatar_url')
+        .eq('id', adminUserId).single();
+    if (capErr || !admin) {
+        throw new Error('Could not identify the acting admin — reset aborted, no data was changed.');
+    }
+
+    const { error: wipeErr } = await supabase.rpc('admin_truncate_all_data', {});
+    if (wipeErr) throw new Error(`Reset failed during wipe: ${wipeErr.message}`);
+
+    // The in-process role cache now holds ids of roles that no longer exist.
+    cache.invalidate('system_roles');
+    await seedNewOrganization();
+    cache.invalidate('system_roles');
+
+    // Resolve the freshly-seeded Admin role by name (cache-free).
+    const { data: adminRole } = await supabase.from('roles').select('id').eq('name', 'Admin').maybeSingle();
+    if (!adminRole?.id) {
+        throw new Error('Reset re-seeded defaults but no Admin role was found — restart the server to mint a fresh claim code.');
+    }
+
+    const { error: insErr } = await supabase.from('users').insert({
+        id: admin.id,
+        auth_user_id: admin.auth_user_id,
+        discord_id: admin.discord_id,
+        name: admin.name,
+        rsi_handle: admin.rsi_handle,
+        avatar_url: admin.avatar_url,
+        role_id: adminRole.id,
+        rsi_verified: true,
+    });
+    if (insErr) {
+        throw new Error(`Reset re-seeded defaults but could not restore your admin account: ${insErr.message}. Restart the server to mint a fresh claim code.`);
+    }
+
+    // Keep the onboarding wizard away — an admin already exists.
+    await supabase.from('settings').upsert({ key: 'setup_completed', value: true }, { onConflict: 'key' });
+    return { ok: true, message: 'Organization reset to a fresh install. You are still signed in as Admin — reload the app to see the clean slate.' };
+}
+
+/**
+ * Destroy ALL data including users + settings, leaving an empty database. Does
+ * NOT re-seed: on the next server start, firstBoot finds no admin, seeds the
+ * defaults, and prints a fresh one-time SETUP-XXXX claim code to the console.
+ * The acting admin is logged out (their row is gone); the client shows a
+ * redeploy prompt.
+ */
+export async function fullWipeOrg() {
+    const { error } = await supabase.rpc('admin_truncate_all_data', {});
+    if (error) throw new Error(`Wipe failed: ${error.message}`);
+    cache.invalidate('system_roles');
+    return { ok: true, message: 'All data wiped. Restart or redeploy the server now to generate a new admin claim code.' };
 }

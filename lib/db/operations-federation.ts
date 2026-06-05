@@ -12,11 +12,19 @@ import { supabase, handleSupabaseError, safeFetch, broadcastToOrg } from './comm
 import { getFullOperationDetails } from './ops.js';
 import { callAlliancePeer } from './alliances.js';
 import { toMirroredOperation } from './mappers.js';
+import {
+    scheduleDebounced, cancelDebounced, tryConsumeToken,
+    getCachedAllianceSyncConfig, recordPeerFailure, recordPeerSuccess,
+} from './allianceSyncState.js';
 import type { HydratedOperation, User, MirroredOperation, OperationPayoutMode } from '../../types.js';
 import { log as baseLog } from '../log.js';
 
 const log = baseLog.child({ module: 'db.operations-federation' });
 const nowIso = () => new Date().toISOString();
+
+// Reconcile pulls per peer per cycle — catch-up after downtime is spread over
+// successive 2-minute cycles instead of flooding the peer's rate limit.
+const MAX_RECONCILE_PULLS_PER_CYCLE = 5;
 
 // --- Display-only user projection: name + avatar, NO real id / email / perms. ---
 function displayUser(u: Partial<User> | undefined, synthId: number): User {
@@ -78,7 +86,7 @@ export function projectOperationSnapshot(op: HydratedOperation, hasRestrictedMar
         tasks: (op.tasks || []).map((t) => ({ ...t, assignedUserId: undefined, assignedUnitId: undefined, assignedUser: undefined, assignedUnit: undefined })),
         commandNodes: (op.commandNodes || []).map((n) => ({ ...n, assignedUserId: undefined, assignedUnitId: undefined, assignedUser: undefined, assignedUnit: undefined, fleetGroupId: undefined, fleetGroup: undefined })),
         boardElements: op.boardElements,
-        logistics: (op.logistics || []).map((l) => ({ ...l, fulfilledByUserId: undefined, fulfilledByOrgId: undefined })),
+        logistics: (op.logistics || []).map((l) => ({ ...l, fulfilledByUserId: undefined })),
 
         // Allied peers + their members (names only) — useful and safe.
         alliedOrgs: op.alliedOrgs,
@@ -173,26 +181,101 @@ export async function revokeAllyFromOperation(opId: string, peerId: string): Pro
     broadcastToOrg('operation_update', { operationId: opId });
 }
 
-/** Push the current snapshot to every ACCEPTED ally (critical events; fire-and-forget). */
+/**
+ * Push the current snapshot to every ACCEPTED ally (fire-and-forget).
+ * Live-sync gating: pushes to a peer marked 'down' are DROPPED, not queued —
+ * the guest's reconcile poll converges on recovery (versions make the drop
+ * lossless). Each push costs one per-peer budget token; immediate events
+ * (status_change / alert / cancel — critical + human-bounded) consume a token
+ * when available but are never blocked, while a budget-starved debounced
+ * 'full' push re-coalesces 10s later (the trailing snapshot always carries
+ * the latest state, so deferring loses nothing).
+ */
 export async function pushOperationToAllies(opId: string, event: 'status_change' | 'alert' | 'cancel' | 'full'): Promise<void> {
+    const immediate = event !== 'full';
+    // An immediate push carries the full latest snapshot anyway — supersede
+    // (and cancel) any pending coalesced push for this op.
+    if (immediate) cancelDebounced(`oppush:${opId}`);
     const { data: allies } = await supabase.from('operation_allied_orgs').select('peer_id').eq('operation_id', opId).eq('accepted', true);
     if (!allies || allies.length === 0) return;
+    const peerIds = (allies as { peer_id: string }[]).map((a) => a.peer_id);
+    const { data: healthRows } = await supabase.from('alliance_peers')
+        .select('id, sync_health').in('id', peerIds);
+    const downPeers = new Set(((healthRows ?? []) as { id: string; sync_health: string | null }[])
+        .filter((p) => p.sync_health === 'down').map((p) => p.id));
     const env = await opEnvelope(opId);
     const snapshot = event === 'cancel' ? null : await buildOperationSnapshot(opId);
-    await Promise.all(allies.map((a: { peer_id: string }) =>
-        callAlliancePeer(a.peer_id, '/api/alliance/op-mirror/push', { method: 'POST', body: { ...env, event, snapshot } })
-            .catch((e) => log.warn('op push failed', { opId, peerId: a.peer_id, event, err: e })),
-    ));
+    let budgetDeferred = false;
+    await Promise.all(peerIds.map((peerId) => {
+        if (downPeers.has(peerId)) return Promise.resolve();
+        if (!tryConsumeToken(peerId, { force: immediate })) { budgetDeferred = true; return Promise.resolve(); }
+        return callAlliancePeer(peerId, '/api/alliance/op-mirror/push', { method: 'POST', body: { ...env, event, snapshot } })
+            .then((res) => { if (res) void recordPeerSuccess(peerId).catch(() => undefined); })
+            .catch((e) => {
+                log.warn('op push failed', { opId, peerId, event, err: e });
+                void recordPeerFailure(peerId).catch(() => undefined);
+            });
+    }));
+    if (budgetDeferred && event === 'full') scheduleAlliedPush(opId, 10_000);
 }
 
-/** Inbound (guest polls): serve the snapshot to a verified, accepted ally. */
+/**
+ * Debounced full-snapshot push — the live-sync hook called by
+ * broadcastOperationUpdate (lib/db/ops.ts) on EVERY op mutation. N rapid edits
+ * within the trailing window coalesce into ONE push of the latest projected
+ * snapshot. No-op for ops without accepted allies (pushOperationToAllies
+ * short-circuits on one indexed query). The flush deletes its own debounce
+ * entry (scheduleDebounced contract), so the map can't leak deleted ops.
+ */
+export function scheduleAlliedPush(opId: string, delayMs?: number): void {
+    scheduleDebounced(`oppush:${opId}`, delayMs ?? getCachedAllianceSyncConfig().pushDebounceMs,
+        () => pushOperationToAllies(opId, 'full'));
+}
+
+/** Inbound (guest polls): serve the snapshot to a verified, INVITED ally.
+ *  The gate is invite-row-exists (not accepted): an invite IS the host's
+ *  deliberate share decision — the invite push already delivers this exact
+ *  snapshot to the un-accepted peer (receiveMirrorInvite stores it), and
+ *  acceptInviteForPeer returns it on a bare invite row. Matching that posture
+ *  here lets the reconcile loop self-heal MISSED invites. Non-invited peers
+ *  stay forbidden (pinned by test); the snapshot projection itself never
+ *  branches on acceptance, so nothing extra crosses the wire pre-accept. */
 export async function getOperationSnapshotForPeer(opId: string, peerId: string, sinceVersion?: number): Promise<{ unchanged: true } | { v: number; op_id: string; version: number; snapshot: HydratedOperation | null }> {
     const { data: ally } = await supabase.from('operation_allied_orgs').select('accepted').eq('operation_id', opId).eq('peer_id', peerId).maybeSingle();
-    if (!ally?.accepted) throw new Error('forbidden');
+    if (!ally) throw new Error('forbidden');
     const env = await opEnvelope(opId);
     if (sinceVersion !== undefined && env.version <= sinceVersion) return { unchanged: true };
     const snapshot = await buildOperationSnapshot(opId);
     return { ...env, snapshot };
+}
+
+/**
+ * Inbound (guest reconciles): the live-sync manifest — every op this peer was
+ * invited to, with the host's current joint_version for accepted ones, in ONE
+ * call (replaces N per-op polls; doubles as the health probe).
+ *
+ * SECURITY (L6/I2): built EXCLUSIVELY from the calling peer's own
+ * operation_allied_orgs rows — no other peer's invites, no counts of anything
+ * else, no existence disclosure beyond what the peer's own invites already
+ * told it. sync_restricted ops appear as id+version only, exactly the poll
+ * envelope they already receive (the snapshot itself stays null for them).
+ */
+export interface OperationManifest { v: 1; fetchedAt: string; accepted: Record<string, number>; invited: string[] }
+export async function getOperationManifestForPeer(peerId: string): Promise<OperationManifest> {
+    const fetchedAt = nowIso();
+    const { data } = await supabase.from('operation_allied_orgs')
+        .select('operation_id, accepted, operation:operations!inner(joint_version)')
+        .eq('peer_id', peerId);
+    type ManifestRow = { operation_id: string; accepted: boolean; operation: { joint_version: number | null } | { joint_version: number | null }[] | null };
+    const accepted: Record<string, number> = {};
+    const invited: string[] = [];
+    for (const row of (data ?? []) as ManifestRow[]) {
+        const op = Array.isArray(row.operation) ? row.operation[0] : row.operation;
+        if (!op) continue; // op deleted mid-query — absent, like its cascade-deleted invite row
+        if (row.accepted) accepted[row.operation_id] = op.joint_version ?? 0;
+        else invited.push(row.operation_id);
+    }
+    return { v: 1, fetchedAt, accepted, invited };
 }
 
 /** Inbound (guest admin accepts): mark the ally accepted, return the first snapshot. */
@@ -235,17 +318,58 @@ export async function upsertAlliedParticipant(opId: string, peerId: string, p: A
     broadcastToOrg('operation_update', { operationId: opId });
 }
 
+/**
+ * Inbound (guest RSVP withdrawal): delete an allied member's participation row.
+ * SECURITY: the DELETE is scoped EXACTLY like the upsert key —
+ * (operation_id, peer_id, remote_user_handle) behind the same accepted-ally
+ * gate — so a peer can only ever delete its OWN participant rows, never
+ * another peer's (pinned by test). Kills ghost-RSVP accumulation.
+ */
+export async function removeAlliedParticipant(opId: string, peerId: string, remoteUserHandle: string): Promise<void> {
+    const { data: ally } = await supabase.from('operation_allied_orgs').select('accepted').eq('operation_id', opId).eq('peer_id', peerId).maybeSingle();
+    if (!ally?.accepted) throw new Error('forbidden');
+    const handle = String(remoteUserHandle || '').slice(0, 120);
+    if (!handle) throw new Error('malformed_request');
+    const { error } = await supabase.from('operation_allied_participants').delete()
+        .eq('operation_id', opId).eq('peer_id', peerId).eq('remote_user_handle', handle);
+    handleSupabaseError({ error, message: 'Failed to remove allied RSVP' });
+    await bumpOperationVersion(opId);
+    broadcastToOrg('operation_update', { operationId: opId });
+}
+
 // =============================================================================
 // GUEST side
 // =============================================================================
 
 interface MirrorPayload { v: number; op_id: string; version: number; event?: string; snapshot: HydratedOperation | null }
 
+// A projected op snapshot is tens of KB even with a big command board; this
+// caps the attacker-controlled inbound jsonb we'll persist so a paired-but-
+// hostile host can't park multi-MB blobs in our mirrored_operations table
+// (storage amplification + heavy admin-browser loads). Well under express's
+// 10mb body limit; a snapshot beyond it is treated as malformed → dropped.
+const MAX_INBOUND_SNAPSHOT_BYTES = 1_000_000;
+function boundedInboundSnapshot(snapshot: HydratedOperation | null | undefined): HydratedOperation | null {
+    if (snapshot == null) return null;
+    if (JSON.stringify(snapshot).length > MAX_INBOUND_SNAPSHOT_BYTES) throw new Error('malformed_request');
+    return snapshot;
+}
+
 /** Inbound (host invites us): store a pending mirror, visible only to admins. */
 export async function receiveMirrorInvite(peer: { id: string }, body: MirrorPayload): Promise<void> {
+    if (!body?.op_id || typeof body.op_id !== 'string') throw new Error('malformed_request');
+    // SECURITY: refuse to clobber a mirror hosted by a DIFFERENT peer. Without
+    // this, any Active peer could upsert over a victim-hosted mirror (id is the
+    // host's operation_id, known to co-allies) — redirecting the guest's RSVP
+    // pushes (member PII) to the attacker, spoofing op content, and resetting
+    // accepted=false (DoS). Mirrors the host_peer_id guard receiveMirrorPush /
+    // receiveMirrorRevoke already enforce.
+    const { data: existing } = await supabase.from('mirrored_operations').select('host_peer_id').eq('id', body.op_id).maybeSingle();
+    if (existing && existing.host_peer_id !== peer.id) return;           // not ours — refuse
+    const snapshot = boundedInboundSnapshot(body.snapshot);
     const { error } = await supabase.from('mirrored_operations').upsert({
         id: body.op_id, host_peer_id: peer.id,
-        snapshot: body.snapshot ?? null, version: body.version ?? 0, snapshot_updated_at: nowIso(),
+        snapshot, version: body.version ?? 0, snapshot_updated_at: nowIso(),
         accepted: false, invited_at: nowIso(), revoked_at: null,
     }, { onConflict: 'id' });
     handleSupabaseError({ error, message: 'Failed to receive invite' });
@@ -262,8 +386,9 @@ export async function receiveMirrorPush(peer: { id: string }, body: MirrorPayloa
         return;
     }
     if (!shouldApplyVersion(body.version, existing.version)) return;     // stale / duplicate
+    const snapshot = boundedInboundSnapshot(body.snapshot);
     await supabase.from('mirrored_operations').update({
-        snapshot: body.snapshot ?? null, version: body.version, snapshot_updated_at: nowIso(),
+        snapshot, version: body.version, snapshot_updated_at: nowIso(),
     }).eq('id', body.op_id);
     broadcastToOrg('operation_update', { operationId: body.op_id });
 }
@@ -324,6 +449,10 @@ export async function declineMirroredOperation(id: string): Promise<void> {
 export async function pollMirroredOperation(id: string): Promise<void> {
     const { data: mirror } = await supabase.from('mirrored_operations').select('host_peer_id, version').eq('id', id).eq('accepted', true).is('revoked_at', null).maybeSingle();
     if (!mirror) return;
+    // Budget gate: a view-mount poll past the per-peer budget serves the
+    // current mirror instead — pushes + the reconcile loop keep it fresh now,
+    // so a skipped on-mount poll is cosmetic, never a correctness loss.
+    if (!tryConsumeToken(mirror.host_peer_id)) return;
     const res = await callAlliancePeer(mirror.host_peer_id, `/api/alliance/op/${id}?since=${mirror.version}`);
     if (!res || !res.ok) return;
     const payload = await res.json() as MirrorPayload | { unchanged: true };
@@ -351,4 +480,270 @@ export async function rsvpMirroredOperation(id: string, userId: number, rsvpStat
         body: { v: 1, op_id: id, remoteUserHandle: handle, displayName: u?.name, avatarUrl: u?.avatar_url, shipText, rsvpStatus, isReady: !!isReady },
     }).catch((e) => log.warn('rsvp push failed', { id, userId, err: e }));
     broadcastToOrg('operation_update', { operationId: id });
+}
+
+/** Guest member withdraws an RSVP: delete locally + push the removal to the
+ *  host (removed:true on the same endpoint) so the host's allied-participant
+ *  row doesn't linger as a ghost. Handle derivation mirrors the RSVP push. */
+export async function removeMirroredRsvp(id: string, userId: number): Promise<void> {
+    const { data: mirror } = await supabase.from('mirrored_operations').select('host_peer_id, accepted').eq('id', id).maybeSingle();
+    if (!mirror?.accepted) throw new Error('This operation is not active.');
+    await supabase.from('mirrored_operation_participation').delete().eq('mirror_op_id', id).eq('user_id', userId);
+    const { data: u } = await supabase.from('users').select('name, rsi_handle').eq('id', userId).maybeSingle();
+    const handle = (u?.rsi_handle as string) || (u?.name as string) || `user-${userId}`;
+    await callAlliancePeer(mirror.host_peer_id, `/api/alliance/op/${id}/rsvp`, {
+        method: 'POST',
+        body: { v: 1, op_id: id, remoteUserHandle: handle, removed: true },
+    }).catch((e) => log.warn('rsvp removal push failed', { id, userId, err: e }));
+    broadcastToOrg('operation_update', { operationId: id });
+}
+
+/**
+ * Re-push every local member's current RSVP for a peer's accepted mirrors —
+ * recovery step after the peer comes back from 'down' (RSVP pushes made while
+ * the host was unreachable were fire-and-forget and lost). Budget-gated; if
+ * the bucket drains mid-way the remainder waits for the next recovery pass.
+ */
+export async function pushLocalRsvpsForPeer(peerId: string): Promise<void> {
+    const { data: mirrors } = await supabase.from('mirrored_operations')
+        .select('id').eq('host_peer_id', peerId).eq('accepted', true).is('revoked_at', null);
+    if (!mirrors || mirrors.length === 0) return;
+    const { data: parts } = await supabase.from('mirrored_operation_participation')
+        .select('mirror_op_id, rsvp_status, ship_text, is_ready, user:users!mirrored_operation_participation_user_id_fkey(name, rsi_handle, avatar_url)')
+        .in('mirror_op_id', (mirrors as { id: string }[]).map((m) => m.id));
+    type PartRow = { mirror_op_id: string; rsvp_status: string; ship_text: string | null; is_ready: boolean; user: { name: string; rsi_handle: string | null; avatar_url: string | null } | { name: string; rsi_handle: string | null; avatar_url: string | null }[] | null };
+    for (const p of (parts ?? []) as PartRow[]) {
+        const u = Array.isArray(p.user) ? p.user[0] : p.user;
+        const handle = u?.rsi_handle || u?.name;
+        if (!handle) continue;
+        if (!tryConsumeToken(peerId)) {
+            log.info('rsvp recovery re-push deferred (budget)', { peerId });
+            return;
+        }
+        await callAlliancePeer(peerId, `/api/alliance/op/${p.mirror_op_id}/rsvp`, {
+            method: 'POST',
+            body: {
+                v: 1, op_id: p.mirror_op_id, remoteUserHandle: handle, displayName: u?.name,
+                avatarUrl: u?.avatar_url, shipText: p.ship_text ?? undefined,
+                rsvpStatus: p.rsvp_status, isReady: !!p.is_ready,
+            },
+        }).catch((e) => log.warn('rsvp recovery re-push failed', { peerId, opId: p.mirror_op_id, err: e }));
+    }
+}
+
+// =============================================================================
+// GUEST side — reconciliation (the live-sync anti-entropy loop)
+// =============================================================================
+// Pushes are the latency optimization; THIS loop is the correctness mechanism.
+// One manifest call per peer per cycle converges everything pushes can miss:
+// missed invites/accepts, stale mirrors, host version regressions (backup
+// restores), and revoked/deleted ops — with a false-revoke guard so a
+// transient host hiccup can never mass-revoke mirrors.
+
+// In-process absence streaks (`${peerId}:${opId}` → consecutive well-formed
+// manifests missing the op). Reset on restart — worst case a revoke waits one
+// extra cycle; never incorrect.
+const mirrorMissingStreaks = new Map<string, number>();
+// Per-peer streak of anomalous (mass-shrink) manifests.
+const massShrinkStreaks = new Map<string, number>();
+
+/** TEST ONLY: reset reconcile streak state. */
+export function __resetReconcileStateForTests(): void {
+    mirrorMissingStreaks.clear();
+    massShrinkStreaks.clear();
+}
+
+export interface MirrorReconcileResult {
+    /** A well-formed manifest was received and processed. */
+    ok: boolean;
+    /** The peer answered (even if not ok) — transport is alive. */
+    peerUp: boolean;
+    pulled: number;
+    revoked: number;
+    /** Pulls deferred to the next cycle (per-cycle cap / budget). */
+    deferred: number;
+    /** Operator-visible anomaly raised this pass (regression heal, mass shrink). */
+    alert?: string;
+}
+
+const NO_INFO: Omit<MirrorReconcileResult, 'peerUp'> = { ok: false, pulled: 0, revoked: 0, deferred: 0 };
+
+/**
+ * Reconcile our mirrors of a host peer against its manifest.
+ * Throws on transport failure (caller feeds the health state machine).
+ */
+export async function reconcileMirrorsWithPeer(peerId: string): Promise<MirrorReconcileResult> {
+    const res = await callAlliancePeer(peerId, '/api/alliance/op-manifest');
+    if (!res) return { ...NO_INFO, peerUp: false };            // peer not Active locally — config, not health
+    if (!res.ok) {
+        log.warn('op-manifest fetch rejected', { peerId, status: res.status });
+        return { ...NO_INFO, peerUp: true };                    // peer is up; "no information", never revoke
+    }
+    let manifest: OperationManifest | null = null;
+    try { manifest = await res.json() as OperationManifest; } catch { manifest = null; }
+    if (!manifest || manifest.v !== 1 || typeof manifest.accepted !== 'object' || manifest.accepted === null || !Array.isArray(manifest.invited)) {
+        log.warn('op-manifest malformed', { peerId });
+        return { ...NO_INFO, peerUp: true };                    // malformed = no information
+    }
+
+    const { data: mirrorRows } = await supabase.from('mirrored_operations')
+        .select('id, version, accepted, revoked_at').eq('host_peer_id', peerId);
+    type MirrorRow = { id: string; version: number; accepted: boolean; revoked_at: string | null };
+    const mirrors = (mirrorRows ?? []) as MirrorRow[];
+    const byId = new Map(mirrors.map((m) => [m.id, m]));
+
+    // ---- plan pulls ---------------------------------------------------------
+    type PullKind = 'stale' | 'regression' | 'missing-accepted' | 'missing-invite' | 'resurrect' | 'reinvite';
+    const pulls: Array<{ opId: string; kind: PullKind; local: MirrorRow | null }> = [];
+    for (const [opId, version] of Object.entries(manifest.accepted)) {
+        if (typeof version !== 'number' || !Number.isFinite(version)) continue;
+        const local = byId.get(opId) ?? null;
+        if (!local) pulls.push({ opId, kind: 'missing-accepted', local });            // missed invite+accept
+        // The host lists this op as accepted (its accepted flag is only ever set
+        // by OUR /accept call) — so it is authoritative for "alive + accepted".
+        else if (local.revoked_at) pulls.push({ opId, kind: 'resurrect', local });    // heal a spurious local revoke (any version)
+        else if (!local.accepted) pulls.push({ opId, kind: 'missing-accepted', local }); // heal a lost accept-ack (host latched accepted, we didn't)
+        else if (version > local.version) pulls.push({ opId, kind: 'stale', local });
+        else if (version < local.version) pulls.push({ opId, kind: 'regression', local }); // host rolled back (backup restore)
+    }
+    for (const opId of manifest.invited) {
+        if (typeof opId !== 'string' || !opId) continue;
+        const local = byId.get(opId) ?? null;
+        if (!local) pulls.push({ opId, kind: 'missing-invite', local });               // missed invite push
+        else if (local.revoked_at) pulls.push({ opId, kind: 'reinvite', local });      // missed RE-invite after revoke
+    }
+
+    // ---- execute pulls (per-cycle cap + per-peer budget) --------------------
+    let pulled = 0;
+    let deferred = 0;
+    let alert: string | undefined;
+    for (const p of pulls) {
+        if (pulled >= MAX_RECONCILE_PULLS_PER_CYCLE || !tryConsumeToken(peerId)) {
+            deferred = pulls.length - pulled;
+            break;
+        }
+        const outcome = await pullMirrorFromHost(peerId, p.opId, p.kind, p.local).catch((e) => {
+            log.warn('reconcile pull failed', { peerId, opId: p.opId, kind: p.kind, err: e });
+            return null;
+        });
+        if (outcome === 'applied') pulled++;
+        if (outcome === 'regression-healed') {
+            pulled++;
+            alert = 'Peer reported older operation versions — it may have been restored from a backup. Mirrors were reset to its current state.';
+            log.warn('mirror version regression healed', { peerId, opId: p.opId });
+        }
+    }
+
+    // ---- revokes: manifest-absence with the false-revoke guard --------------
+    // A live (non-revoked) mirror absent from BOTH manifest sections means the
+    // host deleted the op or withdrew the invite — but only after TWO
+    // consecutive well-formed manifests say so, and never in a mass-shrink
+    // anomaly (host mid-recovery serving a half-empty list).
+    const present = new Set<string>([...Object.keys(manifest.accepted), ...manifest.invited]);
+    const liveLocal = mirrors.filter((m) => !m.revoked_at);
+    const absent = liveLocal.filter((m) => !present.has(m.id));
+    let revoked = 0;
+
+    // A single-mirror peer is included (>= 1): if its one mirror vanishes, that
+    // is a 100% shrink and must get the same anomaly hold as a multi-mirror
+    // mass shrink — otherwise a 1-mirror peer would have no protection beyond
+    // the 2-cycle streak, and a transient host hiccup could flicker the lone
+    // mirror revoked→restored. Revoke-by-absence is only the slow backstop
+    // (explicit cancel/revoke push is primary), so erring conservative is right.
+    const isMassShrink = liveLocal.length >= 1 && absent.length > liveLocal.length / 2;
+    if (isMassShrink) {
+        const streak = (massShrinkStreaks.get(peerId) ?? 0) + 1;
+        massShrinkStreaks.set(peerId, streak);
+        if (streak < 3) {
+            // Anomaly: hold ALL revokes (don't even advance per-op streaks).
+            alert = alert ?? `Peer manifest dropped ${absent.length} of ${liveLocal.length} mirrored operations — holding revokes (anomaly guard).`;
+            log.warn('op-manifest mass shrink — revokes held', { peerId, absent: absent.length, live: liveLocal.length, streak });
+            return { ok: true, peerUp: true, pulled, revoked: 0, deferred, alert };
+        }
+        // The shrink persisted across 3+ manifests — it's real; fall through
+        // to normal streak processing (each op still needs its own 2 passes).
+    } else {
+        massShrinkStreaks.delete(peerId);
+    }
+
+    for (const m of liveLocal) {
+        const key = `${peerId}:${m.id}`;
+        if (!present.has(m.id)) {
+            const streak = (mirrorMissingStreaks.get(key) ?? 0) + 1;
+            if (streak >= 2) {
+                await supabase.from('mirrored_operations').update({ revoked_at: nowIso() })
+                    .eq('id', m.id).eq('host_peer_id', peerId);
+                broadcastToOrg('operation_update', { operationId: m.id });
+                mirrorMissingStreaks.delete(key);
+                revoked++;
+            } else {
+                mirrorMissingStreaks.set(key, streak);
+            }
+        } else {
+            mirrorMissingStreaks.delete(key);
+        }
+    }
+
+    return { ok: true, peerUp: true, pulled, revoked, deferred, alert };
+}
+
+/** Fetch one op snapshot from the host and apply it per the reconcile kind. */
+async function pullMirrorFromHost(
+    peerId: string, opId: string,
+    kind: 'stale' | 'regression' | 'missing-accepted' | 'missing-invite' | 'resurrect' | 'reinvite',
+    local: { version: number; revoked_at: string | null } | null,
+): Promise<'applied' | 'regression-healed' | 'skipped'> {
+    // 'stale' can use the delta form; every other kind needs the full snapshot
+    // (regression MUST bypass ?since= — the host's version is LOWER, so since
+    // would answer {unchanged} and the deadlock would persist).
+    const useSince = kind === 'stale' && local !== null;
+    const res = await callAlliancePeer(peerId, `/api/alliance/op/${opId}${useSince ? `?since=${local.version}` : ''}`);
+    if (!res || !res.ok) return 'skipped';
+    const payload = await res.json() as MirrorPayload | { unchanged: true };
+    if ('unchanged' in payload) return 'skipped';
+    if (typeof payload.version !== 'number' || payload.op_id !== opId) return 'skipped';
+
+    if (kind === 'missing-accepted' || kind === 'missing-invite') {
+        const accepted = kind === 'missing-accepted';
+        const { error } = await supabase.from('mirrored_operations').upsert({
+            id: opId, host_peer_id: peerId,
+            snapshot: payload.snapshot ?? null, version: payload.version, snapshot_updated_at: nowIso(),
+            accepted, invited_at: nowIso(), accepted_at: accepted ? nowIso() : null, revoked_at: null,
+        }, { onConflict: 'id' });
+        handleSupabaseError({ error, message: 'Failed to heal missing mirror' });
+    } else if (kind === 'regression') {
+        // EXPLICIT override of the shouldApplyVersion gate — reachable ONLY from
+        // this reconcile pull of a fresh authoritative manifest, NEVER from an
+        // inbound push (receiveMirrorPush stays strictly version-gated).
+        await supabase.from('mirrored_operations').update({
+            snapshot: payload.snapshot ?? null, version: payload.version, snapshot_updated_at: nowIso(),
+        }).eq('id', opId).eq('host_peer_id', peerId);
+        broadcastToOrg('operation_update', { operationId: opId });
+        return 'regression-healed';
+    } else if (kind === 'resurrect') {
+        // Revoked locally but the host lists it under accepted+alive (a spurious
+        // local revoke, or our cancel handling raced a missed re-share). The
+        // host's accepted flag is authoritative — only our own /accept sets it —
+        // so restore fully as accepted.
+        await supabase.from('mirrored_operations').update({
+            snapshot: payload.snapshot ?? null, version: payload.version, snapshot_updated_at: nowIso(),
+            accepted: true, accepted_at: nowIso(), revoked_at: null,
+        }).eq('id', opId).eq('host_peer_id', peerId);
+    } else if (kind === 'reinvite') {
+        // Missed re-invite after a revoke: back to a pending invite for admins.
+        await supabase.from('mirrored_operations').update({
+            snapshot: payload.snapshot ?? null, version: payload.version, snapshot_updated_at: nowIso(),
+            accepted: false, accepted_at: null, invited_at: nowIso(), revoked_at: null,
+        }).eq('id', opId).eq('host_peer_id', peerId);
+    } else {
+        // 'stale' — same version-gated apply as a push.
+        const { data: existing } = await supabase.from('mirrored_operations')
+            .select('version').eq('id', opId).eq('host_peer_id', peerId).maybeSingle();
+        if (!existing || !shouldApplyVersion(payload.version, existing.version)) return 'skipped';
+        await supabase.from('mirrored_operations').update({
+            snapshot: payload.snapshot ?? null, version: payload.version, snapshot_updated_at: nowIso(),
+        }).eq('id', opId).eq('host_peer_id', peerId);
+    }
+    broadcastToOrg('operation_update', { operationId: opId });
+    return 'applied';
 }

@@ -23,4 +23,8 @@ export const operationsFederationActions = {
     'mirror:poll': ({ id }: MirrorIdPayload) => db.pollMirroredOperation(id),
     'mirror:rsvp': ({ id, rsvpStatus, shipText, isReady, userId }: MirrorRsvpPayload) =>
         db.rsvpMirroredOperation(id, userId, rsvpStatus, shipText, isReady),
+    // Withdraw: delete the member's local participation + push the removal to
+    // the host so its allied-participant row doesn't linger (ghost RSVPs).
+    'mirror:rsvp_remove': ({ id, userId }: { id: string; userId: number }) =>
+        db.removeMirroredRsvp(id, userId),
 };

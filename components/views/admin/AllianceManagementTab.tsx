@@ -16,6 +16,14 @@ const statusClass = (status: string) => {
     }
 };
 
+// Live-sync health badge (alliance_peers.sync_health, maintained by the
+// engine's peer-health state machine).
+const SYNC_BADGES: Record<string, { cls: string; icon: string; label: string }> = {
+    healthy: { cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', icon: 'fa-signal', label: 'Sync OK' },
+    degraded: { cls: 'bg-amber-500/15 text-amber-400 border-amber-500/30', icon: 'fa-triangle-exclamation', label: 'Degraded' },
+    down: { cls: 'bg-red-500/15 text-red-400 border-red-500/30', icon: 'fa-plug-circle-xmark', label: 'Down' },
+};
+
 const AllianceManagementTab: React.FC = () => {
     const { rpcAction } = useData();
     const { hasPermission } = useAuth();
@@ -71,6 +79,33 @@ const AllianceManagementTab: React.FC = () => {
     }, [rpcAction]);
 
     useEffect(() => { load(); }, [load]);
+
+    // Live refresh: the engine broadcasts alliance_update (ids only) on health
+    // / alert transitions; DataCoreContext relays it as a window event. Coalesce
+    // bursts into one re-pull.
+    useEffect(() => {
+        let timer: ReturnType<typeof setTimeout> | null = null;
+        const onUpdate = () => {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => { timer = null; load(); }, 500);
+        };
+        window.addEventListener('app:realtime:alliance-update', onUpdate);
+        return () => {
+            window.removeEventListener('app:realtime:alliance-update', onUpdate);
+            if (timer) clearTimeout(timer);
+        };
+    }, [load]);
+
+    const handleForceSync = async (peerId: string) => {
+        setBusy(true);
+        try {
+            const res = await rpcAction('alliance:force_sync', { peerId });
+            flash(res?.ok ? 'ok' : 'err', res?.message || 'Sync requested.');
+            await load();
+        } catch (e: any) {
+            flash('err', e?.message || 'Sync failed.');
+        } finally { setBusy(false); }
+    };
 
     const handleSaveProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -325,10 +360,27 @@ const AllianceManagementTab: React.FC = () => {
                                         <p className="font-semibold text-white truncate">{peer.peerOrgName || peer.label}</p>
                                         <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${statusClass(peer.status)}`}>{peer.status}</span>
                                         <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border bg-slate-600/20 text-slate-400 border-slate-600/40">{peer.type}</span>
+                                        {peer.status === 'Active' && peer.syncHealth && SYNC_BADGES[peer.syncHealth] && (
+                                            <span
+                                                className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${SYNC_BADGES[peer.syncHealth].cls}`}
+                                                title={peer.syncHealth === 'down' && peer.syncNextAttemptAt
+                                                    ? `Unreachable — next retry ${fmt(peer.syncNextAttemptAt)}`
+                                                    : peer.syncLastOkAt ? `Last successful sync ${fmt(peer.syncLastOkAt)}` : undefined}
+                                            >
+                                                <i className={`fa-solid ${SYNC_BADGES[peer.syncHealth].icon} mr-1`}></i>
+                                                {SYNC_BADGES[peer.syncHealth].label}
+                                            </span>
+                                        )}
                                     </div>
                                     <p className="text-xs text-slate-500 truncate max-w-md">{peer.baseUrl}</p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
+                                    {peer.status === 'Active' && (
+                                        <button onClick={() => handleForceSync(peer.id)} disabled={busy || !canManage}
+                                            className="bg-slate-700/80 hover:bg-slate-600 border border-slate-600/60 text-slate-200 text-xs font-bold py-1.5 px-3 rounded-sm transition-colors disabled:opacity-50" title="Run every sync job for this peer now">
+                                            <i className="fa-solid fa-arrows-rotate mr-1"></i>Sync now
+                                        </button>
+                                    )}
                                     {peer.status !== 'Active' && (
                                         <button onClick={() => handleConnect(peer.id)} disabled={busy || !canManage}
                                             className="bg-indigo-600/80 hover:bg-indigo-500 border border-indigo-500/50 text-white text-xs font-bold py-1.5 px-3 rounded-sm transition-colors disabled:opacity-50">
@@ -341,6 +393,12 @@ const AllianceManagementTab: React.FC = () => {
                                     </button>
                                 </div>
                             </div>
+                            {peer.syncAlert && (
+                                <div className="mt-2 flex items-start gap-2 rounded-sm border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
+                                    <i className="fa-solid fa-triangle-exclamation mt-0.5 shrink-0"></i>
+                                    <span className="min-w-0">{peer.syncAlert}</span>
+                                </div>
+                            )}
                             {peer.status === 'Active' && (
                                 <div className="mt-3 pt-3 border-t border-slate-700/50 space-y-2">
                                     <div className="flex flex-wrap items-center gap-3">
@@ -374,7 +432,10 @@ const AllianceManagementTab: React.FC = () => {
                                                 {[0, 1, 2, 3, 4, 5].map(l => <option key={l} value={l}>L{l}</option>)}
                                             </select>
                                         </label>
-                                        {peer.lastContactAt && <span className="text-[11px] text-slate-500 ml-auto">Last contact: {fmt(peer.lastContactAt)}</span>}
+                                        <span className="text-[11px] text-slate-500 ml-auto">
+                                            {peer.syncLastOkAt && <>Last sync: {fmt(peer.syncLastOkAt)}</>}
+                                            {!peer.syncLastOkAt && peer.lastContactAt && <>Last contact: {fmt(peer.lastContactAt)}</>}
+                                        </span>
                                     </div>
                                 </div>
                             )}
