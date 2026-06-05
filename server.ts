@@ -123,6 +123,25 @@ import {
     handleNextcloudPreview,
     handleNextcloudUpload,
 } from './api/nextcloud.js';
+import {
+    handleDeckStatus,
+    handleDeckBoards,
+    handleDeckStacks,
+    handleDeckCards,
+    handleDeckCreateCard,
+    handleDeckUpdateCard,
+} from './api/nextcloud-deck.js';
+import {
+    handleCalendarStatus,
+    handleCalendarList,
+    handleCalendarEvents,
+} from './api/nextcloud-calendar.js';
+import {
+    handleTablesStatus,
+    handleTablesList,
+    handleTablesSchema,
+    handleTablesRows,
+} from './api/nextcloud-tables.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -609,6 +628,58 @@ app.get('/api/nextcloud/preview', async (req, res) => {
 app.post('/api/nextcloud/upload', async (req, res) => {
     noStore(res);
     await handleNextcloudUpload(req, res);
+});
+app.get('/api/nextcloud/deck/status', async (req, res) => {
+    noStore(res);
+    await handleDeckStatus(req, res);
+});
+app.get('/api/nextcloud/deck/boards', async (req, res) => {
+    noStore(res);
+    await handleDeckBoards(req, res);
+});
+app.get('/api/nextcloud/deck/boards/:boardId/stacks', async (req, res) => {
+    noStore(res);
+    await handleDeckStacks(req, res);
+});
+app.get('/api/nextcloud/deck/boards/:boardId/stacks/:stackId/cards', async (req, res) => {
+    noStore(res);
+    await handleDeckCards(req, res);
+});
+app.post('/api/nextcloud/deck/cards', async (req, res) => {
+    noStore(res);
+    await handleDeckCreateCard(req, res);
+});
+app.put('/api/nextcloud/deck/cards/:cardId', async (req, res) => {
+    noStore(res);
+    await handleDeckUpdateCard(req, res);
+});
+app.get('/api/nextcloud/calendar/status', async (req, res) => {
+    noStore(res);
+    await handleCalendarStatus(req, res);
+});
+app.get('/api/nextcloud/calendar/calendars', async (req, res) => {
+    noStore(res);
+    await handleCalendarList(req, res);
+});
+app.get('/api/nextcloud/calendar/events', async (req, res) => {
+    noStore(res);
+    await handleCalendarEvents(req, res);
+});
+app.get('/api/nextcloud/tables/status', async (req, res) => {
+    noStore(res);
+    await handleTablesStatus(req, res);
+});
+app.get('/api/nextcloud/tables', async (req, res) => {
+    noStore(res);
+    await handleTablesList(req, res);
+});
+app.get('/api/nextcloud/tables/:tableId/schema', async (req, res) => {
+    noStore(res);
+    await handleTablesSchema(req, res);
+});
+app.get('/api/nextcloud/tables/:tableId/rows', async (req, res) => {
+    noStore(res);
+    await handleTablesRows(req, res);
 });
 
 // PWA Service Worker — must never be cached by Cloudflare/browser

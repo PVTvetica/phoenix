@@ -14,17 +14,22 @@ import nextcloudService, {
     NextcloudStatus,
 } from '../../../services/nextcloudService';
 import NextcloudFilePreviewModal from './NextcloudFilePreviewModal';
+import NextcloudDecksTab from './NextcloudDecksTab';
+import NextcloudCalendarTab from './NextcloudCalendarTab';
+import NextcloudTablesTab from './NextcloudTablesTab';
 import {
     buildOpenInNextcloudUrl,
     getPreviewKind,
     triggerBlobDownload,
 } from './nextcloudFileUtils';
 
-type TabId = 'files' | 'decks' | 'links' | 'settings';
+type TabId = 'files' | 'decks' | 'calendar' | 'tables' | 'links' | 'settings';
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
     { id: 'files', label: 'Dateien', icon: 'fa-folder-open' },
     { id: 'decks', label: 'Decks', icon: 'fa-layer-group' },
+    { id: 'calendar', label: 'Kalender', icon: 'fa-calendar' },
+    { id: 'tables', label: 'Tabellen', icon: 'fa-table' },
     { id: 'links', label: 'Verknüpfungen', icon: 'fa-link' },
     { id: 'settings', label: 'Einstellungen', icon: 'fa-gear' },
 ];
@@ -272,7 +277,7 @@ const NextcloudView: React.FC = () => {
                 chipIcon="fa-cloud"
                 chipAccent="purple"
                 title="Nextcloud"
-                subtitle="Dateien und Deck-Boards — Zugangsdaten nur serverseitig."
+                subtitle="Dateien, Decks, Kalender und Tabellen — Zugangsdaten nur serverseitig."
                 stats={
                     <>
                         <HeroStat
@@ -467,11 +472,22 @@ const NextcloudView: React.FC = () => {
                 )}
 
                 {activeTab === 'decks' && (
-                    <EmptyState
-                        icon="fa-layer-group"
-                        heading="Deck-Integration folgt"
-                        description="Boards und Karten werden später über die Nextcloud Deck API angebunden."
+                    <NextcloudDecksTab
+                        serverUrl={status?.serverUrl}
+                        canManage={canManage}
+                        active={activeTab === 'decks'}
                     />
+                )}
+
+                {activeTab === 'calendar' && (
+                    <NextcloudCalendarTab
+                        serverUrl={status?.serverUrl}
+                        active={activeTab === 'calendar'}
+                    />
+                )}
+
+                {activeTab === 'tables' && (
+                    <NextcloudTablesTab active={activeTab === 'tables'} />
                 )}
 
                 {activeTab === 'links' && (

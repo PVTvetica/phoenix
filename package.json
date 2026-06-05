@@ -46,6 +46,7 @@
     "dompurify": "^3.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.0",
+    "ical-expander": "^3.2.0",
     "konva": "^10.3.0",
     "livekit-client": "^2.18.9",
     "livekit-server-sdk": "^2.15.2",
