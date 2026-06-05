@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Announcement } from '../../types';
 import Notice from '../ui/Notice';
+import { serviceTypeLabel } from '../views/operations/requests/requestStyles';
 
 // NOTE: OrgPublicPage is rendered BEFORE the user is authenticated and BEFORE
 // DataContext is populated. It must not use useAuth/useData. All data comes
@@ -56,6 +57,15 @@ function getSlug(): string {
     const parts = host.split('.');
     return parts[0] || '';
 }
+
+const SERVICE_DESCRIPTION_LABELS: Record<string, string> = {
+    'Armed escort and protection services.': 'Bewaffneter Eskort und Schutzdienste.',
+    'Medical extraction and personnel recovery.': 'Medizinische Extraktion und Personenrettung.',
+    'Cargo transport and salvage operations.': 'Frachttransport und Bergungsoperationen.',
+};
+
+const serviceDescriptionLabel = (description: string): string =>
+    SERVICE_DESCRIPTION_LABELS[description] ?? description;
 
 async function fetchJson<T>(url: string): Promise<T | null> {
     try {
@@ -150,9 +160,9 @@ const ProfileHeaderCard: React.FC<{ payload: PublicPagePayload }> = ({ payload }
 
 const NoticesCard: React.FC<{ announcements: Announcement[] }> = ({ announcements }) => (
     <CardPanel as="section" aria-labelledby="notices-heading">
-        <CardHeader icon="fa-solid fa-bullhorn" title="Notices" id="notices-heading">
+        <CardHeader icon="fa-solid fa-bullhorn" title="Hinweise" id="notices-heading">
             <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-                {announcements.length} active
+                {announcements.length} aktiv
             </span>
         </CardHeader>
         <div className="px-6 py-5 space-y-3">
@@ -175,7 +185,7 @@ const NoticesCard: React.FC<{ announcements: Announcement[] }> = ({ announcement
 // safe by construction. Do NOT swap to a different source without re-evaluating.
 const BlurbCard: React.FC<{ text: string; html?: string }> = ({ text, html }) => (
     <CardPanel as="section" aria-labelledby="about-heading">
-        <CardHeader icon="fa-solid fa-circle-info" title="About" id="about-heading" />
+        <CardHeader icon="fa-solid fa-circle-info" title="Über uns" id="about-heading" />
         <div className="px-6 py-5">
             {html ? (
                 // Project doesn't ship @tailwindcss/typography, so `prose*`
@@ -229,7 +239,7 @@ const TestimonialsCard: React.FC<{ slug: string }> = ({ slug }) => {
 
     return (
         <CardPanel as="section" aria-labelledby="testimonials-heading">
-            <CardHeader icon="fa-solid fa-comment-dots" title="What Clients Say" id="testimonials-heading">
+            <CardHeader icon="fa-solid fa-comment-dots" title="Was Clients sagen" id="testimonials-heading">
                 {items.length > 1 && (
                     <div className="flex items-center gap-1.5">
                         {items.map((_, i) => (
@@ -261,12 +271,12 @@ const TestimonialsCard: React.FC<{ slug: string }> = ({ slug }) => {
                     <div className="mb-3 flex items-center gap-2 text-xs text-slate-400">
                         <Stars n={current.rating} />
                         <span aria-hidden>·</span>
-                        <span>{current.serviceType}</span>
+                        <span>{serviceTypeLabel(current.serviceType)}</span>
                     </div>
                     <blockquote className="text-slate-200 text-base leading-relaxed" aria-live="polite">
                         &ldquo;{current.quote}&rdquo;
                     </blockquote>
-                    <p className="mt-4 text-[10px] text-slate-500 font-mono uppercase tracking-[0.2em]">— Verified Client · {current.ratedAt}</p>
+                    <p className="mt-4 text-[10px] text-slate-500 font-mono uppercase tracking-[0.2em]">— Verifizierter Client · {current.ratedAt}</p>
                 </div>
                 {items.length > 1 && (
                     <div className="mt-5 flex items-center justify-between">
@@ -297,18 +307,18 @@ const ServicesCard: React.FC<{ slug: string; onLogin: () => void }> = ({ slug, o
 
     return (
         <CardPanel as="section" aria-labelledby="services-heading">
-            <CardHeader icon="fa-solid fa-briefcase" title="Services Offered" id="services-heading">
+            <CardHeader icon="fa-solid fa-briefcase" title="Angebotene Dienste" id="services-heading">
                 <button onClick={onLogin} className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm border border-sky-500/40 text-sky-300 hover:bg-sky-500/10 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-sky-400">
-                    <i className="fa-solid fa-right-to-bracket mr-1.5" aria-hidden />Melden du sich an, um eine Anfrage zu stellen</button>
+                    <i className="fa-solid fa-right-to-bracket mr-1.5" aria-hidden />Anmelden & Anfrage stellen</button>
             </CardHeader>
             <ul className="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-3 list-none">
                 {items.map((svc) => (
                     <li key={svc.name} className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:border-sky-500/40 transition-colors">
                         <div className="flex items-center gap-3 mb-1.5">
                             {svc.icon && <i className={`${svc.icon} text-lg`} style={{ color: svc.color || '#ef4444' }} aria-hidden />}
-                            <h3 className="text-sm font-bold text-white uppercase tracking-wider">{svc.name}</h3>
+                            <h3 className="text-sm font-bold text-white uppercase tracking-wider">{serviceTypeLabel(svc.name)}</h3>
                         </div>
-                        {svc.description && <p className="text-slate-400 text-xs leading-relaxed">{svc.description}</p>}
+                        {svc.description && <p className="text-slate-400 text-xs leading-relaxed">{serviceDescriptionLabel(svc.description)}</p>}
                     </li>
                 ))}
             </ul>
@@ -320,10 +330,10 @@ const ServicesCard: React.FC<{ slug: string; onLogin: () => void }> = ({ slug, o
 
 const LoginCard: React.FC<{ onLogin: () => void }> = ({ onLogin }) => (
     <CardPanel as="aside" aria-labelledby="cta-heading">
-        <CardHeader icon="fa-solid fa-shield-halved" title="Join The Network" id="cta-heading" />
+        <CardHeader icon="fa-solid fa-shield-halved" title="Dem Netzwerk beitreten" id="cta-heading" />
         <div className="px-6 py-5">
             <p className="text-slate-400 text-xs mb-4 leading-relaxed">
-                Sign in with Discord to submit a service request, join the org, or access restricted areas.
+                Melde dich mit Discord an, um eine Serviceanfrage zu stellen, der Organisation beizutreten oder geschützte Bereiche zu nutzen.
             </p>
             <button
                 id="cta-login"
@@ -334,7 +344,7 @@ const LoginCard: React.FC<{ onLogin: () => void }> = ({ onLogin }) => (
                 <span className="uppercase tracking-wider">Anmelden mit Discord</span>
             </button>
             <p className="mt-3 text-[10px] text-slate-500 leading-relaxed text-center">
-                Uses Discord to authenticate. First time? You&rsquo;ll link your RSI handle next.
+                Authentifizierung über Discord. Erstes Mal? Im nächsten Schritt verknüpfst du deinen RSI-Handle.
             </p>
         </div>
     </CardPanel>
@@ -363,15 +373,15 @@ const StatsCard: React.FC<{ slug: string }> = ({ slug }) => {
         : '—';
 
     const rows: Array<{ label: string; value: string; icon: string }> = [
-        { label: 'Requests Completed', value: stats.totalCompleted.toLocaleString(), icon: 'fa-solid fa-check-double' },
-        { label: 'Avg Client Rating', value: avgRating, icon: 'fa-solid fa-star' },
-        { label: 'Avg Response Time', value: avgResp, icon: 'fa-solid fa-stopwatch' },
-        { label: 'Completed (30d)', value: stats.last30Completed.toLocaleString(), icon: 'fa-solid fa-calendar-check' },
+        { label: 'Abgeschlossene Anfragen', value: stats.totalCompleted.toLocaleString(), icon: 'fa-solid fa-check-double' },
+        { label: 'Ø Client-Bewertung', value: avgRating, icon: 'fa-solid fa-star' },
+        { label: 'Ø Reaktionszeit', value: avgResp, icon: 'fa-solid fa-stopwatch' },
+        { label: 'Abgeschlossen (30T)', value: stats.last30Completed.toLocaleString(), icon: 'fa-solid fa-calendar-check' },
     ];
 
     return (
         <CardPanel as="aside" aria-labelledby="stats-heading">
-            <CardHeader icon="fa-solid fa-chart-simple" title="At A Glance" id="stats-heading" />
+            <CardHeader icon="fa-solid fa-chart-simple" title="Auf einen Blick" id="stats-heading" />
             <dl className="px-6 py-4 space-y-3">
                 {rows.map((row) => (
                     <div key={row.label} className="flex items-center justify-between gap-3 py-1.5">
@@ -393,7 +403,7 @@ const LinksCard: React.FC<{ links: PublicPagePayload['links'] }> = ({ links }) =
     if (!links || links.length === 0) return null;
     return (
         <CardPanel as="aside" aria-labelledby="links-heading">
-            <CardHeader icon="fa-solid fa-link" title="Elsewhere" id="links-heading" />
+            <CardHeader icon="fa-solid fa-link" title="Links" id="links-heading" />
             <ul className="px-4 py-3 space-y-1.5 list-none">
                 {links.map((link) => (
                     <li key={link.id}>
