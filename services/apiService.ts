@@ -1,4 +1,22 @@
 
+import type { NextcloudFileList, NextcloudStatus, NextcloudUploadResult } from './nextcloudTypes';
+import type {
+    CreateDeckCardPayload,
+    CreateDeckCardResult,
+    DeckBoard,
+    DeckCard,
+    DeckStack,
+    DeckStatus,
+    UpdateDeckCardPayload,
+    UpdateDeckCardResult,
+} from './nextcloudDeckTypes';
+import type { CalendarEvent, CalendarListItem, CalendarStatus } from './nextcloudCalendarTypes';
+import type {
+    TablesRowsResult,
+    TablesSchema,
+    TablesStatus,
+    TablesTable,
+} from './nextcloudTablesTypes';
 
 const API_URL = '/api';
 
@@ -20,6 +38,29 @@ class ApiService {
             headers['Authorization'] = `Bearer ${this.token}`;
         }
         return headers;
+    }
+
+    private getAuthHeaders(): HeadersInit {
+        const headers: HeadersInit = {};
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+        return headers;
+    }
+
+    private async parseJsonResponse(response: Response, label: string): Promise<unknown> {
+        const ct = response.headers.get('content-type') ?? '';
+        if (ct.includes('application/json')) {
+            return response.json();
+        }
+        const text = (await response.text()).trimStart();
+        if (text.startsWith('import ')) {
+            throw new Error(
+                `${label}: Antwort ist Quellcode statt JSON. ` +
+                'Vite neu starten und in einem zweiten Terminal „npm run dev:server“ ausführen (API auf Port 3001).',
+            );
+        }
+        throw new Error(`${label}: Unerwartete Antwort — ${text.slice(0, 120)}`);
     }
 
     public setToken(token: string) {
@@ -288,6 +329,225 @@ class ApiService {
         }
         const tail = buffer.trim();
         if (tail) emit(tail);
+    }
+
+    async getNextcloudStatus(): Promise<NextcloudStatus> {
+        const response = await fetch(`${API_URL}/nextcloud/status`, {
+            headers: this.getHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            throw new Error('Failed to fetch Nextcloud status');
+        }
+        return this.parseJsonResponse(response, 'getNextcloudStatus') as Promise<NextcloudStatus>;
+    }
+
+    async getNextcloudFiles(path: string = '/'): Promise<NextcloudFileList> {
+        const qs = new URLSearchParams({ path });
+        const response = await fetch(`${API_URL}/nextcloud/files?${qs}`, {
+            headers: this.getHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Failed to fetch Nextcloud files');
+        }
+        return this.parseJsonResponse(response, 'getNextcloudFiles') as Promise<NextcloudFileList>;
+    }
+
+    private async fetchNextcloudBlob(path: string, endpoint: 'preview' | 'download'): Promise<Blob> {
+        const qs = new URLSearchParams({ path });
+        const response = await fetch(`${API_URL}/nextcloud/${endpoint}?${qs}`, {
+            headers: this.getAuthHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || `Nextcloud ${endpoint} fehlgeschlagen`);
+        }
+        return response.blob();
+    }
+
+    async getNextcloudPreviewBlob(path: string): Promise<Blob> {
+        return this.fetchNextcloudBlob(path, 'preview');
+    }
+
+    async downloadNextcloudFile(path: string): Promise<Blob> {
+        return this.fetchNextcloudBlob(path, 'download');
+    }
+
+    async uploadNextcloudFile(file: File, targetPath: string): Promise<NextcloudUploadResult> {
+        const form = new FormData();
+        form.append('file', file);
+        form.append('targetPath', targetPath);
+        const response = await fetch(`${API_URL}/nextcloud/upload`, {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: form,
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Upload fehlgeschlagen');
+        }
+        return this.parseJsonResponse(response, 'uploadNextcloudFile') as Promise<NextcloudUploadResult>;
+    }
+
+    async getDeckStatus(): Promise<DeckStatus> {
+        const response = await fetch(`${API_URL}/nextcloud/deck/status`, { headers: this.getHeaders() });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            throw new Error('Deck-Status konnte nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getDeckStatus') as Promise<DeckStatus>;
+    }
+
+    async getDeckBoards(): Promise<{ boards: DeckBoard[] }> {
+        const response = await fetch(`${API_URL}/nextcloud/deck/boards`, { headers: this.getHeaders() });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Boards konnten nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getDeckBoards') as Promise<{ boards: DeckBoard[] }>;
+    }
+
+    async getDeckStacks(boardId: number): Promise<{ stacks: DeckStack[] }> {
+        const response = await fetch(`${API_URL}/nextcloud/deck/boards/${boardId}/stacks`, {
+            headers: this.getHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Stacks konnten nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getDeckStacks') as Promise<{ stacks: DeckStack[] }>;
+    }
+
+    async getDeckCards(boardId: number, stackId: number): Promise<{ cards: DeckCard[] }> {
+        const response = await fetch(`${API_URL}/nextcloud/deck/boards/${boardId}/stacks/${stackId}/cards`, {
+            headers: this.getHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Karten konnten nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getDeckCards') as Promise<{ cards: DeckCard[] }>;
+    }
+
+    async createDeckCard(payload: CreateDeckCardPayload): Promise<CreateDeckCardResult> {
+        const response = await fetch(`${API_URL}/nextcloud/deck/cards`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Karte konnte nicht erstellt werden');
+        }
+        return this.parseJsonResponse(response, 'createDeckCard') as Promise<CreateDeckCardResult>;
+    }
+
+    async updateDeckCard(cardId: number, payload: UpdateDeckCardPayload): Promise<UpdateDeckCardResult> {
+        const response = await fetch(`${API_URL}/nextcloud/deck/cards/${cardId}`, {
+            method: 'PUT',
+            headers: this.getHeaders(),
+            body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Karte konnte nicht aktualisiert werden');
+        }
+        return this.parseJsonResponse(response, 'updateDeckCard') as Promise<UpdateDeckCardResult>;
+    }
+
+    async getCalendarStatus(): Promise<CalendarStatus> {
+        const response = await fetch(`${API_URL}/nextcloud/calendar/status`, { headers: this.getHeaders() });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            throw new Error('Kalender-Status konnte nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getCalendarStatus') as Promise<CalendarStatus>;
+    }
+
+    async getCalendars(): Promise<{ calendars: CalendarListItem[] }> {
+        const response = await fetch(`${API_URL}/nextcloud/calendar/calendars`, { headers: this.getHeaders() });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Kalender konnten nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getCalendars') as Promise<{ calendars: CalendarListItem[] }>;
+    }
+
+    async getCalendarEvents(
+        calendarId: string,
+        from?: string,
+        to?: string,
+    ): Promise<{ events: CalendarEvent[] }> {
+        const params = new URLSearchParams({ calendarId });
+        if (from) params.set('from', from);
+        if (to) params.set('to', to);
+        const response = await fetch(`${API_URL}/nextcloud/calendar/events?${params}`, {
+            headers: this.getHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Termine konnten nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getCalendarEvents') as Promise<{ events: CalendarEvent[] }>;
+    }
+
+    async getTablesStatus(): Promise<TablesStatus> {
+        const response = await fetch(`${API_URL}/nextcloud/tables/status`, { headers: this.getHeaders() });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            throw new Error('Tables-Status konnte nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getTablesStatus') as Promise<TablesStatus>;
+    }
+
+    async getTables(): Promise<{ tables: TablesTable[] }> {
+        const response = await fetch(`${API_URL}/nextcloud/tables`, { headers: this.getHeaders() });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Tabellen konnten nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getTables') as Promise<{ tables: TablesTable[] }>;
+    }
+
+    async getTableSchema(tableId: number): Promise<TablesSchema> {
+        const response = await fetch(`${API_URL}/nextcloud/tables/${tableId}/schema`, {
+            headers: this.getHeaders(),
+        });
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Tabellenschema konnte nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getTableSchema') as Promise<TablesSchema>;
+    }
+
+    async getTableRows(tableId: number, limit?: number, offset?: number): Promise<TablesRowsResult> {
+        const params = new URLSearchParams();
+        if (limit != null) params.set('limit', String(limit));
+        if (offset != null) params.set('offset', String(offset));
+        const qs = params.toString();
+        const response = await fetch(
+            `${API_URL}/nextcloud/tables/${tableId}/rows${qs ? `?${qs}` : ''}`,
+            { headers: this.getHeaders() },
+        );
+        if (!response.ok) {
+            this.handleResponseError(response.status);
+            const body = await response.json().catch(() => ({})) as { message?: string };
+            throw new Error(body.message || 'Tabellenzeilen konnten nicht geladen werden');
+        }
+        return this.parseJsonResponse(response, 'getTableRows') as Promise<TablesRowsResult>;
     }
 }
 

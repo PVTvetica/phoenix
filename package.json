@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "node scripts/dev-all.mjs",
+    "dev:server": "npm run build:server && node --env-file=.env scripts/run-dev-api.mjs",
     "build": "tsc && vite build && npm run build:server",
     "build:server": "tsc -p tsconfig.server.json",
     "gen:types": "supabase gen types typescript --linked --schema public > lib/database.types.ts",
@@ -14,7 +16,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "start": "node dist-server/server.js"
+    "start": "node --env-file=.env dist-server/server.js"
   },
   "engines": {
     "node": ">=22.12"
@@ -40,10 +42,12 @@
     "@types/compression": "^1.8.1",
     "@types/dompurify": "^3.0.5",
     "@types/express": "^5.0.6",
+    "busboy": "^1.6.0",
     "compression": "^1.8.1",
     "dompurify": "^3.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.0",
+    "ical-expander": "^3.2.0",
     "konva": "^10.3.0",
     "livekit-client": "^2.18.9",
     "livekit-server-sdk": "^2.15.2",
@@ -66,6 +70,7 @@
     "@eslint/js": "^9.39.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@types/busboy": "^1.5.4",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/web-push": "^3.6.4",

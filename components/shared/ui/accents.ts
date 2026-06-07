@@ -1,4 +1,4 @@
-export type AccentKey =
+﻿export type AccentKey =
     | 'sky'
     | 'emerald'
     | 'purple'
@@ -25,7 +25,7 @@ export interface AccentSpec {
 }
 
 export const ACCENTS: Record<AccentKey, AccentSpec> = {
-    sky:     { text: 'text-sky-400',     bg: 'bg-sky-500/10',     border: 'border-sky-500/30',     dot: 'bg-sky-500',     grad: 'from-sky-500/20 to-sky-500/0',         ring: 'ring-sky-500/20',     btn: 'bg-sky-600 hover:bg-sky-500',         heroGrad: 'bg-linear-to-b from-sky-950/30 via-slate-950/80 to-slate-950',     heroOrb: 'bg-sky-500/10' },
+    sky:     { text: 'text-sky-400',     bg: 'bg-sky-500/10',     border: 'border-sky-500/30',     dot: 'bg-sky-500',     grad: 'from-sky-500/20 to-sky-500/0',         ring: 'ring-sky-500/20',     btn: 'bg-sky-600 hover:bg-sky-500',         heroGrad: 'bg-linear-to-b from-red-950/35 via-slate-950/90 to-slate-950',     heroOrb: 'bg-red-600/10' },
     emerald: { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', dot: 'bg-emerald-500', grad: 'from-emerald-500/20 to-emerald-500/0', ring: 'ring-emerald-500/20', btn: 'bg-emerald-600 hover:bg-emerald-500', heroGrad: 'bg-linear-to-b from-emerald-950/30 via-slate-950/80 to-slate-950', heroOrb: 'bg-emerald-500/10' },
     purple:  { text: 'text-purple-400',  bg: 'bg-purple-500/10',  border: 'border-purple-500/30',  dot: 'bg-purple-500',  grad: 'from-purple-500/20 to-purple-500/0',   ring: 'ring-purple-500/20',  btn: 'bg-purple-600 hover:bg-purple-500',   heroGrad: 'bg-linear-to-b from-purple-950/30 via-slate-950/80 to-slate-950',  heroOrb: 'bg-purple-500/10' },
     amber:   { text: 'text-amber-400',   bg: 'bg-amber-500/10',   border: 'border-amber-500/30',   dot: 'bg-amber-500',   grad: 'from-amber-500/20 to-amber-500/0',     ring: 'ring-amber-500/20',   btn: 'bg-amber-600 hover:bg-amber-500',     heroGrad: 'bg-linear-to-b from-amber-950/30 via-slate-950/80 to-slate-950',   heroOrb: 'bg-amber-500/10' },

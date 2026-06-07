@@ -1,0 +1,335 @@
+A clean record — no observations or actions on file.
+A parent must be selected for this location type.
+A quick look at your environment. We never expose any values — just whether each piece is configured.
+Access Control Protocol
+Add ships from the catalog to build your fleet.
+Add skill tags so operations leads can match you to the right task.
+All existing sessions will be logged out shortly.
+All fields are required.
+All logged in admins will see this notice on the dashboard and other views.
+All logged in clients can see this notice.
+All logged in members can see this notice.
+All selected members will be moved to the chosen unit.
+All selected members will be set to the chosen job title.
+All selected members will be set to the chosen rank.
+An administrator needs to sync the ship catalog from the Star Citizen Wiki.
+An error occurred during triage. Please try again.
+An error occurred while adding aUEC. Please try again.
+An error occurred while adding participants. Please try again.
+An error occurred while adding the entry. Please try again.
+An error occurred while adjusting reputation. Please try again.
+An error occurred while assigning the lead responder. Please try again.
+An error occurred while awarding certification. Please try again.
+An error occurred while awarding certifications. Please try again.
+An error occurred while awarding commendation. Please try again.
+An error occurred while awarding commendations. Please try again.
+An error occurred while completing the request. Please try again.
+An error occurred while creating the ad-hoc request. Please try again.
+An error occurred while deleting the operation.
+An error occurred while dispatching members. Please try again.
+An error occurred while refusing the request. Please try again.
+An error occurred while saving role permissions.
+An error occurred while saving the certification. Please try again.
+An error occurred while saving the commendation. Please try again.
+An error occurred while saving the location. Please try again.
+An error occurred while saving the notice. Please try again.
+An error occurred while saving the rank. Please try again.
+An error occurred while saving the role. Please try again.
+An error occurred while saving the tag. Please try again.
+An error occurred while saving the tool. Please try again.
+An error occurred while submitting your application. Please try again.
+An error occurred while submitting your rating. Please try again.
+An error occurred while syncing your roles. Please try again.
+An error occurred while updating participant details. Please try again.
+An error occurred while updating specializations. Please try again.
+An error occurred while updating the caution. Please try again.
+An error occurred while updating the status. Please try again.
+An error occurred. Please check if this RSI handle is already in the system.
+An error occurred. Please try again.
+An officer will confirm it against the org alt account.
+An officer will fulfil the request.
+An officer will review and execute the transfer.
+An officer will review and fulfil it.
+Anything else — explain in notes.
+Apply clearance level + markers to multiple members
+Ask an admin to grant you the finance:view permission.
+Ask an admin to grant you the qm:view permission.
+Ask an admin to grant you the warehouse:view permission.
+Assign Active Units
+Assign Responders
+Awards & Ribbons
+Awards and ribbons will appear here as they're granted.
+Back up the org wiki to a JSON file, restore it later, or seed a new org from another org's content. Limiting markers and user attribution are not transferred.
+Be the first to post.
+Bicameral parliament with PM elected by the house. Proportional representation.
+Bootstrap this self-hosted instance from a full-organization export (.ndjson) downloaded from the hosted myrsi.org customer portal. One-time only — refused if this instance already has data.
+Broadcast System
+Browse & Select Ships
+Browse the unit hierarchy. Open any unit to view its members, feed, and operations.
+CEO leads the executive. Board of Directors elected by members.
+Captain elected by the crew. Quartermaster keeps order.
+Cartography Database
+Caution Advisory Entry
+Check back later — new opportunities are posted as command needs emerge.
+Choose a Discord channel before posting.
+Commodities only — stock and movements are not included.
+Complete & Archive
+Configure available mission categories for clients and members.
+Configure branches, positions, elections, and legislation.
+Configure hierarchy and insignias. Drag rows to reorder precedence.
+Configure the hero card shown to users with the Client role.
+Configure the integration with Google Gemini for automated intelligence summaries.
+Configure the title, description, and images that identify this site.
+Configure voice radio channels and LiveKit room mappings.
+Connect your Discord server for bot, channel routing, and role sync.
+Constitution updated.
+Could not complete the database health check.
+Could not delete the limiting marker.
+Could not delete the service request.
+Could not load question details.
+Could not load role details from the server.
+Could not reach the host instance.
+Could not revoke sessions.
+Could not save the limiting marker.
+Could not update maintenance settings.
+Could not update the clearance level.
+Create a division or squadron to start organizing ships.
+Create a job posting to begin the recruitment cycle.
+Create a template to standardize interview questions across recruitment cases.
+Credentials Management
+Custom government structure
+Der Administrator hat keinen Testton hinterlegt.
+Discord server roles synced successfully.
+Drafts are limited to one every 3 hours per operation. Try again later.
+EAM broadcast could not be transmitted. Please try again.
+EAM message body cannot be empty.
+Elected President, Senate legislature, and appointed judiciary.
+Election results are now official.
+Electoral System
+Emergency Action Message broadcast to all active sessions.
+Error creating case file.
+Every ship in the org is already in a fleet group.
+Executive Authority
+Failed to create bulletin. Please try again.
+Failed to create intel report. Please try again.
+Failed to delete account. Please try again.
+Failed to delete the intelligence report.
+Failed to delete the interview.
+Failed to delete the position.
+Failed to delete the post.
+Failed to delete the radio channel.
+Failed to delete the service request.
+Failed to delete the service type.
+Failed to file caution note. Please try again.
+Failed to invite the ally. Ensure joint operations are enabled for that peer.
+Failed to move the operator to the target channel.
+Failed to move the operator.
+Failed to move the unit in the hierarchy.
+Failed to process the decision.
+Failed to process the transfer request.
+Failed to publish your post.
+Failed to reassign the interview.
+Failed to reset the case status.
+Failed to save AI settings.
+Failed to save Discord configuration. Please check the console for details.
+Failed to save channel. Please try again.
+Failed to save client dashboard settings. Please try again.
+Failed to save client record changes.
+Failed to save interview evaluation.
+Failed to save legal documents.
+Failed to save organization identity.
+Failed to save radio configuration settings.
+Failed to save site metadata settings. Please try again.
+Failed to save the new rank order.
+Failed to save unit. Please try again.
+Failed to save user record changes.
+Failed to send the broadcast alert.
+Failed to transmit the radio ping.
+Failed to update intel report. Please try again.
+Failed to update operation settings.
+Failed to update the radio channel.
+Failed to update your RSI handle.
+Field reports, target dossiers, and bulletins. Threat analysis and collection.
+Fix a count error. Can go up or down.
+Fix an inventory miscount. Can go up or down.
+Flagged handles, advisories, and field-caution tracking.
+Fleet Organization
+Generate reports from caution notes
+Gesetzgebung
+Give the template a name before importing.
+Government Configuration
+Government identity updated.
+Government structure has been updated.
+HR and government position assignments will appear here as they accumulate. Talk to your command if you expect to see entries here.
+Hangar Management
+Hangar, org fleet, and fleet group management. Ship catalog synced from the Star Citizen Wiki.
+Hauling between warehouses or to a partner.
+Hereditary monarch with an elected parliament.
+Hierarchy Configuration
+Honours and awards recognising member achievement.
+Identity & Role Propagation
+Internal Affairs
+Internal case file opened successfully.
+Interview details saved successfully.
+Interview invitations will appear here once a recruiter schedules you.
+JSON must have a "phases" array (or a "payload" object that does).
+Join the Team
+Kundenfeedback
+Ledger Entry
+Legislation has been vetoed.
+Live queue, unit coordination, and subject lookup. CAD for the room, MDT for the field.
+Manage access levels and capability sets.
+Manage external intelligence feeds, API access, and database synchronization.
+Manage medals and awards.
+Manage security levels and compartmented information controls.
+Manage skill tags and designations.
+Manage system-wide broadcasts and information.
+Manage third-party resources and links. Group tools with categories; reorder within a category using the arrows.
+Manage training credentials and awards.
+Manage unit structure and hierarchy. Drag and drop to reorder or reparent.
+Manual Entry Mode
+Manual Log Entry
+Material consumed in crafting / manufacturing.
+Merit-based council of experts. Competence over popularity.
+Migrating from the hosted platform? Import your org export now, or skip and do it later from Admin → Import.
+Mission Configuration
+Mission Planning
+Mission control and dispatch. Live warrant and intel cross-reference on every request.
+Mission planning and coordination. Plan, brief, and command joint operations end-to-end.
+Most orgs use one 'General' account tied to their in-game ORGNAME_BANK alt. You can add reserve or project accounts later.
+Motion has been created.
+Moving operator to the target channel...
+Name, logo, login screen, duty defaults, and audio cues.
+Neuer Standort
+New Mission Profile
+New Stock Row
+New case file created successfully.
+New stock arrived (mining haul, refinery output, purchase).
+New stock arrived. Adds to the on-hand total.
+New unit has been added to the organizational structure.
+No live bulletins or active cautions.
+No pending service requests.
+No third-party tools have been configured for your access level. Contact an administrator to request access.
+Officer direct entry
+Official communications will appear here when HR or command posts them.
+Offline Status
+Open MyRSI.org uses Discord to sign in. You'll be the organization's first member and Admin.
+Operation settings have been saved.
+Operational performance and ratings. Rankings refresh as missions resolve.
+Operational status and unit hierarchy. Toggle duty, inspect profiles, and review personnel structure.
+Operations you participate in will appear here.
+Organization configuration, users, integrations, and maintenance.
+Organizational Structure
+Perform integrity checks, repairs on legacy data schemas, and optimize storage by pruning old records.
+Permanent Action
+Permission Level Configuration
+Personnel File
+Personnel Movement
+Personnel Record
+Personnel records, recruitment, interviews, transfers, and clearance management.
+Personnel will appear here once they go on duty.
+Please enter a positive cost amount.
+Please enter a valid amount and reason.
+Please enter only the PRIMARY contact's handle in this field. List additional group members in the Party Members box.
+Please provide a statement of interest.
+Please select at least one data type to prune.
+Position Management
+Position holder appointed successfully.
+Priority Broadcast System
+Priority Interrupt Protocol
+Pull from allied feeds
+Push notifications are now active on this device.
+Qualifications awarded through training and assessment.
+Quartiermeister
+Questionnaire Config
+RSI Handle and Name are required.
+RSI Handle is required for ad-hoc interviews.
+Radio ping has been transmitted.
+Rank precedence order updated successfully.
+Recruitment & Vetting
+Recruitment Control
+Regierung
+Remove duplicate caution notes
+Remove duplicate reports
+Replace the default Discord login screen with a branded landing page for visitors who aren't signed in.
+Requesting test signal from command...
+Requests you respond to will appear here.
+Required fields missing.
+Resource Management
+Reusable phase / task / milestone plans
+Review and edit the draft before submitting.
+Role Configuration
+Role focuses and operational specialisations.
+Role permissions have been updated successfully.
+Saving new rank precedence order...
+Scheduled and active ops will appear here.
+Securely federate with allied organizations. Pairing is server-to-server with encrypted, per-peer keys — no data is shared until a handshake completes.
+Selected Clients will gain Member-tier access
+Selected members will lose Member-tier access and be moved to the Client role.
+Selling the stock for aUEC.
+Ship details have been saved.
+Shown on the login screen for all visitors.
+Signal Configuration
+Skills & Competencies
+Someone else already acted on this entry.
+Specialization
+Spectrum monitoring and dispatch. Tune into channels, transfer operators, and broadcast alerts.
+Standing Protocol
+Start by creating a storage location (e.g. 'Main Hangar'), then add your first stock entry. Catalog items are optional — you can also use free-text custom names.
+Start from scratch. Build your own branches and positions.
+Stock destroyed (combat, accident, expiry).
+Stock destroyed (combat, accident, expiry). Reduces the on-hand total.
+Stock has gone missing. Reduces the on-hand total.
+Stock missing without explanation.
+Supreme commander with an appointed advisory council. Direct chain of command.
+System Override
+Tactical Entry
+Tell us your Star Citizen (RSI) handle so the org can recognise you.
+Terms of Service shown to clients on intake and dashboard.
+The EAM broadcast could not be transmitted.
+The MDT requires the intel:view permission. Ask an admin to grant it, or use CAD to manage the live queue.
+The allied org has been invited to this operation.
+The chosen certification will be added to every selected member.
+The chosen commendation will be awarded to every selected member.
+The data pruning operation could not be completed.
+The database repair operation could not be completed.
+The election has been created in Draft status.
+The fleet group has been deleted.
+The pasted text is not valid JSON.
+The queue is clear — incoming requests will appear here.
+The radio frequency has been removed.
+The ship has been assigned to the fleet group.
+The ship has been removed from the fleet group.
+The ship has been removed from your hangar.
+Third-party resources and utilities curated for your access level.
+This operation has no phases, tasks, or milestones to template.
+This unit may have been deleted or you don't have access to it.
+Time-Sensitive Intelligence
+Title, Body, and at least one Audience are required.
+Track bulk fungible commodities — ore, refined materials, fuel, RMC, missiles — across your warehouses. Stock totals are computed from an append-only movement ledger so concurrent adjustments stay honest.
+Track physical in-game assets across your locations. Issue kit to members for operations and log returns with outcomes — the movement ledger keeps the stock totals honest.
+Track your org's in-game bank alt-account. Deposits are claimed by members, confirmed by officers against the real alt. Every deposit, withdrawal, adjustment and reversal is audited.
+Training credentials will appear here once earned.
+Treasury
+Treasury ledger
+Try a different search term or clear your filters.
+Try a different search term.
+Try clearing filters or adjusting the search.
+Turn on or off optional modules for your organization. Disabled modules are hidden from all members and their backend actions are rejected.
+Unit details have been saved successfully.
+You are currently in the General Pool. Contact HR or Command to be assigned to a specific operational unit.
+You are now a candidate.
+You do not have the required permissions (Recruiter or Admin) to access the Case Management System.
+Your account is created. Now claim the Admin seat with the one-time code printed to your server console on first boot.
+Your bill has been created as a draft.
+Your candidacy has been withdrawn.
+Your case files will appear here once you apply for a position or vetting begins.
+Your government structure has been created. You can customise it further from the admin panel.
+Your intel bulletin has been broadcast successfully.
+Your job application has been submitted for review.
+Your organization is ready. Welcome aboard — and thanks again for self-hosting Open MyRSI.org.
+Your security clearance request has been filed for review.
+Your transfer request has been submitted for review.
+Your vote has been recorded securely.
+Zertifizierung
+carousel

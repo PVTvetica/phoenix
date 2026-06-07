@@ -1,0 +1,52 @@
+Access Denied
+All ships assigned
+Create your first treasury account
+Intel access required
+Intel net quiet
+No Unit Assignment
+No active incidents
+No active notices
+No active operations
+No applications yet
+No case files found
+No caution notes match
+No certifications on file
+No commendations yet
+No commodities yet
+No conduct records
+No external tools available
+No fleet groups yet
+No frequencies found
+No intel reports
+No interview templates
+No interviews scheduled
+No job roles defined
+No matches
+No matching requests
+No messages yet
+No mission data yet
+No on-duty members match
+No open governance
+No open positions
+No operations found
+No operations history
+No personnel found
+No position assignments on record
+No records on file
+No request history
+No service history
+No ships match your filters
+No specializations selected
+No units on duty
+No upcoming operations
+No vacancies yet
+No warrants on file
+Queue clear
+Set up your armoury
+Ship catalog is empty
+The wiki is empty
+Unit not found
+You don't have access to Finances
+You don't have access to Quartermaster
+You don't have access to Warehouse
+Your hangar is empty

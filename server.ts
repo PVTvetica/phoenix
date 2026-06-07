@@ -106,6 +106,32 @@ import { respondToPair as allianceRespondToPair, getAllianceSelfProfile as allia
     getAllyRosterProjection, getAllyFleetProjection, getUserById, importOrgData, getPlatformSettings } from './lib/db.js';
 import { runFirstBootCheck } from './lib/firstBoot.js';
 import { verifyToken, signToken, isSessionForceLoggedOut } from './lib/auth.js';
+import {
+    handleNextcloudStatus,
+    handleNextcloudFiles,
+    handleNextcloudDownload,
+    handleNextcloudPreview,
+    handleNextcloudUpload,
+} from './api/nextcloud.js';
+import {
+    handleDeckStatus,
+    handleDeckBoards,
+    handleDeckStacks,
+    handleDeckCards,
+    handleDeckCreateCard,
+    handleDeckUpdateCard,
+} from './api/nextcloud-deck.js';
+import {
+    handleCalendarStatus,
+    handleCalendarList,
+    handleCalendarEvents,
+} from './api/nextcloud-calendar.js';
+import {
+    handleTablesStatus,
+    handleTablesList,
+    handleTablesSchema,
+    handleTablesRows,
+} from './api/nextcloud-tables.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -710,6 +736,80 @@ app.get('/sw.js', swLimiter, async (req, res) => {
         log.error('sw error', { err: e });
         if (!res.headersSent) res.status(500).send('SW Error');
     }
+});
+
+// --- Nextcloud integration (browser → our API only; credentials server-side) ---
+app.get('/api/nextcloud/status', async (req, res) => {
+    noStore(res);
+    await handleNextcloudStatus(req, res);
+});
+app.get('/api/nextcloud/files', async (req, res) => {
+    noStore(res);
+    await handleNextcloudFiles(req, res);
+});
+app.get('/api/nextcloud/download', async (req, res) => {
+    noStore(res);
+    await handleNextcloudDownload(req, res);
+});
+app.get('/api/nextcloud/preview', async (req, res) => {
+    noStore(res);
+    await handleNextcloudPreview(req, res);
+});
+app.post('/api/nextcloud/upload', async (req, res) => {
+    noStore(res);
+    await handleNextcloudUpload(req, res);
+});
+app.get('/api/nextcloud/deck/status', async (req, res) => {
+    noStore(res);
+    await handleDeckStatus(req, res);
+});
+app.get('/api/nextcloud/deck/boards', async (req, res) => {
+    noStore(res);
+    await handleDeckBoards(req, res);
+});
+app.get('/api/nextcloud/deck/boards/:boardId/stacks', async (req, res) => {
+    noStore(res);
+    await handleDeckStacks(req, res);
+});
+app.get('/api/nextcloud/deck/boards/:boardId/stacks/:stackId/cards', async (req, res) => {
+    noStore(res);
+    await handleDeckCards(req, res);
+});
+app.post('/api/nextcloud/deck/cards', async (req, res) => {
+    noStore(res);
+    await handleDeckCreateCard(req, res);
+});
+app.put('/api/nextcloud/deck/cards/:cardId', async (req, res) => {
+    noStore(res);
+    await handleDeckUpdateCard(req, res);
+});
+app.get('/api/nextcloud/calendar/status', async (req, res) => {
+    noStore(res);
+    await handleCalendarStatus(req, res);
+});
+app.get('/api/nextcloud/calendar/calendars', async (req, res) => {
+    noStore(res);
+    await handleCalendarList(req, res);
+});
+app.get('/api/nextcloud/calendar/events', async (req, res) => {
+    noStore(res);
+    await handleCalendarEvents(req, res);
+});
+app.get('/api/nextcloud/tables/status', async (req, res) => {
+    noStore(res);
+    await handleTablesStatus(req, res);
+});
+app.get('/api/nextcloud/tables', async (req, res) => {
+    noStore(res);
+    await handleTablesList(req, res);
+});
+app.get('/api/nextcloud/tables/:tableId/schema', async (req, res) => {
+    noStore(res);
+    await handleTablesSchema(req, res);
+});
+app.get('/api/nextcloud/tables/:tableId/rows', async (req, res) => {
+    noStore(res);
+    await handleTablesRows(req, res);
 });
 
 // PWA Manifest — CORS enabled for cross-origin tenant subdomain → TLD fetches

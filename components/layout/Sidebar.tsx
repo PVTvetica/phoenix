@@ -65,6 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const quartermasterEnabled = (orgMeta?.features?.quartermaster?.enabled) === true;
     const warehouseEnabled = (orgMeta?.features?.warehouse?.enabled) === true;
     const marketplaceEnabled = (orgMeta?.features?.marketplace?.enabled) === true;
+    const nextcloudEnabled = (orgMeta?.features?.nextcloud?.enabled) === true;
     // Leaderboard and External Tools default ON — absent means enabled.
     const leaderboardEnabled = (orgMeta?.features?.leaderboard?.enabled) !== false;
     const externalToolsEnabled = (orgMeta?.features?.externalTools?.enabled) !== false;
@@ -80,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         if (['dashboard', 'requests', 'request-detail', 'dispatch', 'operations', 'operation-detail', 'warrants', 'intel'].includes(v)) return 'command';
         if (['roster', 'member-record', 'leaderboard', 'hr', 'applicant-detail', 'security-vetting', 'case-file-detail', 'internal-transfer-detail', 'internal-job-detail', 'fleet', 'government'].includes(v)) return 'org';
         if (['finances', 'quartermaster', 'warehouse', 'marketplace'].includes(v)) return 'economy';
-        if (['wiki', 'external-tools', 'radio-control'].includes(v)) return 'resources';
+        if (['wiki', 'external-tools', 'radio-control', 'nextcloud'].includes(v)) return 'resources';
         if (['profile', 'help', 'admin'].includes(v)) return 'system';
         return null;
     }, [activeView]);
@@ -378,6 +379,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     isMobile={isMobileOpen}
                                 />
                             ) : null;
+                            const nextcloud = (hasPermission('nextcloud:view') && nextcloudEnabled) ? (
+                                <NavItem
+                                    icon={<i className="fa-solid fa-cloud fa-fw"></i>}
+                                    label="Nextcloud"
+                                    isActive={activeView === 'nextcloud'}
+                                    onClick={() => handleNavClick('nextcloud')}
+                                    isCollapsed={isSidebarCollapsed}
+                                    isMobile={isMobileOpen}
+                                />
+                            ) : null;
                             const profile = (
                                 <NavItem
                                     icon={<i className="fa-solid fa-id-card fa-fw"></i>}
@@ -413,7 +424,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                             const commandItems = [dashboard, serviceRequests, dispatchConsole, operations, warrants, intel].filter(Boolean);
                             const orgItems = [dutyRoster, orgChart, leaderboard, hr, fleet, government, alliances].filter(Boolean);
                             const economyItems = [finances, quartermaster, warehouse, marketplace].filter(Boolean);
-                            const resourcesItems = [wiki, externalTools, radio].filter(Boolean);
+                            const resourcesItems = [wiki, externalTools, radio, nextcloud].filter(Boolean);
                             const systemItems = [profile, help, admin].filter(Boolean);
 
                             // Collapsed rail: flat list, no group chrome
