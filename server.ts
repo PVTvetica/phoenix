@@ -222,7 +222,7 @@ app.use((req, res, next) => {
     const cspNonce = randomBytes(16).toString('base64');
     res.locals.cspNonce = cspNonce;
 
-    res.setHeader('Content-Security-Policy', `default-src 'self'; script-src 'self' 'nonce-${cspNonce}' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss://*.supabase.co wss://*.livekit.cloud; font-src 'self' data: https://cdnjs.cloudflare.com; frame-src 'self' blob: https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://docs.google.com https://drive.google.com https://calendar.google.com https://www.google.com https://open.spotify.com https://codepen.io https://stackblitz.com; media-src 'self' blob: https:; manifest-src 'self';`);
+    res.setHeader('Content-Security-Policy', `default-src 'self'; script-src 'self' 'nonce-${cspNonce}' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss: wss://*.supabase.co wss://*.livekit.cloud; font-src 'self' data: https://cdnjs.cloudflare.com; frame-src 'self' blob: https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://docs.google.com https://drive.google.com https://calendar.google.com https://www.google.com https://open.spotify.com https://codepen.io https://stackblitz.com; media-src 'self' blob: https:; manifest-src 'self';`);
     // Only set HSTS if using HTTPS in production
     if (process.env.NODE_ENV === 'production') {
         res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
